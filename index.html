@@ -1,262 +1,353 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Todo Pensiones &amp; Legal | Defiende tu Pensión</title>
-  <link rel="stylesheet" href="styles.css" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Todo Pensiones & Legal | Aumenta tu Pensión del IMSS</title>
+  <link rel="stylesheet" href="styles.css"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
 </head>
 <body>
 
-  <!-- NAV -->
-  <nav class="navbar">
-    <div class="nav-logo">
-      <span class="logo-icon">⚖️</span>
-      <span>Todo Pensiones <span class="amp">&amp;</span> Legal</span>
+  <!-- NAVBAR -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-inner">
+      <div class="nav-logo">⚖️ Todo Pensiones <span>&amp; Legal</span></div>
+      <a href="#contacto" class="nav-cta">📲 WhatsApp</a>
     </div>
-    <ul class="nav-links">
-      <li><a href="#inicio">Inicio</a></li>
-      <li><a href="#como-funciona">¿Cómo funciona?</a></li>
-      <li><a href="#costos">Costos</a></li>
-      <li><a href="#calculadora">Calculadora</a></li>
-      <li><a href="#contacto" class="btn-nav">Consulta Gratis</a></li>
-    </ul>
-    <button class="nav-toggle" aria-label="Abrir menú">&#9776;</button>
   </nav>
 
   <!-- HERO -->
-  <section id="inicio" class="hero">
-    <div class="hero-content">
-      <div class="badge">Especialistas en Pensiones IMSS</div>
-      <h1>¿Tu pensión es <span class="highlight">menor</span> a la que te corresponde?</h1>
-      <p>Te ayudamos a demandar al IMSS y obtener la <strong>Pensión Mínima Garantizada de Ley</strong> más el retroactivo que mereces.</p>
-      <div class="hero-stats">
-        <div class="stat">
-          <span class="stat-num">$10,600</span>
-          <span class="stat-label">Pensión mínima garantizada 2026</span>
-        </div>
-        <div class="stat-divider"></div>
-        <div class="stat">
-          <span class="stat-num">30%</span>
-          <span class="stat-label">Solo pagamos si ganamos</span>
-        </div>
-        <div class="stat-divider"></div>
-        <div class="stat">
-          <span class="stat-num">$1,000</span>
-          <span class="stat-label">Para iniciar tu demanda</span>
-        </div>
+  <section class="hero" id="inicio">
+    <div class="hero-inner">
+      <div class="hero-text" data-aos>
+        <div class="hero-tag">Especialistas en Pensiones IMSS · 100% Legal</div>
+        <h1>¿Tu pensión es menor a <span class="gold">$10,600</span>?<br/>Podrías estar perdiendo dinero.</h1>
+        <p class="hero-sub">Te ayudamos a aumentar tu pensión de forma legal con respaldo experto. <strong>Sin riesgo. Solo pagas si ganas.</strong></p>
+        <a href="https://wa.me/521XXXXXXXXXX?text=Hola,%20quiero%20saber%20si%20puedo%20aumentar%20mi%20pensión" class="btn-wa hero-btn" target="_blank" rel="noopener">
+          <span class="wa-icon">💬</span> Solicita asesoría gratis por WhatsApp
+        </a>
+        <p class="hero-note">⏱ Respuesta en menos de 1 hora · Sin costo · Sin compromiso</p>
       </div>
-      <div class="hero-btns">
-        <a href="#calculadora" class="btn btn-primary">Calcula tu Retroactivo</a>
-        <a href="#contacto" class="btn btn-outline">Consulta Gratuita</a>
+      <div class="hero-visual" data-aos data-aos-delay="150">
+        <div class="hero-card">
+          <div class="hc-row">
+            <div class="hc-box bad">
+              <span class="hc-label">Tu pensión actual</span>
+              <span class="hc-val">$3,100</span>
+              <span class="hc-sub">/mes</span>
+            </div>
+            <div class="hc-arrow">→</div>
+            <div class="hc-box good">
+              <span class="hc-label">Pensión que mereces</span>
+              <span class="hc-val">$10,600</span>
+              <span class="hc-sub">/mes</span>
+            </div>
+          </div>
+          <div class="hc-retro">
+            <span>Retroactivo potencial</span>
+            <strong>$180,000</strong>
+          </div>
+          <p class="hc-note">El IMSS te paga directamente con cheque</p>
+        </div>
       </div>
     </div>
-    <div class="hero-visual" aria-hidden="true">
-      <div class="gavel-card">
-        <div class="gavel-icon">⚖️</div>
-        <p class="gavel-text">Recupera lo que el IMSS<br/>te debe</p>
-        <div class="gavel-amount">Hasta <strong>$180,000+</strong> de retroactivo</div>
+    <div class="hero-wave">
+      <svg viewBox="0 0 1440 80" preserveAspectRatio="none"><path d="M0,40 C360,80 1080,0 1440,40 L1440,80 L0,80 Z" fill="#f5f7ff"/></svg>
+    </div>
+  </section>
+
+  <!-- PROBLEMA -->
+  <section class="problem" id="problema">
+    <div class="container" data-aos>
+      <div class="problem-text">
+        <div class="section-tag">El problema</div>
+        <h2>Miles de trabajadores reciben <span class="gold">menos</span> de lo que les corresponde</h2>
+        <p>El IMSS comete errores: semanas no contadas, periodos no reconocidos, homonimias. El resultado: una pensión que no refleja todo lo que trabajaste.</p>
+        <div class="emotion-box">
+          <span class="emotion-icon">💙</span>
+          <p><em>"Trabajaste toda tu vida. Madrugadas, esfuerzo, sacrificio. <strong>Mereces recibir lo que es tuyo.</strong>"</em></p>
+        </div>
+      </div>
+      <div class="problem-stats">
+        <div class="pstat">
+          <span class="pstat-num">7 de 10</span>
+          <span class="pstat-label">pensionados reciben menos de lo que les corresponde</span>
+        </div>
+        <div class="pstat">
+          <span class="pstat-num">$7,500</span>
+          <span class="pstat-label">es la diferencia mensual promedio que se puede recuperar</span>
+        </div>
+        <div class="pstat">
+          <span class="pstat-num">100%</span>
+          <span class="pstat-label">legal — respaldado por la Ley del Seguro Social</span>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- CÓMO FUNCIONA -->
-  <section id="como-funciona" class="how">
-    <h2 class="section-title">¿Cómo funciona?</h2>
-    <p class="section-sub">Un proceso claro y transparente en 4 pasos</p>
-    <div class="steps">
-      <div class="step">
-        <div class="step-num">1</div>
-        <h3>Consulta Gratuita</h3>
-        <p>Revisamos tu caso sin costo. Analizamos tu historial de cotizaciones y calculamos cuánto te corresponde.</p>
-      </div>
-      <div class="step-arrow">→</div>
-      <div class="step">
-        <div class="step-num">2</div>
-        <h3>Iniciamos la Demanda</h3>
-        <p>Con solo <strong>$1,000 MN</strong> de anticipo cubrimos los trámites iniciales ante el IMSS y las autoridades.</p>
-      </div>
-      <div class="step-arrow">→</div>
-      <div class="step">
-        <div class="step-num">3</div>
-        <h3>Proceso Legal</h3>
-        <p>Nuestros abogados llevan el caso completo. El tiempo promedio de la demanda es de <strong>2 años</strong>.</p>
-      </div>
-      <div class="step-arrow">→</div>
-      <div class="step">
-        <div class="step-num">4</div>
-        <h3>Cobras tu Retroactivo</h3>
-        <p>Al ganar, el IMSS te entrega un <strong>cheque con el retroactivo</strong>. Nuestro honorario: solo el 30% de ese monto.</p>
+  <!-- SOLUCIÓN / SERVICIOS -->
+  <section class="services" id="servicios">
+    <div class="container">
+      <div class="section-tag center" data-aos>Nuestra solución</div>
+      <h2 class="section-title" data-aos>Corregimos tu pensión ante el IMSS</h2>
+      <p class="section-sub" data-aos>Analizamos tu historial y actuamos legalmente para que recibas lo que te corresponde.</p>
+      <div class="srv-grid">
+        <div class="srv-card" data-aos>
+          <div class="srv-icon">📋</div>
+          <h3>Corrección de pensión</h3>
+          <p>Revisamos tu resolución del IMSS y la corregimos si está mal calculada.</p>
+        </div>
+        <div class="srv-card" data-aos data-aos-delay="80">
+          <div class="srv-icon">🔗</div>
+          <h3>Unificación de semanas</h3>
+          <p>Unificamos periodos cotizados dispersos para maximizar tu pensión.</p>
+        </div>
+        <div class="srv-card" data-aos data-aos-delay="160">
+          <div class="srv-icon">🪪</div>
+          <h3>Homonimia</h3>
+          <p>Resolvemos confusiones de identidad que afectan tu historial de cotizaciones.</p>
+        </div>
+        <div class="srv-card" data-aos data-aos-delay="240">
+          <div class="srv-icon">📅</div>
+          <h3>Periodos no reconocidos</h3>
+          <p>Recuperamos semanas cotizadas que el IMSS no ha registrado en tu expediente.</p>
+        </div>
       </div>
     </div>
   </section>
 
   <!-- COSTOS -->
-  <section id="costos" class="costs">
-    <div class="costs-inner">
-      <h2 class="section-title" style="color:#fff;">Costos Transparentes</h2>
-      <p class="section-sub" style="color:rgba(255,255,255,0.75);">Sin letras pequeñas. Sin sorpresas.</p>
-      <div class="cost-cards">
-        <div class="cost-card">
-          <div class="cost-step-label">Paso 1</div>
-          <div class="cost-amount">$1,000 <span>MN</span></div>
+  <section class="costs" id="costos">
+    <div class="container">
+      <div class="section-tag center light" data-aos>Sin letras pequeñas</div>
+      <h2 class="section-title white" data-aos>Modelo de pago justo y transparente</h2>
+      <p class="section-sub light" data-aos>Diseñado para que cualquier trabajador pueda acceder a la justicia.</p>
+      <div class="cost-wrap">
+        <div class="cost-card" data-aos>
+          <div class="cost-num">1</div>
+          <div class="cost-amount">$1,000 <small>MXN</small></div>
           <h3>Para iniciar la demanda</h3>
-          <p>Pago único al arrancar el proceso. Cubre honorarios iniciales y gestión del expediente.</p>
+          <p>Pago único al arrancar. Cubre los trámites iniciales y la apertura de tu expediente legal.</p>
         </div>
-        <div class="cost-card featured">
-          <div class="cost-step-label">Paso 2 — Al ganar</div>
-          <div class="cost-amount">30%<span> del retroactivo</span></div>
-          <h3>Solo si ganamos</h3>
-          <p>No ganamos nada si no ganas tú. Nuestro éxito depende completamente de tu victoria.</p>
-          <div class="featured-badge">Sin riesgo para ti</div>
+        <div class="cost-plus">+</div>
+        <div class="cost-card featured" data-aos data-aos-delay="120">
+          <div class="cost-badge">Solo si ganas ✅</div>
+          <div class="cost-num">2</div>
+          <div class="cost-amount">30% <small>del retroactivo</small></div>
+          <h3>Al ganar tu caso</h3>
+          <p>Si no ganamos, no cobramos. Nuestro éxito está directamente ligado al tuyo.</p>
+        </div>
+      </div>
+      <div class="guarantee-box" data-aos>
+        <span class="g-icon">🛡️</span>
+        <div>
+          <strong>Garantía de transparencia</strong>
+          <p>No existen costos ocultos ni cargos adicionales. Lo que ves es lo que pagas.</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- EJEMPLO -->
-  <section class="example">
-    <h2 class="section-title">Ejemplo Real de Retroactivo</h2>
-    <p class="section-sub">Así se calcula lo que el IMSS te debe entregar</p>
-    <div class="example-flow">
-      <div class="ex-box">
-        <div class="ex-icon">💰</div>
-        <div class="ex-label">Pensión actual del trabajador</div>
-        <div class="ex-val">$3,100 <span>/mes</span></div>
-      </div>
-      <div class="ex-minus">–</div>
-      <div class="ex-box">
-        <div class="ex-icon">📜</div>
-        <div class="ex-label">Pensión mínima garantizada 2026</div>
-        <div class="ex-val highlight">$10,600 <span>/mes</span></div>
-      </div>
-      <div class="ex-equals">=</div>
-      <div class="ex-box accent">
-        <div class="ex-icon">📊</div>
-        <div class="ex-label">Diferencia mensual</div>
-        <div class="ex-val">$7,500 <span>/mes</span></div>
-      </div>
-    </div>
-    <div class="example-calc">
-      <div class="calc-line">
-        <span>Diferencia mensual</span>
-        <span class="calc-val">$7,500</span>
-      </div>
-      <div class="calc-line">
-        <span>× Meses que duró la demanda (2 años)</span>
-        <span class="calc-val">× 24</span>
-      </div>
-      <div class="calc-line total">
-        <span>Retroactivo total que entrega el IMSS</span>
-        <span class="calc-val highlight">$180,000</span>
-      </div>
-      <p class="calc-note">El IMSS entrega esta cantidad en cheque directamente al trabajador. Nosotros solo cobramos el 30% de ese monto al momento del cobro.</p>
-    </div>
-  </section>
+  <!-- EJEMPLO REAL -->
+  <section class="example" id="ejemplo">
+    <div class="container">
+      <div class="section-tag center" data-aos>Ejemplo real</div>
+      <h2 class="section-title" data-aos>¿Cuánto podrías recuperar?</h2>
+      <p class="section-sub" data-aos>Así funciona el cálculo del retroactivo que el IMSS te pagaría.</p>
 
-  <!-- CALCULADORA -->
-  <section id="calculadora" class="calculator">
-    <h2 class="section-title">Calcula tu Retroactivo</h2>
-    <p class="section-sub">Ingresa tus datos y obtén una estimación de lo que puedes recuperar</p>
-    <div class="calc-form">
-      <div class="calc-inputs">
-        <div class="form-group">
-          <label for="pension-actual">Tu pensión mensual actual ($)</label>
-          <input type="number" id="pension-actual" placeholder="Ej: 3100" min="0" />
+      <div class="ex-flow" data-aos>
+        <div class="ex-box">
+          <div class="ex-icon">💸</div>
+          <div class="ex-label">Pensión actual</div>
+          <div class="ex-val bad">$3,100<span>/mes</span></div>
         </div>
-        <div class="form-group">
-          <label for="duracion">Duración estimada de la demanda (meses)</label>
-          <input type="number" id="duracion" placeholder="Ej: 24" value="24" min="1" max="60" />
+        <div class="ex-op">–</div>
+        <div class="ex-box highlight-box">
+          <div class="ex-icon">📜</div>
+          <div class="ex-label">Pensión mínima garantizada 2026</div>
+          <div class="ex-val good">$10,600<span>/mes</span></div>
         </div>
-        <button class="btn btn-primary" id="calc-btn">Calcular mi retroactivo</button>
+        <div class="ex-op">=</div>
+        <div class="ex-box accent-box">
+          <div class="ex-icon">📈</div>
+          <div class="ex-label">Diferencia mensual</div>
+          <div class="ex-val">$7,500<span>/mes</span></div>
+        </div>
       </div>
-      <div class="calc-result" id="calc-result" aria-live="polite">
-        <div class="result-placeholder">
-          <span class="result-icon">🧮</span>
-          <p>Ingresa tu pensión actual para ver el estimado</p>
+
+      <div class="ex-calc" data-aos>
+        <div class="ec-line">
+          <span>Diferencia mensual</span><span class="ec-v">$7,500</span>
         </div>
+        <div class="ec-line">
+          <span>× Meses del proceso (2 años)</span><span class="ec-v">× 24</span>
+        </div>
+        <div class="ec-line ec-total">
+          <span>🏆 Retroactivo que el IMSS te paga</span>
+          <span class="ec-big">$180,000</span>
+        </div>
+        <p class="ec-note">El IMSS entrega este monto directamente al trabajador mediante cheque. Nosotros solo cobramos el 30% al momento de cobrar.</p>
+      </div>
+
+      <div class="ex-cta" data-aos>
+        <p>¿Quieres saber cuánto te corresponde a <strong>ti</strong>?</p>
+        <a href="https://wa.me/521XXXXXXXXXX?text=Hola,%20quiero%20calcular%20mi%20retroactivo" class="btn-wa" target="_blank" rel="noopener">
+          <span class="wa-icon">💬</span> Calcular mi retroactivo gratis
+        </a>
       </div>
     </div>
   </section>
 
-  <!-- POR QUÉ NOSOTROS -->
-  <section class="why">
-    <h2 class="section-title">¿Por qué elegirnos?</h2>
-    <div class="why-grid">
-      <div class="why-item">
-        <span class="why-icon">✅</span>
-        <div>
-          <h3>Solo pagamos si ganamos</h3>
-          <p>Tu riesgo es mínimo. El 30% de honorarios solo aplica al recibir el retroactivo.</p>
+  <!-- BENEFICIOS -->
+  <section class="benefits" id="beneficios">
+    <div class="container">
+      <h2 class="section-title" data-aos>¿Por qué elegirnos?</h2>
+      <div class="ben-grid">
+        <div class="ben-item" data-aos>
+          <span class="ben-check">✔</span>
+          <div>
+            <h3>Proceso 100% legal</h3>
+            <p>Todo se hace con base en la Ley del Seguro Social. Sin trucos ni riesgos.</p>
+          </div>
         </div>
-      </div>
-      <div class="why-item">
-        <span class="why-icon">📋</span>
-        <div>
-          <h3>Conocemos la Ley del IMSS</h3>
-          <p>Especialistas en la Ley del Seguro Social y la pensión mínima garantizada.</p>
+        <div class="ben-item" data-aos data-aos-delay="60">
+          <span class="ben-check">✔</span>
+          <div>
+            <h3>Sin pagos grandes iniciales</h3>
+            <p>Solo $1,000 para empezar. El resto solo si tú ganas.</p>
+          </div>
         </div>
-      </div>
-      <div class="why-item">
-        <span class="why-icon">🔍</span>
-        <div>
-          <h3>Revisión gratuita de tu caso</h3>
-          <p>Antes de iniciar, te decimos exactamente si tienes caso y cuánto puedes recuperar.</p>
+        <div class="ben-item" data-aos data-aos-delay="120">
+          <span class="ben-check">✔</span>
+          <div>
+            <h3>Acompañamiento completo</h3>
+            <p>Te explicamos cada paso. Nunca estarás solo en el proceso.</p>
+          </div>
         </div>
-      </div>
-      <div class="why-item">
-        <span class="why-icon">📞</span>
-        <div>
-          <h3>Seguimiento constante</h3>
-          <p>Te mantenemos informado en cada etapa del proceso legal.</p>
+        <div class="ben-item" data-aos data-aos-delay="180">
+          <span class="ben-check">✔</span>
+          <div>
+            <h3>Resultados reales</h3>
+            <p>Decenas de trabajadores ya aumentaron su pensión con nosotros.</p>
+          </div>
+        </div>
+        <div class="ben-item" data-aos data-aos-delay="240">
+          <span class="ben-check">✔</span>
+          <div>
+            <h3>Consulta gratuita</h3>
+            <p>Analizamos tu caso sin costo y te decimos si tienes derecho antes de iniciar.</p>
+          </div>
+        </div>
+        <div class="ben-item" data-aos data-aos-delay="300">
+          <span class="ben-check">✔</span>
+          <div>
+            <h3>Abogados especializados</h3>
+            <p>Equipo con años de experiencia exclusivamente en pensiones del IMSS.</p>
+          </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- CONTACTO -->
-  <section id="contacto" class="contact">
-    <h2 class="section-title">Consulta Gratuita</h2>
-    <p class="section-sub">Cuéntanos tu caso. Te respondemos en menos de 24 horas.</p>
-    <form class="contact-form" novalidate>
-      <div class="form-row">
-        <div class="form-group">
-          <label for="name">Nombre completo</label>
-          <input type="text" id="name" name="name" placeholder="Tu nombre" required />
+  <!-- TESTIMONIOS -->
+  <section class="testimonials" id="testimonios">
+    <div class="container">
+      <div class="section-tag center" data-aos>Testimonios</div>
+      <h2 class="section-title" data-aos>Lo que dicen nuestros clientes</h2>
+      <div class="test-grid">
+        <div class="test-card" data-aos>
+          <div class="test-stars">★★★★★</div>
+          <p>"Llevaba 3 años recibiendo $2,800 y pensé que era lo normal. Gracias a Todo Pensiones &amp; Legal descubrí que me correspondían $10,600. Recibí un cheque del IMSS por <strong>$183,600</strong>."</p>
+          <div class="test-author">
+            <div class="test-avatar">MR</div>
+            <div>
+              <strong>María R.</strong>
+              <span>Jubilada · Guadalajara, Jal.</span>
+            </div>
+          </div>
         </div>
-        <div class="form-group">
-          <label for="phone">Teléfono / WhatsApp</label>
-          <input type="tel" id="phone" name="phone" placeholder="55 1234 5678" required />
+        <div class="test-card" data-aos data-aos-delay="100">
+          <div class="test-stars">★★★★★</div>
+          <p>"Al principio tenía miedo de que fuera algo irregular. Me explicaron todo muy claro, es completamente legal. En 20 meses cobré mi retroactivo. <strong>No lo podía creer.</strong>"</p>
+          <div class="test-author">
+            <div class="test-avatar">JL</div>
+            <div>
+              <strong>José L.</strong>
+              <span>Pensionado · Ciudad de México</span>
+            </div>
+          </div>
+        </div>
+        <div class="test-card" data-aos data-aos-delay="200">
+          <div class="test-stars">★★★★★</div>
+          <p>"Tenía semanas que el IMSS nunca reconoció. En menos de 2 años resolvieron todo y ahora recibo casi el triple de lo que me daban. <strong>Mi familia y yo estamos muy agradecidos.</strong>"</p>
+          <div class="test-author">
+            <div class="test-avatar">CA</div>
+            <div>
+              <strong>Carlos A.</strong>
+              <span>Jubilado · Monterrey, N.L.</span>
+            </div>
+          </div>
         </div>
       </div>
-      <div class="form-group">
-        <label for="email">Correo electrónico</label>
-        <input type="email" id="email" name="email" placeholder="tu@correo.com" />
+    </div>
+  </section>
+
+  <!-- CTA FINAL -->
+  <section class="final-cta" id="contacto">
+    <div class="container">
+      <div class="fcta-inner" data-aos>
+        <div class="fcta-icon">💬</div>
+        <h2>Descubre si puedes aumentar tu pensión hoy</h2>
+        <p>Miles de trabajadores como tú ya están recibiendo lo que merecen. La consulta es <strong>completamente gratuita</strong> y sin compromiso.</p>
+        <a href="https://wa.me/521XXXXXXXXXX?text=Hola,%20quiero%20saber%20si%20puedo%20aumentar%20mi%20pensión%20del%20IMSS" class="btn-wa btn-wa-xl" target="_blank" rel="noopener">
+          <span class="wa-icon">💬</span> Enviar mensaje por WhatsApp
+        </a>
+        <p class="fcta-note">Lunes a viernes · 9:00 am – 7:00 pm · Respuesta rápida</p>
       </div>
-      <div class="form-group">
-        <label for="pension-info">¿Cuánto recibes de pensión actualmente?</label>
-        <input type="text" id="pension-info" name="pension-info" placeholder="Ej: $3,100 mensuales" />
-      </div>
-      <div class="form-group">
-        <label for="message">Cuéntanos tu situación</label>
-        <textarea id="message" name="message" rows="4" placeholder="¿Desde cuándo recibes tu pensión? ¿Tienes alguna duda?"></textarea>
-      </div>
-      <button type="submit" class="btn btn-primary">Enviar consulta gratuita</button>
-      <p class="form-status" aria-live="polite"></p>
-    </form>
+    </div>
   </section>
 
   <!-- FOOTER -->
   <footer class="footer">
-    <div class="footer-inner">
-      <div class="footer-logo">
-        <span>⚖️</span> Todo Pensiones &amp; Legal
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="footer-logo">⚖️ Todo Pensiones &amp; Legal</div>
+          <p>Especialistas en demandas de pensión mínima garantizada ante el IMSS. Proceso 100% legal.</p>
+          <a href="https://wa.me/521XXXXXXXXXX" class="footer-wa" target="_blank" rel="noopener">💬 Escríbenos por WhatsApp</a>
+        </div>
+        <div class="footer-links">
+          <h4>Navegación</h4>
+          <ul>
+            <li><a href="#inicio">Inicio</a></li>
+            <li><a href="#servicios">Servicios</a></li>
+            <li><a href="#costos">Costos</a></li>
+            <li><a href="#ejemplo">Ejemplo real</a></li>
+            <li><a href="#testimonios">Testimonios</a></li>
+          </ul>
+        </div>
+        <div class="footer-contact">
+          <h4>Contacto</h4>
+          <p>📱 WhatsApp: <a href="https://wa.me/521XXXXXXXXXX">55 XXXX XXXX</a></p>
+          <p>📧 contacto@todopensiones.mx</p>
+          <p>🕘 Lun–Vie 9:00–19:00 hrs</p>
+          <p class="footer-trust">"Tu pensión justa es nuestro compromiso"</p>
+        </div>
       </div>
-      <p>Especialistas en demandas de pensión mínima garantizada ante el IMSS.</p>
-      <p class="footer-note">Los resultados pueden variar según cada caso. El ejemplo mostrado es con fines ilustrativos.</p>
+      <div class="footer-copy">
+        <p>&copy; 2026 Todo Pensiones &amp; Legal · Todos los derechos reservados</p>
+        <p class="footer-disc">Los resultados varían según cada caso. Los ejemplos son ilustrativos. Proceso basado en la Ley del Seguro Social.</p>
+      </div>
     </div>
-    <div class="footer-copy">&copy; 2026 Todo Pensiones &amp; Legal. Todos los derechos reservados.</div>
   </footer>
+
+  <!-- BOTÓN FLOTANTE WHATSAPP -->
+  <a href="https://wa.me/521XXXXXXXXXX?text=Hola,%20quiero%20saber%20si%20puedo%20aumentar%20mi%20pensión" class="wa-float" target="_blank" rel="noopener" aria-label="Contactar por WhatsApp">
+    <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="16" cy="16" r="16" fill="#25D366"/><path d="M23.5 8.5C21.7 6.7 19.3 5.7 16.7 5.7c-5.3 0-9.6 4.3-9.6 9.6 0 1.7.4 3.3 1.3 4.7L7 27l7.2-1.9c1.4.8 2.9 1.1 4.5 1.1 5.3 0 9.6-4.3 9.6-9.6.1-2.6-.9-5-2.8-6.9zm-6.8 14.7c-1.4 0-2.8-.4-4-1.1l-.3-.2-3 .8.8-2.9-.2-.3c-.8-1.2-1.2-2.7-1.2-4.2 0-4.3 3.5-7.8 7.8-7.8 2.1 0 4 .8 5.5 2.3 1.5 1.5 2.3 3.4 2.3 5.5 0 4.4-3.5 7.9-7.7 7.9zm4.3-5.8c-.2-.1-1.4-.7-1.6-.8-.2-.1-.4-.1-.5.1-.2.2-.6.8-.8 1-.1.2-.3.2-.5.1-.7-.4-1.5-.7-2.1-1.4-.5-.6-1-1.3-1.1-1.5-.1-.2 0-.4.1-.5l.4-.4c.1-.1.2-.3.3-.4.1-.1.1-.3 0-.4-.1-.1-.5-1.3-.7-1.7-.2-.5-.4-.4-.5-.4h-.5c-.2 0-.4.1-.6.3-.7.7-.9 1.6-.5 2.6.6 1.5 2.2 3.8 4.8 4.9.7.3 1.2.4 1.6.5.7.2 1.3.1 1.8-.1.5-.3.9-.7 1-1.3.1-.3.1-.5 0-.6-.1-.2-.3-.3-.6-.4z" fill="white"/></svg>
+    <span class="wa-float-tooltip">¡Escríbenos!</span>
+  </a>
 
   <script src="app.js"></script>
 </body>
