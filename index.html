@@ -3,19 +3,23 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mi Página Web</title>
+  <title>Todo Pensiones &amp; Legal | Defiende tu Pensión</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
 
   <!-- NAV -->
   <nav class="navbar">
-    <div class="nav-logo">MiSitio</div>
+    <div class="nav-logo">
+      <span class="logo-icon">⚖️</span>
+      <span>Todo Pensiones <span class="amp">&amp;</span> Legal</span>
+    </div>
     <ul class="nav-links">
       <li><a href="#inicio">Inicio</a></li>
-      <li><a href="#servicios">Servicios</a></li>
-      <li><a href="#sobre">Sobre mí</a></li>
-      <li><a href="#contacto">Contacto</a></li>
+      <li><a href="#como-funciona">¿Cómo funciona?</a></li>
+      <li><a href="#costos">Costos</a></li>
+      <li><a href="#calculadora">Calculadora</a></li>
+      <li><a href="#contacto" class="btn-nav">Consulta Gratis</a></li>
     </ul>
     <button class="nav-toggle" aria-label="Abrir menú">&#9776;</button>
   </nav>
@@ -23,81 +27,235 @@
   <!-- HERO -->
   <section id="inicio" class="hero">
     <div class="hero-content">
-      <h1>Bienvenido a <span class="highlight">MiSitio</span></h1>
-      <p>Diseño moderno, rendimiento y experiencia de usuario excepcional.</p>
-      <a href="#servicios" class="btn btn-primary">Ver servicios</a>
-      <a href="#contacto" class="btn btn-outline">Contáctame</a>
+      <div class="badge">Especialistas en Pensiones IMSS</div>
+      <h1>¿Tu pensión es <span class="highlight">menor</span> a la que te corresponde?</h1>
+      <p>Te ayudamos a demandar al IMSS y obtener la <strong>Pensión Mínima Garantizada de Ley</strong> más el retroactivo que mereces.</p>
+      <div class="hero-stats">
+        <div class="stat">
+          <span class="stat-num">$10,600</span>
+          <span class="stat-label">Pensión mínima garantizada 2026</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat">
+          <span class="stat-num">30%</span>
+          <span class="stat-label">Solo pagamos si ganamos</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat">
+          <span class="stat-num">$1,000</span>
+          <span class="stat-label">Para iniciar tu demanda</span>
+        </div>
+      </div>
+      <div class="hero-btns">
+        <a href="#calculadora" class="btn btn-primary">Calcula tu Retroactivo</a>
+        <a href="#contacto" class="btn btn-outline">Consulta Gratuita</a>
+      </div>
     </div>
     <div class="hero-visual" aria-hidden="true">
-      <div class="blob"></div>
-    </div>
-  </section>
-
-  <!-- SERVICIOS -->
-  <section id="servicios" class="services">
-    <h2 class="section-title">Servicios</h2>
-    <div class="cards">
-      <div class="card">
-        <div class="card-icon">&#128187;</div>
-        <h3>Desarrollo Web</h3>
-        <p>Sitios rápidos, accesibles y optimizados para todos los dispositivos.</p>
-      </div>
-      <div class="card">
-        <div class="card-icon">&#127912;</div>
-        <h3>Diseño UI/UX</h3>
-        <p>Interfaces intuitivas centradas en la experiencia del usuario.</p>
-      </div>
-      <div class="card">
-        <div class="card-icon">&#128200;</div>
-        <h3>SEO & Rendimiento</h3>
-        <p>Optimización para motores de búsqueda y tiempos de carga mínimos.</p>
+      <div class="gavel-card">
+        <div class="gavel-icon">⚖️</div>
+        <p class="gavel-text">Recupera lo que el IMSS<br/>te debe</p>
+        <div class="gavel-amount">Hasta <strong>$180,000+</strong> de retroactivo</div>
       </div>
     </div>
   </section>
 
-  <!-- SOBRE MÍ -->
-  <section id="sobre" class="about">
-    <div class="about-text">
-      <h2 class="section-title">Sobre mí</h2>
-      <p>Soy un desarrollador apasionado por crear experiencias digitales de alta calidad. Con años de experiencia en tecnologías web modernas, me especializo en construir soluciones elegantes y eficientes.</p>
-      <ul class="skills">
-        <li>HTML &amp; CSS</li>
-        <li>JavaScript</li>
-        <li>React / Vue</li>
-        <li>Node.js</li>
-      </ul>
+  <!-- CÓMO FUNCIONA -->
+  <section id="como-funciona" class="how">
+    <h2 class="section-title">¿Cómo funciona?</h2>
+    <p class="section-sub">Un proceso claro y transparente en 4 pasos</p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <h3>Consulta Gratuita</h3>
+        <p>Revisamos tu caso sin costo. Analizamos tu historial de cotizaciones y calculamos cuánto te corresponde.</p>
+      </div>
+      <div class="step-arrow">→</div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <h3>Iniciamos la Demanda</h3>
+        <p>Con solo <strong>$1,000 MN</strong> de anticipo cubrimos los trámites iniciales ante el IMSS y las autoridades.</p>
+      </div>
+      <div class="step-arrow">→</div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <h3>Proceso Legal</h3>
+        <p>Nuestros abogados llevan el caso completo. El tiempo promedio de la demanda es de <strong>2 años</strong>.</p>
+      </div>
+      <div class="step-arrow">→</div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <h3>Cobras tu Retroactivo</h3>
+        <p>Al ganar, el IMSS te entrega un <strong>cheque con el retroactivo</strong>. Nuestro honorario: solo el 30% de ese monto.</p>
+      </div>
     </div>
-    <div class="about-image" aria-hidden="true">
-      <div class="avatar-placeholder">
-        <span>&#128100;</span>
+  </section>
+
+  <!-- COSTOS -->
+  <section id="costos" class="costs">
+    <div class="costs-inner">
+      <h2 class="section-title" style="color:#fff;">Costos Transparentes</h2>
+      <p class="section-sub" style="color:rgba(255,255,255,0.75);">Sin letras pequeñas. Sin sorpresas.</p>
+      <div class="cost-cards">
+        <div class="cost-card">
+          <div class="cost-step-label">Paso 1</div>
+          <div class="cost-amount">$1,000 <span>MN</span></div>
+          <h3>Para iniciar la demanda</h3>
+          <p>Pago único al arrancar el proceso. Cubre honorarios iniciales y gestión del expediente.</p>
+        </div>
+        <div class="cost-card featured">
+          <div class="cost-step-label">Paso 2 — Al ganar</div>
+          <div class="cost-amount">30%<span> del retroactivo</span></div>
+          <h3>Solo si ganamos</h3>
+          <p>No ganamos nada si no ganas tú. Nuestro éxito depende completamente de tu victoria.</p>
+          <div class="featured-badge">Sin riesgo para ti</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EJEMPLO -->
+  <section class="example">
+    <h2 class="section-title">Ejemplo Real de Retroactivo</h2>
+    <p class="section-sub">Así se calcula lo que el IMSS te debe entregar</p>
+    <div class="example-flow">
+      <div class="ex-box">
+        <div class="ex-icon">💰</div>
+        <div class="ex-label">Pensión actual del trabajador</div>
+        <div class="ex-val">$3,100 <span>/mes</span></div>
+      </div>
+      <div class="ex-minus">–</div>
+      <div class="ex-box">
+        <div class="ex-icon">📜</div>
+        <div class="ex-label">Pensión mínima garantizada 2026</div>
+        <div class="ex-val highlight">$10,600 <span>/mes</span></div>
+      </div>
+      <div class="ex-equals">=</div>
+      <div class="ex-box accent">
+        <div class="ex-icon">📊</div>
+        <div class="ex-label">Diferencia mensual</div>
+        <div class="ex-val">$7,500 <span>/mes</span></div>
+      </div>
+    </div>
+    <div class="example-calc">
+      <div class="calc-line">
+        <span>Diferencia mensual</span>
+        <span class="calc-val">$7,500</span>
+      </div>
+      <div class="calc-line">
+        <span>× Meses que duró la demanda (2 años)</span>
+        <span class="calc-val">× 24</span>
+      </div>
+      <div class="calc-line total">
+        <span>Retroactivo total que entrega el IMSS</span>
+        <span class="calc-val highlight">$180,000</span>
+      </div>
+      <p class="calc-note">El IMSS entrega esta cantidad en cheque directamente al trabajador. Nosotros solo cobramos el 30% de ese monto al momento del cobro.</p>
+    </div>
+  </section>
+
+  <!-- CALCULADORA -->
+  <section id="calculadora" class="calculator">
+    <h2 class="section-title">Calcula tu Retroactivo</h2>
+    <p class="section-sub">Ingresa tus datos y obtén una estimación de lo que puedes recuperar</p>
+    <div class="calc-form">
+      <div class="calc-inputs">
+        <div class="form-group">
+          <label for="pension-actual">Tu pensión mensual actual ($)</label>
+          <input type="number" id="pension-actual" placeholder="Ej: 3100" min="0" />
+        </div>
+        <div class="form-group">
+          <label for="duracion">Duración estimada de la demanda (meses)</label>
+          <input type="number" id="duracion" placeholder="Ej: 24" value="24" min="1" max="60" />
+        </div>
+        <button class="btn btn-primary" id="calc-btn">Calcular mi retroactivo</button>
+      </div>
+      <div class="calc-result" id="calc-result" aria-live="polite">
+        <div class="result-placeholder">
+          <span class="result-icon">🧮</span>
+          <p>Ingresa tu pensión actual para ver el estimado</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- POR QUÉ NOSOTROS -->
+  <section class="why">
+    <h2 class="section-title">¿Por qué elegirnos?</h2>
+    <div class="why-grid">
+      <div class="why-item">
+        <span class="why-icon">✅</span>
+        <div>
+          <h3>Solo pagamos si ganamos</h3>
+          <p>Tu riesgo es mínimo. El 30% de honorarios solo aplica al recibir el retroactivo.</p>
+        </div>
+      </div>
+      <div class="why-item">
+        <span class="why-icon">📋</span>
+        <div>
+          <h3>Conocemos la Ley del IMSS</h3>
+          <p>Especialistas en la Ley del Seguro Social y la pensión mínima garantizada.</p>
+        </div>
+      </div>
+      <div class="why-item">
+        <span class="why-icon">🔍</span>
+        <div>
+          <h3>Revisión gratuita de tu caso</h3>
+          <p>Antes de iniciar, te decimos exactamente si tienes caso y cuánto puedes recuperar.</p>
+        </div>
+      </div>
+      <div class="why-item">
+        <span class="why-icon">📞</span>
+        <div>
+          <h3>Seguimiento constante</h3>
+          <p>Te mantenemos informado en cada etapa del proceso legal.</p>
+        </div>
       </div>
     </div>
   </section>
 
   <!-- CONTACTO -->
   <section id="contacto" class="contact">
-    <h2 class="section-title">Contacto</h2>
+    <h2 class="section-title">Consulta Gratuita</h2>
+    <p class="section-sub">Cuéntanos tu caso. Te respondemos en menos de 24 horas.</p>
     <form class="contact-form" novalidate>
-      <div class="form-group">
-        <label for="name">Nombre</label>
-        <input type="text" id="name" name="name" placeholder="Tu nombre" required />
+      <div class="form-row">
+        <div class="form-group">
+          <label for="name">Nombre completo</label>
+          <input type="text" id="name" name="name" placeholder="Tu nombre" required />
+        </div>
+        <div class="form-group">
+          <label for="phone">Teléfono / WhatsApp</label>
+          <input type="tel" id="phone" name="phone" placeholder="55 1234 5678" required />
+        </div>
       </div>
       <div class="form-group">
         <label for="email">Correo electrónico</label>
-        <input type="email" id="email" name="email" placeholder="tu@correo.com" required />
+        <input type="email" id="email" name="email" placeholder="tu@correo.com" />
       </div>
       <div class="form-group">
-        <label for="message">Mensaje</label>
-        <textarea id="message" name="message" rows="5" placeholder="¿En qué puedo ayudarte?" required></textarea>
+        <label for="pension-info">¿Cuánto recibes de pensión actualmente?</label>
+        <input type="text" id="pension-info" name="pension-info" placeholder="Ej: $3,100 mensuales" />
       </div>
-      <button type="submit" class="btn btn-primary">Enviar mensaje</button>
+      <div class="form-group">
+        <label for="message">Cuéntanos tu situación</label>
+        <textarea id="message" name="message" rows="4" placeholder="¿Desde cuándo recibes tu pensión? ¿Tienes alguna duda?"></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary">Enviar consulta gratuita</button>
       <p class="form-status" aria-live="polite"></p>
     </form>
   </section>
 
   <!-- FOOTER -->
   <footer class="footer">
-    <p>&copy; 2026 MiSitio. Todos los derechos reservados.</p>
+    <div class="footer-inner">
+      <div class="footer-logo">
+        <span>⚖️</span> Todo Pensiones &amp; Legal
+      </div>
+      <p>Especialistas en demandas de pensión mínima garantizada ante el IMSS.</p>
+      <p class="footer-note">Los resultados pueden variar según cada caso. El ejemplo mostrado es con fines ilustrativos.</p>
+    </div>
+    <div class="footer-copy">&copy; 2026 Todo Pensiones &amp; Legal. Todos los derechos reservados.</div>
   </footer>
 
   <script src="app.js"></script>
