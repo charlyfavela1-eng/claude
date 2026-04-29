@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mi Página Web</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="navbar">
+    <div class="nav-logo">MiSitio</div>
+    <ul class="nav-links">
+      <li><a href="#inicio">Inicio</a></li>
+      <li><a href="#servicios">Servicios</a></li>
+      <li><a href="#sobre">Sobre mí</a></li>
+      <li><a href="#contacto">Contacto</a></li>
+    </ul>
+    <button class="nav-toggle" aria-label="Abrir menú">&#9776;</button>
+  </nav>
+
+  <!-- HERO -->
+  <section id="inicio" class="hero">
+    <div class="hero-content">
+      <h1>Bienvenido a <span class="highlight">MiSitio</span></h1>
+      <p>Diseño moderno, rendimiento y experiencia de usuario excepcional.</p>
+      <a href="#servicios" class="btn btn-primary">Ver servicios</a>
+      <a href="#contacto" class="btn btn-outline">Contáctame</a>
+    </div>
+    <div class="hero-visual" aria-hidden="true">
+      <div class="blob"></div>
+    </div>
+  </section>
+
+  <!-- SERVICIOS -->
+  <section id="servicios" class="services">
+    <h2 class="section-title">Servicios</h2>
+    <div class="cards">
+      <div class="card">
+        <div class="card-icon">&#128187;</div>
+        <h3>Desarrollo Web</h3>
+        <p>Sitios rápidos, accesibles y optimizados para todos los dispositivos.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">&#127912;</div>
+        <h3>Diseño UI/UX</h3>
+        <p>Interfaces intuitivas centradas en la experiencia del usuario.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">&#128200;</div>
+        <h3>SEO & Rendimiento</h3>
+        <p>Optimización para motores de búsqueda y tiempos de carga mínimos.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SOBRE MÍ -->
+  <section id="sobre" class="about">
+    <div class="about-text">
+      <h2 class="section-title">Sobre mí</h2>
+      <p>Soy un desarrollador apasionado por crear experiencias digitales de alta calidad. Con años de experiencia en tecnologías web modernas, me especializo en construir soluciones elegantes y eficientes.</p>
+      <ul class="skills">
+        <li>HTML &amp; CSS</li>
+        <li>JavaScript</li>
+        <li>React / Vue</li>
+        <li>Node.js</li>
+      </ul>
+    </div>
+    <div class="about-image" aria-hidden="true">
+      <div class="avatar-placeholder">
+        <span>&#128100;</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACTO -->
+  <section id="contacto" class="contact">
+    <h2 class="section-title">Contacto</h2>
+    <form class="contact-form" novalidate>
+      <div class="form-group">
+        <label for="name">Nombre</label>
+        <input type="text" id="name" name="name" placeholder="Tu nombre" required />
+      </div>
+      <div class="form-group">
+        <label for="email">Correo electrónico</label>
+        <input type="email" id="email" name="email" placeholder="tu@correo.com" required />
+      </div>
+      <div class="form-group">
+        <label for="message">Mensaje</label>
+        <textarea id="message" name="message" rows="5" placeholder="¿En qué puedo ayudarte?" required></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary">Enviar mensaje</button>
+      <p class="form-status" aria-live="polite"></p>
+    </form>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <p>&copy; 2026 MiSitio. Todos los derechos reservados.</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
