@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "enabledPlugins": {
+    "renoise@renoise-plugins-official": true
+  },
+  "extraKnownMarketplaces": {
+    "renoise-plugins-official": {
+      "source": {
+        "source": "github",
+        "repo": "ArcoCodes/renoise-plugins-official"
+      }
+    }
+  }
+}
