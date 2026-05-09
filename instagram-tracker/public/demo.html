@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Instagram Competitor Tracker</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  * { font-family: 'Inter', sans-serif; }
+  .page { display: none; }
+  .page.active { display: block; }
+  .fade-in { animation: fadeIn .18s ease; }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+  .typing::after { content:'|'; animation: blink .7s infinite; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+  .spinner { animation: spin 1s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .slide-in { animation: slideIn .22s ease; }
+  @keyframes slideIn { from { opacity:0; transform:translateX(12px); } to { opacity:1; transform:translateX(0); } }
+</style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+<!-- ═══════════════════════════════════════════ LOGIN ═══ -->
+<div id="page-login" class="page active">
+  <div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 to-slate-800">
+    <div class="bg-white rounded-2xl shadow-xl p-10 w-full max-w-md text-center fade-in">
+      <div class="mb-8">
+        <div class="w-16 h-16 bg-gradient-to-br from-pink-500 to-purple-600 rounded-2xl mx-auto mb-4 flex items-center justify-center">
+          <svg class="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+          </svg>
+        </div>
+        <h1 class="text-2xl font-bold text-gray-900">Instagram Tracker</h1>
+        <p class="text-gray-500 mt-2 text-sm">Track competitors, detect viral posts, and recreate content with AI</p>
+      </div>
+      <button onclick="navigate('feed')"
+        class="w-full flex items-center justify-center gap-3 bg-white border border-gray-300 rounded-xl px-6 py-3 text-gray-700 font-medium hover:bg-gray-50 hover:border-gray-400 transition-colors shadow-sm">
+        <svg class="w-5 h-5" viewBox="0 0 24 24">
+          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+        </svg>
+        Continue with Google
+      </button>
+      <p class="text-xs text-gray-400 mt-6">Only public Instagram profiles are tracked. We never ask for Instagram credentials.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ SHELL (sidebar + main) ═══ -->
+<div id="page-feed" class="page">
+<div id="page-competitors" class="page"></div>
+<div id="page-library" class="page"></div>
+<div id="page-post" class="page"></div>
+</div>
+
+<!-- Shared dashboard layout injected by JS -->
+<div id="dashboard" class="hidden min-h-screen flex">
+
+  <!-- Sidebar -->
+  <aside class="w-64 bg-white border-r border-gray-200 flex flex-col flex-shrink-0">
+    <div class="p-6 border-b border-gray-100">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 bg-gradient-to-br from-pink-500 to-purple-600 rounded-lg flex items-center justify-center">
+          <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+          </svg>
+        </div>
+        <span class="font-semibold text-gray-900 text-sm">IG Tracker</span>
+      </div>
+    </div>
+    <nav class="flex-1 p-4 space-y-1">
+      <button onclick="navigate('feed')" id="nav-feed"
+        class="nav-link w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-700 hover:bg-gray-100 transition-colors text-left">
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+        Viral Feed
+      </button>
+      <button onclick="navigate('competitors')" id="nav-competitors"
+        class="nav-link w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-700 hover:bg-gray-100 transition-colors text-left">
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        Competitors
+      </button>
+      <button onclick="navigate('library')" id="nav-library"
+        class="nav-link w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-700 hover:bg-gray-100 transition-colors text-left">
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg>
+        Library
+      </button>
+    </nav>
+    <div class="p-4 border-t border-gray-100">
+      <div class="flex items-center gap-3 mb-3">
+        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=demo" class="w-8 h-8 rounded-full bg-gray-100"/>
+        <div class="flex-1 min-w-0">
+          <p class="text-sm font-medium text-gray-900 truncate">Demo User</p>
+          <p class="text-xs text-gray-500 truncate">demo@brand.com</p>
+        </div>
+      </div>
+      <button onclick="navigate('login')" class="w-full text-xs text-gray-500 hover:text-gray-700 py-1 transition-colors text-left">Sign out</button>
+    </div>
+  </aside>
+
+  <!-- Main content area -->
+  <main class="flex-1 overflow-auto" id="main-content"></main>
+</div>
+
+<script>
+// ─── Demo data ────────────────────────────────────────────────────────────────
+const POSTS = [
+  {
+    id:'p1', handle:'nike', score:8.4, likes:142300, comments:3210, views:890000,
+    type:'REEL', detected:'2025-05-08',
+    thumb:'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=400&fit=crop',
+    caption:'Just Do It — no excuses, no limits. 🔥 Drop what\'s holding you back. #nike #justdoit #motivation #sport',
+    hashtags:['nike','justdoit','motivation','sport'],
+    recreations:1, saved:false
+  },
+  {
+    id:'p2', handle:'adidas', score:5.1, likes:89400, comments:1870, views:null,
+    type:'CAROUSEL', detected:'2025-05-07',
+    thumb:'https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=400&h=400&fit=crop',
+    caption:'New collection. New chapter. Impossible is nothing. #adidas #newcollection #streetwear',
+    hashtags:['adidas','newcollection','streetwear'],
+    recreations:0, saved:true
+  },
+  {
+    id:'p3', handle:'gymshark', score:4.7, likes:67200, comments:2140, views:210000,
+    type:'REEL', detected:'2025-05-07',
+    thumb:'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=400&fit=crop',
+    caption:'Train like your life depends on it. Because your health does. 💪 #gymshark #fitness #gym #workout',
+    hashtags:['gymshark','fitness','gym','workout'],
+    recreations:0, saved:false
+  },
+  {
+    id:'p4', handle:'lululemon', score:3.8, likes:51000, comments:980, views:null,
+    type:'IMAGE', detected:'2025-05-06',
+    thumb:'https://images.unsplash.com/photo-1506629082955-511b1aa562c8?w=400&h=400&fit=crop',
+    caption:'Sweat. Smile. Repeat. Your practice, your pace. ✨ #lululemon #yoga #wellness #mindfulness',
+    hashtags:['lululemon','yoga','wellness','mindfulness'],
+    recreations:1, saved:false
+  },
+  {
+    id:'p5', handle:'underarmour', score:3.2, likes:43800, comments:760, views:155000,
+    type:'VIDEO', detected:'2025-05-05',
+    thumb:'https://images.unsplash.com/photo-1530822847156-5df684ec5105?w=400&h=400&fit=crop',
+    caption:'Protect this house. The grind never stops. #underarmour #ua #training #athlete',
+    hashtags:['underarmour','ua','training','athlete'],
+    recreations:0, saved:true
+  },
+  {
+    id:'p6', handle:'newbalance', score:3.0, likes:38900, comments:640, views:null,
+    type:'IMAGE', detected:'2025-05-05',
+    thumb:'https://images.unsplash.com/photo-1539185441755-769473a23570?w=400&h=400&fit=crop',
+    caption:'Fearlessly independent. Run your own race. #newbalance #running #sneakers #independence',
+    hashtags:['newbalance','running','sneakers','independence'],
+    recreations:0, saved:false
+  },
+];
+
+const COMPETITORS = [
+  { id:'c1', handle:'nike', posts:284, viral:3, active:true, threshold:3.0, interval:30, lastCheck:'14:22' },
+  { id:'c2', handle:'adidas', posts:196, viral:1, active:true, threshold:3.5, interval:60, lastCheck:'14:08' },
+  { id:'c3', handle:'gymshark', posts:143, viral:2, active:true, threshold:4.0, interval:30, lastCheck:'13:55' },
+  { id:'c4', handle:'lululemon', posts:98, viral:1, active:false, threshold:3.0, interval:120, lastCheck:'11:30' },
+  { id:'c5', handle:'underarmour', posts:61, viral:1, active:true, threshold:3.0, interval:60, lastCheck:'14:01' },
+];
+
+const LIBRARY = [POSTS[1], POSTS[4]];
+
+let currentPost = null;
+let aiGenerated = false;
+
+// ─── Navigation ────────────────────────────────────────────────────────────────
+function navigate(page, postId) {
+  document.querySelectorAll('.nav-link').forEach(el => {
+    el.classList.remove('bg-purple-50','text-purple-700','font-medium');
+    el.classList.add('text-gray-700');
+  });
+
+  if (page === 'login') {
+    document.getElementById('dashboard').classList.add('hidden');
+    document.getElementById('page-login').classList.add('active');
+    return;
+  }
+
+  document.getElementById('page-login').classList.remove('active');
+  document.getElementById('dashboard').classList.remove('hidden');
+
+  const navEl = document.getElementById('nav-' + page);
+  if (navEl) {
+    navEl.classList.add('bg-purple-50','text-purple-700','font-medium');
+    navEl.classList.remove('text-gray-700');
+  }
+
+  const main = document.getElementById('main-content');
+
+  if (page === 'feed') renderFeed(main);
+  else if (page === 'competitors') renderCompetitors(main);
+  else if (page === 'library') renderLibrary(main);
+  else if (page === 'post') { currentPost = POSTS.find(p=>p.id===postId); aiGenerated=false; renderPost(main); }
+}
+
+// ─── Viral Feed ────────────────────────────────────────────────────────────────
+function renderFeed(el) {
+  const typeColors = { IMAGE:'bg-blue-100 text-blue-700', VIDEO:'bg-red-100 text-red-700', CAROUSEL:'bg-amber-100 text-amber-700', REEL:'bg-purple-100 text-purple-700' };
+  const typeLabel = { IMAGE:'Photo', VIDEO:'Video', CAROUSEL:'Carousel', REEL:'Reel' };
+
+  el.innerHTML = `
+  <div class="p-8 fade-in">
+    <div class="mb-8">
+      <h1 class="text-2xl font-bold text-gray-900">Viral Feed</h1>
+      <p class="text-gray-500 mt-1 text-sm">Posts detected above your viral threshold</p>
+    </div>
+    <div class="flex gap-3 mb-6 flex-wrap">
+      <select class="text-sm border border-gray-300 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-purple-500">
+        <option>All competitors</option>
+        ${COMPETITORS.map(c=>`<option>@${c.handle}</option>`).join('')}
+      </select>
+      <select class="text-sm border border-gray-300 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-purple-500">
+        <option>All types</option>
+        <option>Photos</option><option>Videos</option><option>Carousels</option><option>Reels</option>
+      </select>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+      ${POSTS.map(p=>`
+      <div onclick="navigate('post','${p.id}')" class="bg-white rounded-xl border border-gray-200 overflow-hidden hover:border-gray-300 hover:shadow-md transition-all cursor-pointer group">
+        <div class="relative aspect-square bg-gray-100">
+          <img src="${p.thumb}" alt="" class="w-full h-full object-cover"/>
+          <div class="absolute top-2 left-2 bg-orange-500 text-white text-xs font-bold px-2 py-1 rounded-full">${p.score}x</div>
+          <div class="absolute top-2 right-2 text-xs font-medium px-2 py-1 rounded-full ${typeColors[p.type]}">${typeLabel[p.type]}</div>
+          ${p.recreations>0?'<div class="absolute bottom-2 right-2 bg-purple-600 text-white text-xs px-2 py-0.5 rounded-full">Recreated</div>':''}
+        </div>
+        <div class="p-4">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="text-sm font-semibold text-gray-900">@${p.handle}</span>
+            <span class="text-xs text-gray-400">${p.detected}</span>
+          </div>
+          <p class="text-sm text-gray-600 line-clamp-2 mb-3">${p.caption}</p>
+          <div class="flex items-center gap-4 text-xs text-gray-500">
+            <span class="flex items-center gap-1">
+              <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"/></svg>
+              ${p.likes.toLocaleString()}
+            </span>
+            <span class="flex items-center gap-1">
+              <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+              ${p.comments.toLocaleString()}
+            </span>
+            ${p.views?`<span>${(p.views/1000).toFixed(0)}K views</span>`:''}
+          </div>
+        </div>
+      </div>`).join('')}
+    </div>
+  </div>`;
+}
+
+// ─── Competitors ────────────────────────────────────────────────────────────────
+function renderCompetitors(el) {
+  el.innerHTML = `
+  <div class="p-8 fade-in">
+    <div class="flex items-center justify-between mb-8">
+      <div>
+        <h1 class="text-2xl font-bold text-gray-900">Competitors</h1>
+        <p class="text-gray-500 mt-1 text-sm">Manage Instagram profiles you're tracking</p>
+      </div>
+      <button onclick="toggleAddForm()" class="bg-purple-600 text-white px-4 py-2.5 rounded-lg text-sm font-medium hover:bg-purple-700 transition-colors flex items-center gap-2">
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+        Add Competitor
+      </button>
+    </div>
+
+    <!-- Add form (hidden by default) -->
+    <div id="add-form" class="hidden bg-white rounded-xl border border-gray-200 p-6 mb-6 fade-in">
+      <h2 class="text-base font-semibold text-gray-900 mb-4">Add New Competitor</h2>
+      <div class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Instagram Handle</label>
+          <div class="flex">
+            <span class="inline-flex items-center px-3 rounded-l-lg border border-r-0 border-gray-300 bg-gray-50 text-gray-500 text-sm">@</span>
+            <input id="new-handle" type="text" placeholder="competitor_handle"
+              class="flex-1 rounded-r-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"/>
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Viral threshold: <span id="thresh-val" class="font-bold text-orange-600">3x</span></label>
+          <input type="range" min="1.5" max="10" step="0.5" value="3"
+            oninput="document.getElementById('thresh-val').textContent=this.value+'x'"
+            class="w-full accent-purple-600"/>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Check interval: <span class="font-bold">30 min</span></label>
+          <input type="range" min="15" max="240" step="15" value="30" class="w-full accent-purple-600"/>
+        </div>
+        <button onclick="addCompetitor()" class="w-full bg-purple-600 text-white py-2.5 rounded-lg text-sm font-medium hover:bg-purple-700 transition-colors">
+          Add Competitor
+        </button>
+      </div>
+    </div>
+
+    <div id="competitors-list" class="space-y-3">
+      ${COMPETITORS.map(c=>competitorCard(c)).join('')}
+    </div>
+  </div>`;
+}
+
+function competitorCard(c) {
+  return `
+  <div id="comp-${c.id}" class="bg-white rounded-xl border border-gray-200 p-5 fade-in">
+    <div class="flex items-center gap-4">
+      <div class="w-10 h-10 bg-gradient-to-br from-pink-400 to-purple-500 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+        ${c.handle[0].toUpperCase()}
+      </div>
+      <div class="flex-1 min-w-0">
+        <div class="flex items-center gap-2">
+          <p class="font-semibold text-gray-900">@${c.handle}</p>
+          <span class="text-xs px-2 py-0.5 rounded-full ${c.active?'bg-green-100 text-green-700':'bg-gray-100 text-gray-500'}">
+            ${c.active?'Active':'Paused'}
+          </span>
+        </div>
+        <div class="flex items-center gap-4 mt-1 text-xs text-gray-500 flex-wrap">
+          <span>${c.posts} posts</span>
+          <span>${c.viral} viral</span>
+          <span>Threshold: ${c.threshold}x</span>
+          <span>Every ${c.interval}m</span>
+          <span>Last check: ${c.lastCheck}</span>
+        </div>
+      </div>
+      <div class="flex items-center gap-1">
+        <button onclick="alert('Poll triggered for @${c.handle}')" title="Poll now"
+          class="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+        </button>
+        <button onclick="toggleActive('${c.id}')" title="${c.active?'Pause':'Activate'}"
+          class="p-2 rounded-lg transition-colors ${c.active?'text-green-600 hover:bg-green-50':'text-gray-400 hover:bg-gray-100'}">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            ${c.active
+              ?'<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"/>'
+              :'<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>'}
+          </svg>
+        </button>
+        <button onclick="removeComp('${c.id}','${c.handle}')" title="Remove"
+          class="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+          <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function toggleAddForm() {
+  const f = document.getElementById('add-form');
+  f.classList.toggle('hidden');
+}
+
+function addCompetitor() {
+  const handle = document.getElementById('new-handle').value.replace('@','').trim();
+  if (!handle) return;
+  const newC = { id:'c'+Date.now(), handle, posts:0, viral:0, active:true, threshold:3.0, interval:30, lastCheck:'Just now' };
+  COMPETITORS.push(newC);
+  document.getElementById('competitors-list').insertAdjacentHTML('afterbegin', competitorCard(newC));
+  document.getElementById('add-form').classList.add('hidden');
+  document.getElementById('new-handle').value = '';
+}
+
+function toggleActive(id) {
+  const c = COMPETITORS.find(x=>x.id===id);
+  c.active = !c.active;
+  renderCompetitors(document.getElementById('main-content'));
+}
+
+function removeComp(id, handle) {
+  if (!confirm(`Remove @${handle}?`)) return;
+  const idx = COMPETITORS.findIndex(c=>c.id===id);
+  if (idx>-1) COMPETITORS.splice(idx,1);
+  document.getElementById('comp-'+id)?.remove();
+}
+
+// ─── Library ────────────────────────────────────────────────────────────────
+function renderLibrary(el) {
+  const saved = POSTS.filter(p=>p.saved);
+  el.innerHTML = `
+  <div class="p-8 fade-in">
+    <div class="mb-8">
+      <h1 class="text-2xl font-bold text-gray-900">Inspiration Library</h1>
+      <p class="text-gray-500 mt-1 text-sm">Posts you've saved for later reference</p>
+    </div>
+    ${saved.length===0?`
+      <div class="text-center py-20 text-gray-400">
+        <svg class="w-16 h-16 mx-auto mb-4 opacity-40" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg>
+        <p class="text-lg font-medium text-gray-500">Library is empty</p>
+        <p class="text-sm mt-1">Save posts from the viral feed</p>
+      </div>`:`
+    <div class="space-y-3" id="library-list">
+      ${saved.map(p=>`
+      <div id="lib-${p.id}" class="bg-white rounded-xl border border-gray-200 p-5">
+        <div class="flex items-center gap-4">
+          <div onclick="navigate('post','${p.id}')" class="cursor-pointer flex-shrink-0">
+            <img src="${p.thumb}" class="w-16 h-16 rounded-lg object-cover"/>
+          </div>
+          <div class="flex-1 min-w-0">
+            <p onclick="navigate('post','${p.id}')" class="font-semibold text-gray-900 hover:text-purple-600 cursor-pointer">@${p.handle}</p>
+            <p class="text-sm text-gray-500 truncate mt-0.5">${p.caption}</p>
+            <div class="flex items-center gap-3 mt-1 text-xs text-gray-400">
+              <span>${p.likes.toLocaleString()} likes</span>
+              <span class="text-orange-500 font-medium">${p.score}x viral</span>
+            </div>
+          </div>
+          <button onclick="unsave('${p.id}')"
+            class="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors flex-shrink-0">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
+        </div>
+      </div>`).join('')}
+    </div>`}
+  </div>`;
+}
+
+function unsave(id) {
+  const p = POSTS.find(x=>x.id===id);
+  if (p) p.saved = false;
+  document.getElementById('lib-'+id)?.remove();
+  const list = document.getElementById('library-list');
+  if (list && !list.children.length) renderLibrary(document.getElementById('main-content'));
+}
+
+// ─── Post Detail ────────────────────────────────────────────────────────────────
+function renderPost(el) {
+  const p = currentPost;
+  if (!p) return;
+  const typeColors = { IMAGE:'bg-blue-100 text-blue-700', VIDEO:'bg-red-100 text-red-700', CAROUSEL:'bg-amber-100 text-amber-700', REEL:'bg-purple-100 text-purple-700' };
+  const typeLabel = { IMAGE:'Photo', VIDEO:'Video', CAROUSEL:'Carousel', REEL:'Reel' };
+
+  el.innerHTML = `
+  <div class="p-8 fade-in">
+    <div class="mb-6">
+      <button onclick="navigate('feed')" class="text-sm text-gray-400 hover:text-gray-600 flex items-center gap-1 mb-4 transition-colors">
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+        Viral Feed
+      </button>
+      <div class="flex items-center justify-between">
+        <h1 class="text-2xl font-bold text-gray-900">@${p.handle}</h1>
+        <a href="#" class="text-sm text-gray-500 hover:text-gray-700 flex items-center gap-1 transition-colors">
+          View on Instagram
+          <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <!-- Left: Original -->
+      <div class="space-y-4">
+        <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+          <img src="${p.thumb}" class="w-full object-cover max-h-96"/>
+          <div class="p-3 flex items-center gap-2">
+            <span class="text-xs font-medium px-2 py-1 rounded-full ${typeColors[p.type]}">${typeLabel[p.type]}</span>
+          </div>
+        </div>
+
+        <!-- Metrics -->
+        <div class="bg-white rounded-xl border border-gray-200 p-5">
+          <div class="grid grid-cols-3 gap-4 text-center">
+            <div><p class="text-2xl font-bold text-gray-900">${p.likes.toLocaleString()}</p><p class="text-xs text-gray-500 mt-0.5">Likes</p></div>
+            <div><p class="text-2xl font-bold text-gray-900">${p.comments.toLocaleString()}</p><p class="text-xs text-gray-500 mt-0.5">Comments</p></div>
+            <div><p class="text-2xl font-bold text-orange-500">${p.score}x</p><p class="text-xs text-gray-500 mt-0.5">Viral score</p></div>
+          </div>
+          ${p.views?`<div class="mt-3 pt-3 border-t border-gray-100 text-center text-xs text-gray-400">${p.views.toLocaleString()} views</div>`:''}
+        </div>
+
+        <!-- Caption -->
+        <div class="bg-white rounded-xl border border-gray-200 p-5">
+          <h3 class="text-sm font-semibold text-gray-900 mb-3">Original Caption</h3>
+          <p class="text-sm text-gray-600">${p.caption}</p>
+          <div class="flex flex-wrap gap-1.5 mt-3">
+            ${p.hashtags.map(t=>`<span class="text-xs text-blue-600">#${t}</span>`).join('')}
+          </div>
+        </div>
+
+        <!-- Save -->
+        <div class="bg-white rounded-xl border border-gray-200 p-5">
+          ${p.saved?`
+          <div class="flex items-center justify-between">
+            <span class="text-sm text-gray-700 flex items-center gap-2">
+              <svg class="w-4 h-4 text-purple-600" fill="currentColor" viewBox="0 0 20 20"><path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z"/></svg>
+              Saved to library
+            </span>
+            <button onclick="toggleSave()" class="text-xs text-gray-400 hover:text-red-600 transition-colors">Remove</button>
+          </div>`:`
+          <button onclick="toggleSave()"
+            class="w-full text-sm text-gray-600 hover:text-purple-600 flex items-center justify-center gap-2 py-1 transition-colors">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg>
+            Save to library
+          </button>`}
+        </div>
+      </div>
+
+      <!-- Right: AI Recreator -->
+      <div>
+        <h2 class="text-lg font-semibold text-gray-900 mb-4">Recreate with AI</h2>
+        <div id="ai-panel">${renderAIPanel()}</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function toggleSave() {
+  currentPost.saved = !currentPost.saved;
+  renderPost(document.getElementById('main-content'));
+}
+
+function renderAIPanel() {
+  if (!aiGenerated) {
+    return `
+    <div class="bg-white rounded-xl border border-gray-200 p-6">
+      <h2 class="text-lg font-semibold text-gray-900 mb-2">AI Recreator</h2>
+      <p class="text-sm text-gray-500 mb-6">Generate adapted content for your brand based on what made this post viral.</p>
+      <button onclick="generateAI()"
+        class="w-full bg-gradient-to-r from-pink-500 to-purple-600 text-white py-3 rounded-xl text-sm font-semibold hover:opacity-90 transition-opacity flex items-center justify-center gap-2">
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+        Recreate with AI
+      </button>
+    </div>`;
+  }
+  const p = currentPost;
+  const res = AI_RESULTS[p.id] || AI_RESULTS.default;
+  return `
+  <div class="space-y-4 slide-in">
+    ${aiSection('Tone Analysis','<p class="text-sm text-gray-600">'+res.tone+'</p>')}
+    ${aiSection('Structure Breakdown','<p class="text-sm text-gray-600">'+res.structure+'</p>')}
+    ${aiSection('Creative Brief','<p class="text-sm text-gray-600">'+res.brief+'</p>'+copyBtn('brief',res.brief))}
+    ${aiSection('Visual Notes','<p class="text-sm text-gray-600">'+res.visual+'</p>')}
+    ${aiSection('Adapted Caption','<p class="text-sm text-gray-800 font-medium whitespace-pre-wrap">'+res.caption+'</p>'+copyBtn('caption',res.caption), true)}
+    <div class="bg-white rounded-xl border border-gray-200 p-5">
+      <h3 class="text-sm font-semibold text-gray-900 mb-3">Suggested Hashtags</h3>
+      <div class="flex flex-wrap gap-2">${res.hashtags.map(t=>`<span class="bg-purple-50 text-purple-700 text-xs px-2 py-1 rounded-full">#${t}</span>`).join('')}</div>
+      ${copyBtn('hashtags', res.hashtags.map(t=>'#'+t).join(' '))}
+    </div>
+    <button onclick="copyAll('${p.id}')"
+      class="w-full bg-gray-900 text-white py-3 rounded-xl text-sm font-semibold hover:bg-gray-800 transition-colors">
+      Copy Caption + Hashtags
+    </button>
+    <button onclick="aiGenerated=false;document.getElementById('ai-panel').innerHTML=renderAIPanel()"
+      class="w-full text-sm text-gray-500 hover:text-gray-700 py-2 transition-colors">
+      Regenerate
+    </button>
+  </div>`;
+}
+
+function aiSection(title, body, highlight=false) {
+  return `<div class="bg-white rounded-xl border p-5 ${highlight?'border-purple-200 bg-purple-50/30':'border-gray-200'}">
+    <h3 class="text-sm font-semibold text-gray-900 mb-3">${title}</h3>${body}</div>`;
+}
+
+function copyBtn(key, text) {
+  return `<button id="copy-${key}" onclick="doCopy('${key}','${encodeURIComponent(text)}')"
+    class="mt-3 text-xs text-gray-400 hover:text-gray-600 flex items-center gap-1 transition-colors">
+    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+    Copy</button>`;
+}
+
+function doCopy(key, encoded) {
+  navigator.clipboard.writeText(decodeURIComponent(encoded)).catch(()=>{});
+  const btn = document.getElementById('copy-'+key);
+  if (btn) { btn.innerHTML = '<svg class="w-3.5 h-3.5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg><span class="text-green-500">Copied!</span>'; }
+  setTimeout(()=>{ if(btn) btn.innerHTML = '<svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>Copy'; }, 2000);
+}
+
+function copyAll(postId) {
+  const res = AI_RESULTS[postId] || AI_RESULTS.default;
+  const text = res.caption + '\n\n' + res.hashtags.map(t=>'#'+t).join(' ');
+  navigator.clipboard.writeText(text).catch(()=>{});
+  const btn = event.target;
+  btn.textContent = 'Copied!';
+  setTimeout(()=>{ btn.textContent = 'Copy Caption + Hashtags'; }, 2000);
+}
+
+function generateAI() {
+  const panel = document.getElementById('ai-panel');
+  panel.innerHTML = `
+  <div class="bg-white rounded-xl border border-gray-200 p-6 text-center">
+    <svg class="w-8 h-8 spinner text-purple-600 mx-auto mb-4" fill="none" viewBox="0 0 24 24">
+      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+    </svg>
+    <p class="text-sm text-gray-600 font-medium">Analyzing with Claude AI<span class="typing"></span></p>
+    <p class="text-xs text-gray-400 mt-1">Generating tone analysis, brief and adapted caption…</p>
+  </div>`;
+  setTimeout(()=>{
+    aiGenerated = true;
+    if (currentPost) currentPost.recreations = 1;
+    panel.innerHTML = renderAIPanel();
+  }, 2800);
+}
+
+// ─── AI Demo Results ────────────────────────────────────────────────────────────
+const AI_RESULTS = {
+  p1: {
+    tone: 'The post uses imperative, high-energy language that speaks directly to the audience\'s inner drive. The "no excuses" framing creates a binary worldview that resonates with aspirational consumers who see themselves as fighters against mediocrity. The fire emoji amplifies the emotional intensity without being verbose.',
+    structure: 'Opens with the iconic slogan as an anchor (instant recognition), immediately pivots to an action-oriented challenge, closes with a directive. Single sentence rhythm creates urgency. Minimalist punctuation — every word earns its place. No CTA needed because the brand IS the CTA.',
+    brief: 'Create a Reel (15–30s) showing your product in motion — ideally someone using it in a real, slightly imperfect scenario (not overly polished). Open with a bold full-screen text overlay. Music: high BPM, building energy. No voiceover needed. End frame: product + tagline.',
+    caption: 'No waiting. No perfect timing. No more "when I\'m ready."\nYour moment is right now — and your gear should match that energy. 🔥\n\nShop the new drop in bio. Limited run.',
+    visual: 'Color palette: high contrast — deep black + brand accent (avoid white backgrounds, they kill energy). Shot type: ground-level angles looking up at the subject. On-screen text: bold sans-serif, 2–3 words max per frame. Quick cuts every 1.2s.',
+    hashtags: ['justmove','yourbrand','limitededition','trainhard','newdrop','sportswear','ootd','motivation2025']
+  },
+  default: {
+    tone: 'The post leverages aspirational language combined with a community-building tone. It positions the audience as insiders who understand something others don\'t. The emoji usage is strategic — placed at the end of key ideas rather than decoratively — which keeps the copy feeling premium rather than casual.',
+    structure: 'Hook in line 1 (statement or question that stops the scroll), supporting context in lines 2–3, clear CTA before the hashtag block. Line breaks create white space that improves mobile readability. Hashtags are separated from copy to maintain visual cleanliness.',
+    brief: 'Static carousel (4–6 slides) or single image with strong visual metaphor. First slide must work as a standalone billboard — assume the user will not swipe. Typography-forward design works well for this niche. Format: square (1:1) for feed, or 4:5 for better real estate.',
+    caption: 'The best version of your brand isn\'t a future goal — it\'s a daily practice.\n\nWe built this for the ones who show up before they feel ready. For the ones who know that consistency beats intensity, every time.\n\nNew collection available now. Link in bio.',
+    visual: 'Warm neutral palette (off-white, sand, warm gray) with one accent color pull from your brand identity. Natural lighting preferred over studio. Props that signal craft and quality — not perfection. Text overlay: light weight serif or humanist sans.',
+    hashtags: ['yourbrand','newcollection','brandname','shopnow','lifestyle','design','qualitymatters','slowfashion']
+  }
+};
+
+// ─── Boot ────────────────────────────────────────────────────────────────────
+navigate('login');
+</script>
+</body>
+</html>
