@@ -1,0 +1,128 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id            String       @id @default(cuid())
+  email         String       @unique
+  name          String?
+  image         String?
+  brandVoice    String?
+  brandName     String?
+  slackWebhook  String?
+  competitors   Competitor[]
+  savedPosts    SavedPost[]
+  accounts      Account[]
+  sessions      Session[]
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+}
+
+model Competitor {
+  id                 String    @id @default(cuid())
+  userId             String
+  instagramHandle    String
+  displayName        String?
+  profilePicUrl      String?
+  isActive           Boolean   @default(true)
+  viralThreshold     Float     @default(3.0)
+  checkInterval      Int       @default(30)
+  lastCheckedAt      DateTime?
+  baselineEngagement Float?
+  posts              Post[]
+  user               User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt          DateTime  @default(now())
+
+  @@unique([userId, instagramHandle])
+}
+
+model Post {
+  id              String         @id @default(cuid())
+  competitorId    String
+  instagramPostId String         @unique
+  postUrl         String
+  mediaType       String
+  thumbnailUrl    String?
+  caption         String?        @db.Text
+  hashtags        String[]
+  likesCount      Int            @default(0)
+  commentsCount   Int            @default(0)
+  viewsCount      Int?
+  engagementRate  Float?
+  isViral         Boolean        @default(false)
+  viralScore      Float?
+  publishedAt     DateTime
+  detectedAt      DateTime?
+  snapshots       PostSnapshot[]
+  recreations     Recreation[]
+  savedBy         SavedPost[]
+  competitor      Competitor     @relation(fields: [competitorId], references: [id], onDelete: Cascade)
+  createdAt       DateTime       @default(now())
+}
+
+model PostSnapshot {
+  id            String   @id @default(cuid())
+  postId        String
+  likesCount    Int
+  commentsCount Int
+  viewsCount    Int?
+  takenAt       DateTime @default(now())
+  post          Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+}
+
+model Recreation {
+  id                 String   @id @default(cuid())
+  postId             String
+  userId             String
+  brief              String   @db.Text
+  caption            String   @db.Text
+  hashtags           String[]
+  visualNotes        String?  @db.Text
+  toneAnalysis       String?  @db.Text
+  structureBreakdown String?  @db.Text
+  post               Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  createdAt          DateTime @default(now())
+}
+
+model SavedPost {
+  id      String   @id @default(cuid())
+  userId  String
+  postId  String
+  notes   String?
+  tags    String[]
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post    Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  savedAt DateTime @default(now())
+
+  @@unique([userId, postId])
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
