@@ -1,15 +1,18 @@
-import { Redis } from '@upstash/redis'
+import IORedis from 'ioredis'
 
-// For BullMQ we need ioredis-compatible connection
-export const redisConnection = {
-  host: process.env.UPSTASH_REDIS_REST_URL?.replace('https://', '') ?? 'localhost',
-  port: 6379,
-  password: process.env.UPSTASH_REDIS_REST_TOKEN,
-  tls: process.env.NODE_ENV === 'production' ? {} : undefined,
-}
+const REDIS_URL = process.env.REDIS_URL ?? 'redis://localhost:6379'
 
-// For general use (Upstash REST client)
-export const redis = new Redis({
-  url: process.env.UPSTASH_REDIS_REST_URL ?? '',
-  token: process.env.UPSTASH_REDIS_REST_TOKEN ?? '',
+// ioredis connection for BullMQ
+export const redisConnection = new IORedis(REDIS_URL, {
+  maxRetriesPerRequest: null, // required by BullMQ
 })
+
+// Simple key-value helpers (replaces Upstash REST client for local use)
+export const redis = {
+  get: (key: string) => redisConnection.get(key),
+  set: (key: string, value: string, opts?: { ex?: number }) =>
+    opts?.ex
+      ? redisConnection.set(key, value, 'EX', opts.ex)
+      : redisConnection.set(key, value),
+  del: (key: string) => redisConnection.del(key),
+}
