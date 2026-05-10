@@ -3,22 +3,12 @@
     "question": [
       {
         "params": {
-          "type": "list",
+          "type": "buttons",
           "value": "👋 ¡Hola! Gracias por escribir a *Joyería El Broquelito* 💎\n\nSomos expertos en *oro y plata personalizado* en Nogales, Sonora. Tu satisfacción es nuestra prioridad.\n\n¿En qué podemos ayudarte hoy? 👇",
-          "button": "Ver opciones",
-          "list": [
-            {
-              "title": "Menú principal",
-              "options": [
-                "📦 Ver catálogo",
-                "💰 Cotizar / Precio",
-                "✨ Personalizar pieza",
-                "🚚 Envíos",
-                "🛡️ Garantías",
-                "📍 Tienda / Ubicación",
-                "💬 Hablar con asesor"
-              ]
-            }
+          "buttons": [
+            "📦 Ver catálogo",
+            "💰 Cotizar / Precio",
+            "➕ Más opciones"
           ]
         },
         "handler": "show"
@@ -50,30 +40,14 @@
             "params": [{ "params": { "step": 3, "type": "question" }, "handler": "goto" }]
           },
           {
-            "value": "✨ Personalizar pieza",
-            "params": [{ "params": { "step": 4, "type": "question" }, "handler": "goto" }]
-          },
-          {
-            "value": "🚚 Envíos",
-            "params": [{ "params": { "step": 5, "type": "question" }, "handler": "goto" }]
-          },
-          {
-            "value": "🛡️ Garantías",
-            "params": [{ "params": { "step": 6, "type": "question" }, "handler": "goto" }]
-          },
-          {
-            "value": "📍 Tienda / Ubicación",
-            "params": [{ "params": { "step": 7, "type": "question" }, "handler": "goto" }]
-          },
-          {
-            "value": "💬 Hablar con asesor",
-            "params": [{ "params": { "step": 8, "type": "question" }, "handler": "goto" }]
+            "value": "➕ Más opciones",
+            "params": [{ "params": { "step": 23, "type": "question" }, "handler": "goto" }]
           }
         ],
         "handler": "buttons"
       },
       {
-        "params": { "step": 21, "type": "question" },
+        "params": { "step": 22, "type": "question" },
         "handler": "goto"
       }
     ]
@@ -931,8 +905,6 @@
           "buttons": [
             "📦 Ver catálogo",
             "💰 Cotizar",
-            "✨ Personalizar",
-            "💬 Hablar con asesor",
             "🔙 Menú principal"
           ]
         },
@@ -951,16 +923,48 @@
             "params": [{ "params": { "step": 3, "type": "question" }, "handler": "goto" }]
           },
           {
-            "value": "✨ Personalizar",
+            "value": "🔙 Menú principal",
+            "params": [{ "params": { "step": 1, "type": "question" }, "handler": "goto" }]
+          }
+        ],
+        "handler": "buttons"
+      },
+      {
+        "params": { "step": 1, "type": "question" },
+        "handler": "goto"
+      }
+    ]
+  },
+
+  {
+    "question": [
+      {
+        "params": {
+          "type": "buttons",
+          "value": "Aquí tienes más opciones 👇",
+          "buttons": [
+            "✨ Personalizar pieza",
+            "🚚 Envíos",
+            "📍 Tienda / Asesor"
+          ]
+        },
+        "handler": "show"
+      }
+    ],
+    "answer": [
+      {
+        "params": [
+          {
+            "value": "✨ Personalizar pieza",
             "params": [{ "params": { "step": 4, "type": "question" }, "handler": "goto" }]
           },
           {
-            "value": "💬 Hablar con asesor",
-            "params": [{ "params": { "step": 8, "type": "question" }, "handler": "goto" }]
+            "value": "🚚 Envíos",
+            "params": [{ "params": { "step": 5, "type": "question" }, "handler": "goto" }]
           },
           {
-            "value": "🔙 Menú principal",
-            "params": [{ "params": { "step": 1, "type": "question" }, "handler": "goto" }]
+            "value": "📍 Tienda / Asesor",
+            "params": [{ "params": { "step": 7, "type": "question" }, "handler": "goto" }]
           }
         ],
         "handler": "buttons"
