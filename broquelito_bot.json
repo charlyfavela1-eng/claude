@@ -1,39 +1,5 @@
 [
   {
-    "question": [
-      {
-        "params": {
-          "type": "buttons",
-          "value": "👋 ¡Hola! Gracias por escribir a *Joyería El Broquelito* 💎\n\nSomos expertos en *oro y plata personalizado* en Nogales, Sonora. Tu satisfacción es nuestra prioridad.\n\n¿En qué podemos ayudarte hoy? 👇",
-          "buttons": [
-            "📦 Ver catálogo",
-            "💰 Cotizar / Precio",
-            "➕ Más opciones"
-          ]
-        },
-        "handler": "show"
-      },
-      {
-        "params": {
-          "name": "set_tag",
-          "params": {
-            "type": 2,
-            "value": "bot-activo"
-          }
-        },
-        "handler": "action"
-      },
-      {
-        "params": {
-          "name": "set_tag",
-          "params": {
-            "type": 1,
-            "value": "contacto-nuevo"
-          }
-        },
-        "handler": "action"
-      }
-    ],
     "answer": [
       {
         "params": [
@@ -83,23 +49,43 @@
         },
         "handler": "goto"
       }
-    ]
-  },
-  {
+    ],
     "question": [
       {
         "params": {
           "type": "buttons",
-          "value": "Aquí tienes más opciones 👇",
+          "value": "👋 ¡Hola! Gracias por escribir a *Joyería El Broquelito* 💎\n\nSomos expertos en *oro y plata personalizado* en Nogales, Sonora. Tu satisfacción es nuestra prioridad.\n\n¿En qué podemos ayudarte hoy? 👇",
           "buttons": [
-            "✨ Personalizar pieza",
-            "🚚 Envíos",
-            "📍 Tienda / Asesor"
+            "📦 Ver catálogo",
+            "💰 Cotizar / Precio",
+            "➕ Más opciones"
           ]
         },
         "handler": "show"
+      },
+      {
+        "params": {
+          "name": "set_tag",
+          "params": {
+            "type": 2,
+            "value": "bot-activo"
+          }
+        },
+        "handler": "action"
+      },
+      {
+        "params": {
+          "name": "set_tag",
+          "params": {
+            "type": 1,
+            "value": "contacto-nuevo"
+          }
+        },
+        "handler": "action"
       }
-    ],
+    ]
+  },
+  {
     "answer": [
       {
         "params": [
@@ -149,34 +135,23 @@
         },
         "handler": "goto"
       }
-    ]
-  },
-  {
+    ],
     "question": [
       {
         "params": {
           "type": "buttons",
-          "value": "📦 *Nuestro Catálogo — Oro y Plata*\n\nTenemos diseños únicos hechos a mano:\n\n💍 Esclavas personalizadas con nombre\n⛓️ Cadenas cubanas y figaro\n💍 Anillos y argollas de matrimonio\n🔖 Dijes con foto, nombre o fecha\n✨ Diseños exclusivos a tu medida\n\nAhora mismo te enviamos fotos y videos reales 📸\n\n¿Qué te gustaría ver?",
+          "value": "Aquí tienes más opciones 👇",
           "buttons": [
-            "📸 Ver fotos del catálogo",
-            "💰 Cotizar una pieza",
-            "✨ Personalizar la mía",
-            "💬 Hablar con asesor"
+            "✨ Personalizar pieza",
+            "🚚 Envíos",
+            "📍 Tienda / Asesor"
           ]
         },
         "handler": "show"
-      },
-      {
-        "params": {
-          "name": "set_tag",
-          "params": {
-            "type": 2,
-            "value": "vio-catalogo"
-          }
-        },
-        "handler": "action"
       }
-    ],
+    ]
+  },
+  {
     "answer": [
       {
         "params": [
@@ -238,9 +213,43 @@
         },
         "handler": "goto"
       }
+    ],
+    "question": [
+      {
+        "params": {
+          "type": "buttons",
+          "value": "📦 *Nuestro Catálogo — Oro y Plata*\n\nTenemos diseños únicos hechos a mano:\n\n💍 Esclavas personalizadas con nombre\n⛓️ Cadenas cubanas y figaro\n💍 Anillos y argollas de matrimonio\n🔖 Dijes con foto, nombre o fecha\n✨ Diseños exclusivos a tu medida\n\nAhora mismo te enviamos fotos y videos reales 📸\n\n¿Qué te gustaría ver?",
+          "buttons": [
+            "📸 Ver fotos del catálogo",
+            "💰 Cotizar una pieza",
+            "✨ Personalizar la mía",
+            "💬 Hablar con asesor"
+          ]
+        },
+        "handler": "show"
+      },
+      {
+        "params": {
+          "name": "set_tag",
+          "params": {
+            "type": 2,
+            "value": "vio-catalogo"
+          }
+        },
+        "handler": "action"
+      }
     ]
   },
   {
+    "answer": [
+      {
+        "params": {
+          "step": 10,
+          "type": "question"
+        },
+        "handler": "goto"
+      }
+    ],
     "question": [
       {
         "params": {
@@ -259,7 +268,9 @@
         },
         "handler": "action"
       }
-    ],
+    ]
+  },
+  {
     "answer": [
       {
         "params": {
@@ -268,9 +279,7 @@
         },
         "handler": "goto"
       }
-    ]
-  },
-  {
+    ],
     "question": [
       {
         "params": {
@@ -289,43 +298,9 @@
         },
         "handler": "action"
       }
-    ],
-    "answer": [
-      {
-        "params": {
-          "step": 10,
-          "type": "question"
-        },
-        "handler": "goto"
-      }
     ]
   },
   {
-    "question": [
-      {
-        "params": {
-          "type": "buttons",
-          "value": "🚚 *Envíos*\n\n✅ Enviamos a toda la *República Mexicana* y *Estados Unidos*\n📦 Empaque con caja de regalo incluida\n🔢 Número de guía para rastrear tu pedido\n🏪 También puedes recoger en tienda\n\n📍 Nogales, Sonora — L-S 9am a 7pm\n\n¿A dónde necesitas tu envío?",
-          "buttons": [
-            "📍 Nogales (recoger)",
-            "🇲🇽 Otro estado MX",
-            "🇺🇸 USA / Arizona",
-            "💬 Hablar con asesor"
-          ]
-        },
-        "handler": "show"
-      },
-      {
-        "params": {
-          "name": "set_tag",
-          "params": {
-            "type": 2,
-            "value": "pregunto-envios"
-          }
-        },
-        "handler": "action"
-      }
-    ],
     "answer": [
       {
         "params": [
@@ -387,19 +362,17 @@
         },
         "handler": "goto"
       }
-    ]
-  },
-  {
+    ],
     "question": [
       {
         "params": {
           "type": "buttons",
-          "value": "🛡️ *Garantías y Seguridad*\n\n✅ Garantía por *defectos de fabricación* en todas las piezas\n🔍 Revisamos cada pieza antes de enviarla\n📸 Te enviamos foto/video del producto terminado\n⭐ Negocio establecido con clientes reales y atención directa\n\n¿Tienes alguna duda específica?",
+          "value": "🚚 *Envíos*\n\n✅ Enviamos a toda la *República Mexicana* y *Estados Unidos*\n📦 Empaque con caja de regalo incluida\n🔢 Número de guía para rastrear tu pedido\n🏪 También puedes recoger en tienda\n\n📍 Nogales, Sonora — L-S 9am a 7pm\n\n¿A dónde necesitas tu envío?",
           "buttons": [
-            "🔒 ¿Es seguro depositar?",
-            "📸 Ver piezas reales",
-            "💬 Hablar con asesor",
-            "🔙 Volver al menú"
+            "📍 Nogales (recoger)",
+            "🇲🇽 Otro estado MX",
+            "🇺🇸 USA / Arizona",
+            "💬 Hablar con asesor"
           ]
         },
         "handler": "show"
@@ -409,12 +382,14 @@
           "name": "set_tag",
           "params": {
             "type": 2,
-            "value": "pregunto-garantias"
+            "value": "pregunto-envios"
           }
         },
         "handler": "action"
       }
-    ],
+    ]
+  },
+  {
     "answer": [
       {
         "params": [
@@ -476,24 +451,34 @@
         },
         "handler": "goto"
       }
-    ]
-  },
-  {
+    ],
     "question": [
       {
         "params": {
           "type": "buttons",
-          "value": "📍 *Joyería El Broquelito*\n\n🗺️ *Ubicación:*\nCampillo Local 21, Col. Fundo Legal\nNogales, Sonora, México\n\n🕒 *Horario:*\nLunes a Sábado: 9:00 AM – 7:00 PM\nDomingo: Cerrado\n\n📱 *WhatsApp:* 631 249 4451\n\n¡Te esperamos con muchas opciones! 😊",
+          "value": "🛡️ *Garantías y Seguridad*\n\n✅ Garantía por *defectos de fabricación* en todas las piezas\n🔍 Revisamos cada pieza antes de enviarla\n📸 Te enviamos foto/video del producto terminado\n⭐ Negocio establecido con clientes reales y atención directa\n\n¿Tienes alguna duda específica?",
           "buttons": [
-            "✅ Hacer mi pedido",
-            "📦 Ver catálogo",
+            "🔒 ¿Es seguro depositar?",
+            "📸 Ver piezas reales",
             "💬 Hablar con asesor",
             "🔙 Volver al menú"
           ]
         },
         "handler": "show"
+      },
+      {
+        "params": {
+          "name": "set_tag",
+          "params": {
+            "type": 2,
+            "value": "pregunto-garantias"
+          }
+        },
+        "handler": "action"
       }
-    ],
+    ]
+  },
+  {
     "answer": [
       {
         "params": [
@@ -555,9 +540,25 @@
         },
         "handler": "goto"
       }
+    ],
+    "question": [
+      {
+        "params": {
+          "type": "buttons",
+          "value": "📍 *Joyería El Broquelito*\n\n🗺️ *Ubicación:*\nCampillo Local 21, Col. Fundo Legal\nNogales, Sonora, México\n\n🕒 *Horario:*\nLunes a Sábado: 9:00 AM – 7:00 PM\nDomingo: Cerrado\n\n📱 *WhatsApp:* 631 249 4451\n\n¡Te esperamos con muchas opciones! 😊",
+          "buttons": [
+            "✅ Hacer mi pedido",
+            "📦 Ver catálogo",
+            "💬 Hablar con asesor",
+            "🔙 Volver al menú"
+          ]
+        },
+        "handler": "show"
+      }
     ]
   },
   {
+    "answer": [],
     "question": [
       {
         "params": {
@@ -601,41 +602,6 @@
     ]
   },
   {
-    "question": [
-      {
-        "params": {
-          "type": "buttons",
-          "value": "¡Perfecto, anotamos tu solicitud! 📝\n\nUn asesor revisará los detalles y te enviará tu *cotización personalizada* muy pronto.\n\n⏱️ Tiempo de respuesta: L-S de 9am a 7pm\n\n¿Necesitas algo más mientras tanto?",
-          "buttons": [
-            "✅ Listo, gracias",
-            "💳 Formas de pago",
-            "🚚 Info de envíos",
-            "💬 Hablar con asesor"
-          ]
-        },
-        "handler": "show"
-      },
-      {
-        "params": {
-          "name": "set_tag",
-          "params": {
-            "type": 2,
-            "value": "lead-calificado"
-          }
-        },
-        "handler": "action"
-      },
-      {
-        "params": {
-          "name": "add_note",
-          "params": {
-            "type": 2,
-            "value": "Cliente solicita cotización: {{message_text}}"
-          }
-        },
-        "handler": "action"
-      }
-    ],
     "answer": [
       {
         "params": [
@@ -697,26 +663,44 @@
         },
         "handler": "goto"
       }
-    ]
-  },
-  {
+    ],
     "question": [
       {
         "params": {
           "type": "buttons",
-          "value": "¿Tienes alguna otra pregunta? 😊\n\n👇 Elige lo que necesitas saber:",
+          "value": "¡Perfecto, anotamos tu solicitud! 📝\n\nUn asesor revisará los detalles y te enviará tu *cotización personalizada* muy pronto.\n\n⏱️ Tiempo de respuesta: L-S de 9am a 7pm\n\n¿Necesitas algo más mientras tanto?",
           "buttons": [
-            "🛒 ¿Cómo ordenar?",
+            "✅ Listo, gracias",
             "💳 Formas de pago",
-            "📸 Ver fotos reales",
-            "↩️ Cambios / Devoluciones",
-            "✅ Listo para ordenar",
-            "🔙 Menú principal"
+            "🚚 Info de envíos",
+            "💬 Hablar con asesor"
           ]
         },
         "handler": "show"
+      },
+      {
+        "params": {
+          "name": "set_tag",
+          "params": {
+            "type": 2,
+            "value": "lead-calificado"
+          }
+        },
+        "handler": "action"
+      },
+      {
+        "params": {
+          "name": "add_note",
+          "params": {
+            "type": 2,
+            "value": "Cliente solicita cotización: {{message_text}}"
+          }
+        },
+        "handler": "action"
       }
-    ],
+    ]
+  },
+  {
     "answer": [
       {
         "params": [
@@ -802,24 +786,26 @@
         },
         "handler": "goto"
       }
-    ]
-  },
-  {
+    ],
     "question": [
       {
         "params": {
           "type": "buttons",
-          "value": "🛒 *¿Cómo hacer tu pedido?*\n\nEs muy sencillo, te guiamos paso a paso:\n\n1️⃣ Elige tu pieza o cuéntanos qué quieres\n2️⃣ Te enviamos cotización y diseño\n3️⃣ Confirmas y realizas el anticipo\n4️⃣ Fabricamos con alto nivel de detalle\n5️⃣ Te enviamos foto/video antes de enviar\n6️⃣ ¡Recibes tu joya! 💍\n\n¿Listo para empezar?",
+          "value": "¿Tienes alguna otra pregunta? 😊\n\n👇 Elige lo que necesitas saber:",
           "buttons": [
-            "✅ Quiero hacer mi pedido",
+            "🛒 ¿Cómo ordenar?",
             "💳 Formas de pago",
-            "💬 Hablar con asesor",
-            "🔙 Volver"
+            "📸 Ver fotos reales",
+            "↩️ Cambios / Devoluciones",
+            "✅ Listo para ordenar",
+            "🔙 Menú principal"
           ]
         },
         "handler": "show"
       }
-    ],
+    ]
+  },
+  {
     "answer": [
       {
         "params": [
@@ -881,23 +867,24 @@
         },
         "handler": "goto"
       }
-    ]
-  },
-  {
+    ],
     "question": [
       {
         "params": {
           "type": "buttons",
-          "value": "💳 *Formas de Pago*\n\nAceptamos:\n\n🏦 Depósito bancario\n💸 Transferencia SPEI\n💵 Efectivo en tienda\n💲 Dólares (clientes de USA)\n\n💡 Solicitamos un *anticipo* para comenzar tu pieza o apartar tu pedido. El resto al entregar.\n\n¿Tienes alguna duda?",
+          "value": "🛒 *¿Cómo hacer tu pedido?*\n\nEs muy sencillo, te guiamos paso a paso:\n\n1️⃣ Elige tu pieza o cuéntanos qué quieres\n2️⃣ Te enviamos cotización y diseño\n3️⃣ Confirmas y realizas el anticipo\n4️⃣ Fabricamos con alto nivel de detalle\n5️⃣ Te enviamos foto/video antes de enviar\n6️⃣ ¡Recibes tu joya! 💍\n\n¿Listo para empezar?",
           "buttons": [
-            "✅ Listo, hacer pedido",
+            "✅ Quiero hacer mi pedido",
+            "💳 Formas de pago",
             "💬 Hablar con asesor",
             "🔙 Volver"
           ]
         },
         "handler": "show"
       }
-    ],
+    ]
+  },
+  {
     "answer": [
       {
         "params": [
@@ -947,33 +934,23 @@
         },
         "handler": "goto"
       }
-    ]
-  },
-  {
+    ],
     "question": [
       {
         "params": {
           "type": "buttons",
-          "value": "📸 *Fotos y Videos Reales*\n\n¡Claro que sí! Te enviamos fotos y videos reales de piezas terminadas para que veas la calidad de nuestro trabajo.\n\n✅ Trabajamos con alto nivel de detalle\n✅ Siempre te mostramos el resultado final antes del envío\n\nUn asesor te enviará el material ahora mismo 😊",
+          "value": "💳 *Formas de Pago*\n\nAceptamos:\n\n🏦 Depósito bancario\n💸 Transferencia SPEI\n💵 Efectivo en tienda\n💲 Dólares (clientes de USA)\n\n💡 Solicitamos un *anticipo* para comenzar tu pieza o apartar tu pedido. El resto al entregar.\n\n¿Tienes alguna duda?",
           "buttons": [
-            "💬 Ver con asesor",
-            "✅ Listo para ordenar",
+            "✅ Listo, hacer pedido",
+            "💬 Hablar con asesor",
             "🔙 Volver"
           ]
         },
         "handler": "show"
-      },
-      {
-        "params": {
-          "name": "set_tag",
-          "params": {
-            "type": 2,
-            "value": "solicito-fotos"
-          }
-        },
-        "handler": "action"
       }
-    ],
+    ]
+  },
+  {
     "answer": [
       {
         "params": [
@@ -1023,24 +1000,33 @@
         },
         "handler": "goto"
       }
-    ]
-  },
-  {
+    ],
     "question": [
       {
         "params": {
           "type": "buttons",
-          "value": "🔒 *¿Es seguro depositar?*\n\nEntendemos tu duda, ¡es muy válida! 😊\n\nSomos un *negocio establecido* en Nogales, Sonora:\n\n✅ Clientes reales con reseñas verificables\n✅ Tienda física: Campillo Local 21, Col. Fundo Legal\n✅ Atención directa y personalizada\n✅ Foto/video de tu pieza antes de enviar\n✅ Puedes pasar a vernos en persona\n\n¡Tu confianza es nuestra prioridad! 💎",
+          "value": "📸 *Fotos y Videos Reales*\n\n¡Claro que sí! Te enviamos fotos y videos reales de piezas terminadas para que veas la calidad de nuestro trabajo.\n\n✅ Trabajamos con alto nivel de detalle\n✅ Siempre te mostramos el resultado final antes del envío\n\nUn asesor te enviará el material ahora mismo 😊",
           "buttons": [
-            "📍 Ver nuestra tienda",
-            "💬 Hablar con asesor",
-            "✅ Quiero ordenar",
+            "💬 Ver con asesor",
+            "✅ Listo para ordenar",
             "🔙 Volver"
           ]
         },
         "handler": "show"
+      },
+      {
+        "params": {
+          "name": "set_tag",
+          "params": {
+            "type": 2,
+            "value": "solicito-fotos"
+          }
+        },
+        "handler": "action"
       }
-    ],
+    ]
+  },
+  {
     "answer": [
       {
         "params": [
@@ -1102,23 +1088,24 @@
         },
         "handler": "goto"
       }
-    ]
-  },
-  {
+    ],
     "question": [
       {
         "params": {
           "type": "buttons",
-          "value": "↩️ *Cambios y Devoluciones*\n\nAceptamos cambios o devoluciones *solo en caso de defectos de fabricación*.\n\n🔍 Revisamos cada pieza antes de enviarla para garantizar calidad\n📸 Siempre te enviamos foto/video final para tu aprobación\n\nSi tienes algún problema con tu pieza, te explicamos el proceso sin complicaciones 😊",
+          "value": "🔒 *¿Es seguro depositar?*\n\nEntendemos tu duda, ¡es muy válida! 😊\n\nSomos un *negocio establecido* en Nogales, Sonora:\n\n✅ Clientes reales con reseñas verificables\n✅ Tienda física: Campillo Local 21, Col. Fundo Legal\n✅ Atención directa y personalizada\n✅ Foto/video de tu pieza antes de enviar\n✅ Puedes pasar a vernos en persona\n\n¡Tu confianza es nuestra prioridad! 💎",
           "buttons": [
+            "📍 Ver nuestra tienda",
             "💬 Hablar con asesor",
-            "✅ Listo, hacer pedido",
+            "✅ Quiero ordenar",
             "🔙 Volver"
           ]
         },
         "handler": "show"
       }
-    ],
+    ]
+  },
+  {
     "answer": [
       {
         "params": [
@@ -1168,24 +1155,23 @@
         },
         "handler": "goto"
       }
-    ]
-  },
-  {
+    ],
     "question": [
       {
         "params": {
           "type": "buttons",
-          "value": "🗄️ *¿Puedo apartar una pieza?*\n\n¡Claro que sí! 😊\n\nPuedes apartar tu pieza con un *anticipo* y la guardamos hasta que estés listo para recogerla o recibirla.\n\n💡 Solo necesitas un pago parcial para reservarla.\n\n¿Te ayudamos a apartarla ahora?",
+          "value": "↩️ *Cambios y Devoluciones*\n\nAceptamos cambios o devoluciones *solo en caso de defectos de fabricación*.\n\n🔍 Revisamos cada pieza antes de enviarla para garantizar calidad\n📸 Siempre te enviamos foto/video final para tu aprobación\n\nSi tienes algún problema con tu pieza, te explicamos el proceso sin complicaciones 😊",
           "buttons": [
-            "✅ Sí, quiero apartarla",
-            "💳 Ver formas de pago",
             "💬 Hablar con asesor",
+            "✅ Listo, hacer pedido",
             "🔙 Volver"
           ]
         },
         "handler": "show"
       }
-    ],
+    ]
+  },
+  {
     "answer": [
       {
         "params": [
@@ -1247,33 +1233,24 @@
         },
         "handler": "goto"
       }
-    ]
-  },
-  {
+    ],
     "question": [
       {
         "params": {
           "type": "buttons",
-          "value": "🎉 *Promociones y Descuentos*\n\n¡Sí contamos con promociones especiales en ciertas piezas! 🌟\n\nPara conocer las promociones vigentes, un asesor te informará con gusto.\n\n¿Quieres que te cuenten las promociones de hoy?",
+          "value": "🗄️ *¿Puedo apartar una pieza?*\n\n¡Claro que sí! 😊\n\nPuedes apartar tu pieza con un *anticipo* y la guardamos hasta que estés listo para recogerla o recibirla.\n\n💡 Solo necesitas un pago parcial para reservarla.\n\n¿Te ayudamos a apartarla ahora?",
           "buttons": [
-            "✅ Sí, ver promociones",
-            "✅ Listo para ordenar",
+            "✅ Sí, quiero apartarla",
+            "💳 Ver formas de pago",
+            "💬 Hablar con asesor",
             "🔙 Volver"
           ]
         },
         "handler": "show"
-      },
-      {
-        "params": {
-          "name": "set_tag",
-          "params": {
-            "type": 2,
-            "value": "pregunto-promociones"
-          }
-        },
-        "handler": "action"
       }
-    ],
+    ]
+  },
+  {
     "answer": [
       {
         "params": [
@@ -1323,23 +1300,33 @@
         },
         "handler": "goto"
       }
-    ]
-  },
-  {
+    ],
     "question": [
       {
         "params": {
           "type": "buttons",
-          "value": "🎉 ¡Excelente elección!\n\n¿Estás listo para realizar tu pedido?",
+          "value": "🎉 *Promociones y Descuentos*\n\n¡Sí contamos con promociones especiales en ciertas piezas! 🌟\n\nPara conocer las promociones vigentes, un asesor te informará con gusto.\n\n¿Quieres que te cuenten las promociones de hoy?",
           "buttons": [
-            "✅ Sí, hacer pedido",
-            "❓ Tengo más preguntas",
-            "❌ Aún no, gracias"
+            "✅ Sí, ver promociones",
+            "✅ Listo para ordenar",
+            "🔙 Volver"
           ]
         },
         "handler": "show"
+      },
+      {
+        "params": {
+          "name": "set_tag",
+          "params": {
+            "type": 2,
+            "value": "pregunto-promociones"
+          }
+        },
+        "handler": "action"
       }
-    ],
+    ]
+  },
+  {
     "answer": [
       {
         "params": [
@@ -1389,9 +1376,24 @@
         },
         "handler": "goto"
       }
+    ],
+    "question": [
+      {
+        "params": {
+          "type": "buttons",
+          "value": "🎉 ¡Excelente elección!\n\n¿Estás listo para realizar tu pedido?",
+          "buttons": [
+            "✅ Sí, hacer pedido",
+            "❓ Tengo más preguntas",
+            "❌ Aún no, gracias"
+          ]
+        },
+        "handler": "show"
+      }
     ]
   },
   {
+    "answer": [],
     "question": [
       {
         "params": {
@@ -1445,19 +1447,6 @@
     ]
   },
   {
-    "question": [
-      {
-        "params": {
-          "type": "buttons",
-          "value": "No hay problema, ¡estamos aquí para cuando lo necesites! 😊\n\n¿Te gustaría que te contactemos después con novedades o promociones?",
-          "buttons": [
-            "✅ Sí, contáctenme después",
-            "❌ No, gracias"
-          ]
-        },
-        "handler": "show"
-      }
-    ],
     "answer": [
       {
         "params": [
@@ -1495,9 +1484,23 @@
         },
         "handler": "goto"
       }
+    ],
+    "question": [
+      {
+        "params": {
+          "type": "buttons",
+          "value": "No hay problema, ¡estamos aquí para cuando lo necesites! 😊\n\n¿Te gustaría que te contactemos después con novedades o promociones?",
+          "buttons": [
+            "✅ Sí, contáctenme después",
+            "❌ No, gracias"
+          ]
+        },
+        "handler": "show"
+      }
     ]
   },
   {
+    "answer": [],
     "question": [
       {
         "params": {
@@ -1519,20 +1522,6 @@
     ]
   },
   {
-    "question": [
-      {
-        "params": {
-          "type": "buttons",
-          "value": "Disculpa, no entendí bien 😅\n\n¿Con qué te puedo ayudar?\n\n👇 Elige una opción:",
-          "buttons": [
-            "📦 Ver catálogo",
-            "💰 Cotizar",
-            "🔙 Menú principal"
-          ]
-        },
-        "handler": "show"
-      }
-    ],
     "answer": [
       {
         "params": [
@@ -1581,6 +1570,20 @@
           "type": "question"
         },
         "handler": "goto"
+      }
+    ],
+    "question": [
+      {
+        "params": {
+          "type": "buttons",
+          "value": "Disculpa, no entendí bien 😅\n\n¿Con qué te puedo ayudar?\n\n👇 Elige una opción:",
+          "buttons": [
+            "📦 Ver catálogo",
+            "💰 Cotizar",
+            "🔙 Menú principal"
+          ]
+        },
+        "handler": "show"
       }
     ]
   }
