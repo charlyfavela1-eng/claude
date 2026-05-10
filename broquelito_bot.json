@@ -16,14 +16,20 @@
       {
         "params": {
           "name": "set_tag",
-          "params": { "type": 2, "value": "bot-activo" }
+          "params": {
+            "type": 2,
+            "value": "bot-activo"
+          }
         },
         "handler": "action"
       },
       {
         "params": {
           "name": "set_tag",
-          "params": { "type": 1, "value": "contacto-nuevo" }
+          "params": {
+            "type": 1,
+            "value": "contacto-nuevo"
+          }
         },
         "handler": "action"
       }
@@ -33,26 +39,118 @@
         "params": [
           {
             "value": "📦 Ver catálogo",
-            "params": [{ "params": { "step": 2, "type": "question" }, "handler": "goto" }]
+            "params": [
+              {
+                "params": {
+                  "step": 3,
+                  "type": "question"
+                },
+                "handler": "goto"
+              }
+            ]
           },
           {
             "value": "💰 Cotizar / Precio",
-            "params": [{ "params": { "step": 3, "type": "question" }, "handler": "goto" }]
+            "params": [
+              {
+                "params": {
+                  "step": 4,
+                  "type": "question"
+                },
+                "handler": "goto"
+              }
+            ]
           },
           {
             "value": "➕ Más opciones",
-            "params": [{ "params": { "step": 23, "type": "question" }, "handler": "goto" }]
+            "params": [
+              {
+                "params": {
+                  "step": 2,
+                  "type": "question"
+                },
+                "handler": "goto"
+              }
+            ]
           }
         ],
         "handler": "buttons"
       },
       {
-        "params": { "step": 22, "type": "question" },
+        "params": {
+          "step": 1,
+          "type": "question"
+        },
         "handler": "goto"
       }
     ]
   },
-
+  {
+    "question": [
+      {
+        "params": {
+          "type": "buttons",
+          "value": "Aquí tienes más opciones 👇",
+          "buttons": [
+            "✨ Personalizar pieza",
+            "🚚 Envíos",
+            "📍 Tienda / Asesor"
+          ]
+        },
+        "handler": "show"
+      }
+    ],
+    "answer": [
+      {
+        "params": [
+          {
+            "value": "✨ Personalizar pieza",
+            "params": [
+              {
+                "params": {
+                  "step": 5,
+                  "type": "question"
+                },
+                "handler": "goto"
+              }
+            ]
+          },
+          {
+            "value": "🚚 Envíos",
+            "params": [
+              {
+                "params": {
+                  "step": 6,
+                  "type": "question"
+                },
+                "handler": "goto"
+              }
+            ]
+          },
+          {
+            "value": "📍 Tienda / Asesor",
+            "params": [
+              {
+                "params": {
+                  "step": 8,
+                  "type": "question"
+                },
+                "handler": "goto"
+              }
+            ]
+          }
+        ],
+        "handler": "buttons"
+      },
+      {
+        "params": {
+          "step": 1,
+          "type": "question"
+        },
+        "handler": "goto"
+      }
+    ]
+  },
   {
     "question": [
       {
@@ -71,7 +169,10 @@
       {
         "params": {
           "name": "set_tag",
-          "params": { "type": 2, "value": "vio-catalogo" }
+          "params": {
+            "type": 2,
+            "value": "vio-catalogo"
+          }
         },
         "handler": "action"
       }
@@ -81,30 +182,64 @@
         "params": [
           {
             "value": "📸 Ver fotos del catálogo",
-            "params": [{ "params": { "step": 8, "type": "question" }, "handler": "goto" }]
+            "params": [
+              {
+                "params": {
+                  "step": 9,
+                  "type": "question"
+                },
+                "handler": "goto"
+              }
+            ]
           },
           {
             "value": "💰 Cotizar una pieza",
-            "params": [{ "params": { "step": 3, "type": "question" }, "handler": "goto" }]
+            "params": [
+              {
+                "params": {
+                  "step": 4,
+                  "type": "question"
+                },
+                "handler": "goto"
+              }
+            ]
           },
           {
             "value": "✨ Personalizar la mía",
-            "params": [{ "params": { "step": 4, "type": "question" }, "handler": "goto" }]
+            "params": [
+              {
+                "params": {
+                  "step": 5,
+                  "type": "question"
+                },
+                "handler": "goto"
+              }
+            ]
           },
           {
             "value": "💬 Hablar con asesor",
-            "params": [{ "params": { "step": 8, "type": "question" }, "handler": "goto" }]
+            "params": [
+              {
+                "params": {
+                  "step": 9,
+                  "type": "question"
+                },
+                "handler": "goto"
+              }
+            ]
           }
         ],
         "handler": "buttons"
       },
       {
-        "params": { "step": 10, "type": "question" },
+        "params": {
+          "step": 11,
+          "type": "question"
+        },
         "handler": "goto"
       }
     ]
   },
-
   {
     "question": [
       {
@@ -117,19 +252,24 @@
       {
         "params": {
           "name": "set_tag",
-          "params": { "type": 2, "value": "solicito-cotizacion" }
+          "params": {
+            "type": 2,
+            "value": "solicito-cotizacion"
+          }
         },
         "handler": "action"
       }
     ],
     "answer": [
       {
-        "params": { "step": 9, "type": "question" },
+        "params": {
+          "step": 10,
+          "type": "question"
+        },
         "handler": "goto"
       }
     ]
   },
-
   {
     "question": [
       {
@@ -142,19 +282,24 @@
       {
         "params": {
           "name": "set_tag",
-          "params": { "type": 2, "value": "interes-personalizado" }
+          "params": {
+            "type": 2,
+            "value": "interes-personalizado"
+          }
         },
         "handler": "action"
       }
     ],
     "answer": [
       {
-        "params": { "step": 9, "type": "question" },
+        "params": {
+          "step": 10,
+          "type": "question"
+        },
         "handler": "goto"
       }
     ]
   },
-
   {
     "question": [
       {
@@ -173,7 +318,10 @@
       {
         "params": {
           "name": "set_tag",
-          "params": { "type": 2, "value": "pregunto-envios" }
+          "params": {
+            "type": 2,
+            "value": "pregunto-envios"
+          }
         },
         "handler": "action"
       }
@@ -183,30 +331,64 @@
         "params": [
           {
             "value": "📍 Nogales (recoger)",
-            "params": [{ "params": { "step": 10, "type": "question" }, "handler": "goto" }]
+            "params": [
+              {
+                "params": {
+                  "step": 11,
+                  "type": "question"
+                },
+                "handler": "goto"
+              }
+            ]
           },
           {
             "value": "🇲🇽 Otro estado MX",
-            "params": [{ "params": { "step": 10, "type": "question" }, "handler": "goto" }]
+            "params": [
+              {
+                "params": {
+                  "step": 11,
+                  "type": "question"
+                },
+                "handler": "goto"
+              }
+            ]
           },
           {
             "value": "🇺🇸 USA / Arizona",
-            "params": [{ "params": { "step": 10, "type": "question" }, "handler": "goto" }]
+            "params": [
+              {
+                "params": {
+                  "step": 11,
+                  "type": "question"
+                },
+                "handler": "goto"
+              }
+            ]
           },
           {
             "value": "💬 Hablar con asesor",
-            "params": [{ "params": { "step": 8, "type": "question" }, "handler": "goto" }]
+            "params": [
+              {
+                "params": {
+                  "step": 9,
+                  "type": "question"
+                },
+                "handler": "goto"
+              }
+            ]
           }
         ],
         "handler": "buttons"
       },
       {
-        "params": { "step": 10, "type": "question" },
+        "params": {
+          "step": 11,
+          "type": "question"
+        },
         "handler": "goto"
       }
     ]
   },
-
   {
     "question": [
       {
@@ -225,7 +407,10 @@
       {
         "params": {
           "name": "set_tag",
-          "params": { "type": 2, "value": "pregunto-garantias" }
+          "params": {
+            "type": 2,
+            "value": "pregunto-garantias"
+          }
         },
         "handler": "action"
       }
@@ -235,30 +420,64 @@
         "params": [
           {
             "value": "🔒 ¿Es seguro depositar?",
-            "params": [{ "params": { "step": 14, "type": "question" }, "handler": "goto" }]
+            "params": [
+              {
+                "params": {
+                  "step": 15,
+                  "type": "question"
+                },
+                "handler": "goto"
+              }
+            ]
           },
           {
             "value": "📸 Ver piezas reales",
-            "params": [{ "params": { "step": 13, "type": "question" }, "handler": "goto" }]
+            "params": [
+              {
+                "params": {
+                  "step": 14,
+                  "type": "question"
+                },
+                "handler": "goto"
+              }
+            ]
           },
           {
             "value": "💬 Hablar con asesor",
-            "params": [{ "params": { "step": 8, "type": "question" }, "handler": "goto" }]
+            "params": [
+              {
+                "params": {
+                  "step": 9,
+                  "type": "question"
+                },
+                "handler": "goto"
+              }
+            ]
           },
           {
             "value": "🔙 Volver al menú",
-            "params": [{ "params": { "step": 1, "type": "question" }, "handler": "goto" }]
+            "params": [
+              {
+                "params": {
+                  "step": 1,
+                  "type": "question"
+                },
+                "handler": "goto"
+              }
+            ]
           }
         ],
         "handler": "buttons"
       },
       {
-        "params": { "step": 10, "type": "question" },
+        "params": {
+          "step": 11,
+          "type": "question"
+        },
         "handler": "goto"
       }
     ]
   },
-
   {
     "question": [
       {
@@ -280,30 +499,64 @@
         "params": [
           {
             "value": "✅ Hacer mi pedido",
-            "params": [{ "params": { "step": 18, "type": "question" }, "handler": "goto" }]
+            "params": [
+              {
+                "params": {
+                  "step": 19,
+                  "type": "question"
+                },
+                "handler": "goto"
+              }
+            ]
           },
           {
             "value": "📦 Ver catálogo",
-            "params": [{ "params": { "step": 2, "type": "question" }, "handler": "goto" }]
+            "params": [
+              {
+                "params": {
+                  "step": 3,
+                  "type": "question"
+                },
+                "handler": "goto"
+              }
+            ]
           },
           {
             "value": "💬 Hablar con asesor",
-            "params": [{ "params": { "step": 8, "type": "question" }, "handler": "goto" }]
+            "params": [
+              {
+                "params": {
+                  "step": 9,
+                  "type": "question"
+                },
+                "handler": "goto"
+              }
+            ]
           },
           {
             "value": "🔙 Volver al menú",
-            "params": [{ "params": { "step": 1, "type": "question" }, "handler": "goto" }]
+            "params": [
+              {
+                "params": {
+                  "step": 1,
+                  "type": "question"
+                },
+                "handler": "goto"
+              }
+            ]
           }
         ],
         "handler": "buttons"
       },
       {
-        "params": { "step": 1, "type": "question" },
+        "params": {
+          "step": 1,
+          "type": "question"
+        },
         "handler": "goto"
       }
     ]
   },
-
   {
     "question": [
       {
@@ -316,28 +569,37 @@
       {
         "params": {
           "name": "set_tag",
-          "params": { "type": 2, "value": "solicito-asesor" }
+          "params": {
+            "type": 2,
+            "value": "solicito-asesor"
+          }
         },
         "handler": "action"
       },
       {
         "params": {
           "name": "add_note",
-          "params": { "type": 2, "value": "⚠️ CLIENTE ESPERANDO ATENCIÓN HUMANA. Atender de inmediato." }
+          "params": {
+            "type": 2,
+            "value": "⚠️ CLIENTE ESPERANDO ATENCIÓN HUMANA. Atender de inmediato."
+          }
         },
         "handler": "action"
       },
       {
         "params": {
           "name": "change_responsible_user",
-          "params": { "type": 2 }
+          "params": {
+            "type": 2
+          }
         },
         "handler": "action"
       },
-      { "handler": "stop" }
+      {
+        "handler": "stop"
+      }
     ]
   },
-
   {
     "question": [
       {
@@ -356,14 +618,20 @@
       {
         "params": {
           "name": "set_tag",
-          "params": { "type": 2, "value": "lead-calificado" }
+          "params": {
+            "type": 2,
+            "value": "lead-calificado"
+          }
         },
         "handler": "action"
       },
       {
         "params": {
           "name": "add_note",
-          "params": { "type": 2, "value": "Cliente solicita cotización: {{message_text}}" }
+          "params": {
+            "type": 2,
+            "value": "Cliente solicita cotización: {{message_text}}"
+          }
         },
         "handler": "action"
       }
@@ -373,30 +641,64 @@
         "params": [
           {
             "value": "✅ Listo, gracias",
-            "params": [{ "params": { "step": 20, "type": "question" }, "handler": "goto" }]
+            "params": [
+              {
+                "params": {
+                  "step": 21,
+                  "type": "question"
+                },
+                "handler": "goto"
+              }
+            ]
           },
           {
             "value": "💳 Formas de pago",
-            "params": [{ "params": { "step": 12, "type": "question" }, "handler": "goto" }]
+            "params": [
+              {
+                "params": {
+                  "step": 13,
+                  "type": "question"
+                },
+                "handler": "goto"
+              }
+            ]
           },
           {
             "value": "🚚 Info de envíos",
-            "params": [{ "params": { "step": 5, "type": "question" }, "handler": "goto" }]
+            "params": [
+              {
+                "params": {
+                  "step": 6,
+                  "type": "question"
+                },
+                "handler": "goto"
+              }
+            ]
           },
           {
             "value": "💬 Hablar con asesor",
-            "params": [{ "params": { "step": 8, "type": "question" }, "handler": "goto" }]
+            "params": [
+              {
+                "params": {
+                  "step": 9,
+                  "type": "question"
+                },
+                "handler": "goto"
+              }
+            ]
           }
         ],
         "handler": "buttons"
       },
       {
-        "params": { "step": 10, "type": "question" },
+        "params": {
+          "step": 11,
+          "type": "question"
+        },
         "handler": "goto"
       }
     ]
   },
-
   {
     "question": [
       {
@@ -420,38 +722,88 @@
         "params": [
           {
             "value": "🛒 ¿Cómo ordenar?",
-            "params": [{ "params": { "step": 11, "type": "question" }, "handler": "goto" }]
+            "params": [
+              {
+                "params": {
+                  "step": 12,
+                  "type": "question"
+                },
+                "handler": "goto"
+              }
+            ]
           },
           {
             "value": "💳 Formas de pago",
-            "params": [{ "params": { "step": 12, "type": "question" }, "handler": "goto" }]
+            "params": [
+              {
+                "params": {
+                  "step": 13,
+                  "type": "question"
+                },
+                "handler": "goto"
+              }
+            ]
           },
           {
             "value": "📸 Ver fotos reales",
-            "params": [{ "params": { "step": 13, "type": "question" }, "handler": "goto" }]
+            "params": [
+              {
+                "params": {
+                  "step": 14,
+                  "type": "question"
+                },
+                "handler": "goto"
+              }
+            ]
           },
           {
             "value": "↩️ Cambios / Devoluciones",
-            "params": [{ "params": { "step": 15, "type": "question" }, "handler": "goto" }]
+            "params": [
+              {
+                "params": {
+                  "step": 16,
+                  "type": "question"
+                },
+                "handler": "goto"
+              }
+            ]
           },
           {
             "value": "✅ Listo para ordenar",
-            "params": [{ "params": { "step": 18, "type": "question" }, "handler": "goto" }]
+            "params": [
+              {
+                "params": {
+                  "step": 19,
+                  "type": "question"
+                },
+                "handler": "goto"
+              }
+            ]
           },
           {
             "value": "🔙 Menú principal",
-            "params": [{ "params": { "step": 1, "type": "question" }, "handler": "goto" }]
+            "params": [
+              {
+                "params": {
+                  "step": 1,
+                  "type": "question"
+                },
+                "handler": "goto"
+              }
+            ]
           }
         ],
         "handler": "buttons"
       },
       {
-        "params": { "step": 1, "type": "question" },
+        "params": {
+          "step": 1,
+          "type": "question"
+        },
         "handler": "goto"
       }
     ]
   },
-
   {
     "question": [
       {
@@ -473,30 +825,64 @@
         "params": [
           {
             "value": "✅ Quiero hacer mi pedido",
-            "params": [{ "params": { "step": 18, "type": "question" }, "handler": "goto" }]
+            "params": [
+              {
+                "params": {
+                  "step": 19,
+                  "type": "question"
+                },
+                "handler": "goto"
+              }
+            ]
           },
           {
             "value": "💳 Formas de pago",
-            "params": [{ "params": { "step": 12, "type": "question" }, "handler": "goto" }]
+            "params": [
+              {
+                "params": {
+                  "step": 13,
+                  "type": "question"
+                },
+                "handler": "goto"
+              }
+            ]
           },
           {
             "value": "💬 Hablar con asesor",
-            "params": [{ "params": { "step": 8, "type": "question" }, "handler": "goto" }]
+            "params": [
+              {
+                "params": {
+                  "step": 9,
+                  "type": "question"
+                },
+                "handler": "goto"
+              }
+            ]
           },
           {
             "value": "🔙 Volver",
-            "params": [{ "params": { "step": 10, "type": "question" }, "handler": "goto" }]
+            "params": [
+              {
+                "params": {
+                  "step": 11,
+                  "type": "question"
+                },
+                "handler": "goto"
+              }
+            ]
           }
         ],
         "handler": "buttons"
       },
       {
-        "params": { "step": 10, "type": "question" },
+        "params": {
+          "step": 11,
+          "type": "question"
+        },
         "handler": "goto"
       }
     ]
   },
-
   {
     "question": [
       {
@@ -517,26 +903,52 @@
         "params": [
           {
             "value": "✅ Listo, hacer pedido",
-            "params": [{ "params": { "step": 18, "type": "question" }, "handler": "goto" }]
+            "params": [
+              {
+                "params": {
+                  "step": 19,
+                  "type": "question"
+                },
+                "handler": "goto"
+              }
+            ]
           },
           {
             "value": "💬 Hablar con asesor",
-            "params": [{ "params": { "step": 8, "type": "question" }, "handler": "goto" }]
+            "params": [
+              {
+                "params": {
+                  "step": 9,
+                  "type": "question"
+                },
+                "handler": "goto"
+              }
+            ]
           },
           {
             "value": "🔙 Volver",
-            "params": [{ "params": { "step": 10, "type": "question" }, "handler": "goto" }]
+            "params": [
+              {
+                "params": {
+                  "step": 11,
+                  "type": "question"
+                },
+                "handler": "goto"
+              }
+            ]
           }
         ],
         "handler": "buttons"
       },
       {
-        "params": { "step": 10, "type": "question" },
+        "params": {
+          "step": 11,
+          "type": "question"
+        },
         "handler": "goto"
       }
     ]
   },
-
   {
     "question": [
       {
@@ -554,7 +966,10 @@
       {
         "params": {
           "name": "set_tag",
-          "params": { "type": 2, "value": "solicito-fotos" }
+          "params": {
+            "type": 2,
+            "value": "solicito-fotos"
+          }
         },
         "handler": "action"
       }
@@ -564,26 +979,52 @@
         "params": [
           {
             "value": "💬 Ver con asesor",
-            "params": [{ "params": { "step": 8, "type": "question" }, "handler": "goto" }]
+            "params": [
+              {
+                "params": {
+                  "step": 9,
+                  "type": "question"
+                },
+                "handler": "goto"
+              }
+            ]
           },
           {
             "value": "✅ Listo para ordenar",
-            "params": [{ "params": { "step": 18, "type": "question" }, "handler": "goto" }]
+            "params": [
+              {
+                "params": {
+                  "step": 19,
+                  "type": "question"
+                },
+                "handler": "goto"
+              }
+            ]
           },
           {
             "value": "🔙 Volver",
-            "params": [{ "params": { "step": 10, "type": "question" }, "handler": "goto" }]
+            "params": [
+              {
+                "params": {
+                  "step": 11,
+                  "type": "question"
+                },
+                "handler": "goto"
+              }
+            ]
           }
         ],
         "handler": "buttons"
       },
       {
-        "params": { "step": 10, "type": "question" },
+        "params": {
+          "step": 11,
+          "type": "question"
+        },
         "handler": "goto"
       }
     ]
   },
-
   {
     "question": [
       {
@@ -605,30 +1046,64 @@
         "params": [
           {
             "value": "📍 Ver nuestra tienda",
-            "params": [{ "params": { "step": 7, "type": "question" }, "handler": "goto" }]
+            "params": [
+              {
+                "params": {
+                  "step": 8,
+                  "type": "question"
+                },
+                "handler": "goto"
+              }
+            ]
           },
           {
             "value": "💬 Hablar con asesor",
-            "params": [{ "params": { "step": 8, "type": "question" }, "handler": "goto" }]
+            "params": [
+              {
+                "params": {
+                  "step": 9,
+                  "type": "question"
+                },
+                "handler": "goto"
+              }
+            ]
           },
           {
             "value": "✅ Quiero ordenar",
-            "params": [{ "params": { "step": 18, "type": "question" }, "handler": "goto" }]
+            "params": [
+              {
+                "params": {
+                  "step": 19,
+                  "type": "question"
+                },
+                "handler": "goto"
+              }
+            ]
           },
           {
             "value": "🔙 Volver",
-            "params": [{ "params": { "step": 10, "type": "question" }, "handler": "goto" }]
+            "params": [
+              {
+                "params": {
+                  "step": 11,
+                  "type": "question"
+                },
+                "handler": "goto"
+              }
+            ]
           }
         ],
         "handler": "buttons"
       },
       {
-        "params": { "step": 10, "type": "question" },
+        "params": {
+          "step": 11,
+          "type": "question"
+        },
         "handler": "goto"
       }
     ]
   },
-
   {
     "question": [
       {
@@ -649,26 +1124,52 @@
         "params": [
           {
             "value": "💬 Hablar con asesor",
-            "params": [{ "params": { "step": 8, "type": "question" }, "handler": "goto" }]
+            "params": [
+              {
+                "params": {
+                  "step": 9,
+                  "type": "question"
+                },
+                "handler": "goto"
+              }
+            ]
           },
           {
             "value": "✅ Listo, hacer pedido",
-            "params": [{ "params": { "step": 18, "type": "question" }, "handler": "goto" }]
+            "params": [
+              {
+                "params": {
+                  "step": 19,
+                  "type": "question"
+                },
+                "handler": "goto"
+              }
+            ]
           },
           {
             "value": "🔙 Volver",
-            "params": [{ "params": { "step": 10, "type": "question" }, "handler": "goto" }]
+            "params": [
+              {
+                "params": {
+                  "step": 11,
+                  "type": "question"
+                },
+                "handler": "goto"
+              }
+            ]
           }
         ],
         "handler": "buttons"
       },
       {
-        "params": { "step": 10, "type": "question" },
+        "params": {
+          "step": 11,
+          "type": "question"
+        },
         "handler": "goto"
       }
     ]
   },
-
   {
     "question": [
       {
@@ -690,30 +1191,64 @@
         "params": [
           {
             "value": "✅ Sí, quiero apartarla",
-            "params": [{ "params": { "step": 18, "type": "question" }, "handler": "goto" }]
+            "params": [
+              {
+                "params": {
+                  "step": 19,
+                  "type": "question"
+                },
+                "handler": "goto"
+              }
+            ]
           },
           {
             "value": "💳 Ver formas de pago",
-            "params": [{ "params": { "step": 12, "type": "question" }, "handler": "goto" }]
+            "params": [
+              {
+                "params": {
+                  "step": 13,
+                  "type": "question"
+                },
+                "handler": "goto"
+              }
+            ]
           },
           {
             "value": "💬 Hablar con asesor",
-            "params": [{ "params": { "step": 8, "type": "question" }, "handler": "goto" }]
+            "params": [
+              {
+                "params": {
+                  "step": 9,
+                  "type": "question"
+                },
+                "handler": "goto"
+              }
+            ]
           },
           {
             "value": "🔙 Volver",
-            "params": [{ "params": { "step": 10, "type": "question" }, "handler": "goto" }]
+            "params": [
+              {
+                "params": {
+                  "step": 11,
+                  "type": "question"
+                },
+                "handler": "goto"
+              }
+            ]
           }
         ],
         "handler": "buttons"
       },
       {
-        "params": { "step": 10, "type": "question" },
+        "params": {
+          "step": 11,
+          "type": "question"
+        },
         "handler": "goto"
       }
     ]
   },
-
   {
     "question": [
       {
@@ -731,7 +1266,10 @@
       {
         "params": {
           "name": "set_tag",
-          "params": { "type": 2, "value": "pregunto-promociones" }
+          "params": {
+            "type": 2,
+            "value": "pregunto-promociones"
+          }
         },
         "handler": "action"
       }
@@ -741,26 +1279,52 @@
         "params": [
           {
             "value": "✅ Sí, ver promociones",
-            "params": [{ "params": { "step": 8, "type": "question" }, "handler": "goto" }]
+            "params": [
+              {
+                "params": {
+                  "step": 9,
+                  "type": "question"
+                },
+                "handler": "goto"
+              }
+            ]
           },
           {
             "value": "✅ Listo para ordenar",
-            "params": [{ "params": { "step": 18, "type": "question" }, "handler": "goto" }]
+            "params": [
+              {
+                "params": {
+                  "step": 19,
+                  "type": "question"
+                },
+                "handler": "goto"
+              }
+            ]
           },
           {
             "value": "🔙 Volver",
-            "params": [{ "params": { "step": 10, "type": "question" }, "handler": "goto" }]
+            "params": [
+              {
+                "params": {
+                  "step": 11,
+                  "type": "question"
+                },
+                "handler": "goto"
+              }
+            ]
           }
         ],
         "handler": "buttons"
       },
       {
-        "params": { "step": 10, "type": "question" },
+        "params": {
+          "step": 11,
+          "type": "question"
+        },
         "handler": "goto"
       }
     ]
   },
-
   {
     "question": [
       {
@@ -781,26 +1345,52 @@
         "params": [
           {
             "value": "✅ Sí, hacer pedido",
-            "params": [{ "params": { "step": 19, "type": "question" }, "handler": "goto" }]
+            "params": [
+              {
+                "params": {
+                  "step": 20,
+                  "type": "question"
+                },
+                "handler": "goto"
+              }
+            ]
           },
           {
             "value": "❓ Tengo más preguntas",
-            "params": [{ "params": { "step": 10, "type": "question" }, "handler": "goto" }]
+            "params": [
+              {
+                "params": {
+                  "step": 11,
+                  "type": "question"
+                },
+                "handler": "goto"
+              }
+            ]
           },
           {
             "value": "❌ Aún no, gracias",
-            "params": [{ "params": { "step": 20, "type": "question" }, "handler": "goto" }]
+            "params": [
+              {
+                "params": {
+                  "step": 21,
+                  "type": "question"
+                },
+                "handler": "goto"
+              }
+            ]
           }
         ],
         "handler": "buttons"
       },
       {
-        "params": { "step": 19, "type": "question" },
+        "params": {
+          "step": 20,
+          "type": "question"
+        },
         "handler": "goto"
       }
     ]
   },
-
   {
     "question": [
       {
@@ -813,35 +1403,47 @@
       {
         "params": {
           "name": "set_tag",
-          "params": { "type": 2, "value": "listo-para-ordenar" }
+          "params": {
+            "type": 2,
+            "value": "listo-para-ordenar"
+          }
         },
         "handler": "action"
       },
       {
         "params": {
           "name": "set_tag",
-          "params": { "type": 2, "value": "lead-calificado" }
+          "params": {
+            "type": 2,
+            "value": "lead-calificado"
+          }
         },
         "handler": "action"
       },
       {
         "params": {
           "name": "add_note",
-          "params": { "type": 2, "value": "✅ Cliente listo para ordenar. Confirmar detalles y enviar datos de pago de inmediato." }
+          "params": {
+            "type": 2,
+            "value": "✅ Cliente listo para ordenar. Confirmar detalles y enviar datos de pago de inmediato."
+          }
         },
         "handler": "action"
       },
       {
         "params": {
           "name": "change_responsible_user",
-          "params": { "type": 2 }
+          "params": {
+            "type": 2
+          }
         },
         "handler": "action"
       },
-      { "handler": "stop" }
+      {
+        "handler": "stop"
+      }
     ]
   },
-
   {
     "question": [
       {
@@ -861,22 +1463,40 @@
         "params": [
           {
             "value": "✅ Sí, contáctenme después",
-            "params": [{ "params": { "step": 21, "type": "question" }, "handler": "goto" }]
+            "params": [
+              {
+                "params": {
+                  "step": 22,
+                  "type": "question"
+                },
+                "handler": "goto"
+              }
+            ]
           },
           {
             "value": "❌ No, gracias",
-            "params": [{ "params": { "step": 21, "type": "question" }, "handler": "goto" }]
+            "params": [
+              {
+                "params": {
+                  "step": 22,
+                  "type": "question"
+                },
+                "handler": "goto"
+              }
+            ]
           }
         ],
         "handler": "buttons"
       },
       {
-        "params": { "step": 21, "type": "question" },
+        "params": {
+          "step": 22,
+          "type": "question"
+        },
         "handler": "goto"
       }
     ]
   },
-
   {
     "question": [
       {
@@ -889,13 +1509,15 @@
       {
         "params": {
           "name": "set_tag",
-          "params": { "type": 2, "value": "atendido-bot" }
+          "params": {
+            "type": 2,
+            "value": "atendido-bot"
+          }
         },
         "handler": "action"
       }
     ]
   },
-
   {
     "question": [
       {
@@ -916,61 +1538,48 @@
         "params": [
           {
             "value": "📦 Ver catálogo",
-            "params": [{ "params": { "step": 2, "type": "question" }, "handler": "goto" }]
+            "params": [
+              {
+                "params": {
+                  "step": 3,
+                  "type": "question"
+                },
+                "handler": "goto"
+              }
+            ]
           },
           {
             "value": "💰 Cotizar",
-            "params": [{ "params": { "step": 3, "type": "question" }, "handler": "goto" }]
+            "params": [
+              {
+                "params": {
+                  "step": 4,
+                  "type": "question"
+                },
+                "handler": "goto"
+              }
+            ]
           },
           {
             "value": "🔙 Menú principal",
-            "params": [{ "params": { "step": 1, "type": "question" }, "handler": "goto" }]
+            "params": [
+              {
+                "params": {
+                  "step": 1,
+                  "type": "question"
+                },
+                "handler": "goto"
+              }
+            ]
           }
         ],
         "handler": "buttons"
       },
-      {
-        "params": { "step": 1, "type": "question" },
-        "handler": "goto"
-      }
-    ]
-  },
-
-  {
-    "question": [
       {
         "params": {
-          "type": "buttons",
-          "value": "Aquí tienes más opciones 👇",
-          "buttons": [
-            "✨ Personalizar pieza",
-            "🚚 Envíos",
-            "📍 Tienda / Asesor"
-          ]
+          "step": 1,
+          "type": "question"
         },
-        "handler": "show"
-      }
-    ],
-    "answer": [
-      {
-        "params": [
-          {
-            "value": "✨ Personalizar pieza",
-            "params": [{ "params": { "step": 4, "type": "question" }, "handler": "goto" }]
-          },
-          {
-            "value": "🚚 Envíos",
-            "params": [{ "params": { "step": 5, "type": "question" }, "handler": "goto" }]
-          },
-          {
-            "value": "📍 Tienda / Asesor",
-            "params": [{ "params": { "step": 7, "type": "question" }, "handler": "goto" }]
-          }
-        ],
-        "handler": "buttons"
-      },
-      {
-        "params": { "step": 1, "type": "question" },
         "handler": "goto"
       }
     ]
