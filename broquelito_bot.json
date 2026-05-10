@@ -3,16 +3,22 @@
     "question": [
       {
         "params": {
-          "type": "buttons",
+          "type": "list",
           "value": "👋 ¡Hola! Gracias por escribir a *Joyería El Broquelito* 💎\n\nSomos expertos en *oro y plata personalizado* en Nogales, Sonora. Tu satisfacción es nuestra prioridad.\n\n¿En qué podemos ayudarte hoy? 👇",
-          "buttons": [
-            "📦 Ver catálogo",
-            "💰 Cotizar / Precio",
-            "✨ Personalizar pieza",
-            "🚚 Envíos",
-            "🛡️ Garantías",
-            "📍 Tienda / Ubicación",
-            "💬 Hablar con asesor"
+          "button": "Ver opciones",
+          "list": [
+            {
+              "title": "Menú principal",
+              "options": [
+                "📦 Ver catálogo",
+                "💰 Cotizar / Precio",
+                "✨ Personalizar pieza",
+                "🚚 Envíos",
+                "🛡️ Garantías",
+                "📍 Tienda / Ubicación",
+                "💬 Hablar con asesor"
+              ]
+            }
           ]
         },
         "handler": "show"
