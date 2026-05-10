@@ -90,7 +90,7 @@
       {
         "params": [
           {
-            "value": "✨ Personalizar pieza",
+            "value": "✨ Personalizar",
             "params": [
               {
                 "params": {
@@ -142,7 +142,7 @@
           "type": "buttons",
           "value": "Aquí tienes más opciones 👇",
           "buttons": [
-            "✨ Personalizar pieza",
+            "✨ Personalizar",
             "🚚 Envíos",
             "📍 Tienda / Asesor"
           ]
@@ -156,7 +156,7 @@
       {
         "params": [
           {
-            "value": "📸 Ver fotos del catálogo",
+            "value": "📸 Ver fotos",
             "params": [
               {
                 "params": {
@@ -180,7 +180,7 @@
             ]
           },
           {
-            "value": "✨ Personalizar la mía",
+            "value": "✨ Personalizar",
             "params": [
               {
                 "params": {
@@ -220,9 +220,9 @@
           "type": "buttons",
           "value": "📦 *Nuestro Catálogo — Oro y Plata*\n\nTenemos diseños únicos hechos a mano:\n\n💍 Esclavas personalizadas con nombre\n⛓️ Cadenas cubanas y figaro\n💍 Anillos y argollas de matrimonio\n🔖 Dijes con foto, nombre o fecha\n✨ Diseños exclusivos a tu medida\n\nAhora mismo te enviamos fotos y videos reales 📸\n\n¿Qué te gustaría ver?",
           "buttons": [
-            "📸 Ver fotos del catálogo",
+            "📸 Ver fotos",
             "💰 Cotizar una pieza",
-            "✨ Personalizar la mía",
+            "✨ Personalizar",
             "💬 Hablar con asesor"
           ]
         },
@@ -394,7 +394,7 @@
       {
         "params": [
           {
-            "value": "🔒 ¿Es seguro depositar?",
+            "value": "🔒 ¿Es seguro?",
             "params": [
               {
                 "params": {
@@ -458,7 +458,7 @@
           "type": "buttons",
           "value": "🛡️ *Garantías y Seguridad*\n\n✅ Garantía por *defectos de fabricación* en todas las piezas\n🔍 Revisamos cada pieza antes de enviarla\n📸 Te enviamos foto/video del producto terminado\n⭐ Negocio establecido con clientes reales y atención directa\n\n¿Tienes alguna duda específica?",
           "buttons": [
-            "🔒 ¿Es seguro depositar?",
+            "🔒 ¿Es seguro?",
             "📸 Ver piezas reales",
             "💬 Hablar con asesor",
             "🔙 Volver al menú"
@@ -741,7 +741,7 @@
             ]
           },
           {
-            "value": "↩️ Cambios / Devoluciones",
+            "value": "↩️ Devoluciones",
             "params": [
               {
                 "params": {
@@ -753,7 +753,7 @@
             ]
           },
           {
-            "value": "✅ Listo para ordenar",
+            "value": "✅ Ordenar ahora",
             "params": [
               {
                 "params": {
@@ -796,8 +796,8 @@
             "🛒 ¿Cómo ordenar?",
             "💳 Formas de pago",
             "📸 Ver fotos reales",
-            "↩️ Cambios / Devoluciones",
-            "✅ Listo para ordenar",
+            "↩️ Devoluciones",
+            "✅ Ordenar ahora",
             "🔙 Menú principal"
           ]
         },
@@ -810,7 +810,7 @@
       {
         "params": [
           {
-            "value": "✅ Quiero hacer mi pedido",
+            "value": "✅ Hacer pedido",
             "params": [
               {
                 "params": {
@@ -874,7 +874,7 @@
           "type": "buttons",
           "value": "🛒 *¿Cómo hacer tu pedido?*\n\nEs muy sencillo, te guiamos paso a paso:\n\n1️⃣ Elige tu pieza o cuéntanos qué quieres\n2️⃣ Te enviamos cotización y diseño\n3️⃣ Confirmas y realizas el anticipo\n4️⃣ Fabricamos con alto nivel de detalle\n5️⃣ Te enviamos foto/video antes de enviar\n6️⃣ ¡Recibes tu joya! 💍\n\n¿Listo para empezar?",
           "buttons": [
-            "✅ Quiero hacer mi pedido",
+            "✅ Hacer pedido",
             "💳 Formas de pago",
             "💬 Hablar con asesor",
             "🔙 Volver"
@@ -889,7 +889,7 @@
       {
         "params": [
           {
-            "value": "✅ Listo, hacer pedido",
+            "value": "✅ Hacer pedido",
             "params": [
               {
                 "params": {
@@ -941,7 +941,7 @@
           "type": "buttons",
           "value": "💳 *Formas de Pago*\n\nAceptamos:\n\n🏦 Depósito bancario\n💸 Transferencia SPEI\n💵 Efectivo en tienda\n💲 Dólares (clientes de USA)\n\n💡 Solicitamos un *anticipo* para comenzar tu pieza o apartar tu pedido. El resto al entregar.\n\n¿Tienes alguna duda?",
           "buttons": [
-            "✅ Listo, hacer pedido",
+            "✅ Hacer pedido",
             "💬 Hablar con asesor",
             "🔙 Volver"
           ]
@@ -967,7 +967,7 @@
             ]
           },
           {
-            "value": "✅ Listo para ordenar",
+            "value": "✅ Ordenar ahora",
             "params": [
               {
                 "params": {
@@ -1008,7 +1008,7 @@
           "value": "📸 *Fotos y Videos Reales*\n\n¡Claro que sí! Te enviamos fotos y videos reales de piezas terminadas para que veas la calidad de nuestro trabajo.\n\n✅ Trabajamos con alto nivel de detalle\n✅ Siempre te mostramos el resultado final antes del envío\n\nUn asesor te enviará el material ahora mismo 😊",
           "buttons": [
             "💬 Ver con asesor",
-            "✅ Listo para ordenar",
+            "✅ Ordenar ahora",
             "🔙 Volver"
           ]
         },
@@ -1031,7 +1031,7 @@
       {
         "params": [
           {
-            "value": "📍 Ver nuestra tienda",
+            "value": "📍 Ver tienda",
             "params": [
               {
                 "params": {
@@ -1095,7 +1095,7 @@
           "type": "buttons",
           "value": "🔒 *¿Es seguro depositar?*\n\nEntendemos tu duda, ¡es muy válida! 😊\n\nSomos un *negocio establecido* en Nogales, Sonora:\n\n✅ Clientes reales con reseñas verificables\n✅ Tienda física: Campillo Local 21, Col. Fundo Legal\n✅ Atención directa y personalizada\n✅ Foto/video de tu pieza antes de enviar\n✅ Puedes pasar a vernos en persona\n\n¡Tu confianza es nuestra prioridad! 💎",
           "buttons": [
-            "📍 Ver nuestra tienda",
+            "📍 Ver tienda",
             "💬 Hablar con asesor",
             "✅ Quiero ordenar",
             "🔙 Volver"
@@ -1122,7 +1122,7 @@
             ]
           },
           {
-            "value": "✅ Listo, hacer pedido",
+            "value": "✅ Hacer pedido",
             "params": [
               {
                 "params": {
@@ -1163,7 +1163,7 @@
           "value": "↩️ *Cambios y Devoluciones*\n\nAceptamos cambios o devoluciones *solo en caso de defectos de fabricación*.\n\n🔍 Revisamos cada pieza antes de enviarla para garantizar calidad\n📸 Siempre te enviamos foto/video final para tu aprobación\n\nSi tienes algún problema con tu pieza, te explicamos el proceso sin complicaciones 😊",
           "buttons": [
             "💬 Hablar con asesor",
-            "✅ Listo, hacer pedido",
+            "✅ Hacer pedido",
             "🔙 Volver"
           ]
         },
@@ -1176,7 +1176,7 @@
       {
         "params": [
           {
-            "value": "✅ Sí, quiero apartarla",
+            "value": "✅ Apartar pieza",
             "params": [
               {
                 "params": {
@@ -1188,7 +1188,7 @@
             ]
           },
           {
-            "value": "💳 Ver formas de pago",
+            "value": "💳 Formas de pago",
             "params": [
               {
                 "params": {
@@ -1240,8 +1240,8 @@
           "type": "buttons",
           "value": "🗄️ *¿Puedo apartar una pieza?*\n\n¡Claro que sí! 😊\n\nPuedes apartar tu pieza con un *anticipo* y la guardamos hasta que estés listo para recogerla o recibirla.\n\n💡 Solo necesitas un pago parcial para reservarla.\n\n¿Te ayudamos a apartarla ahora?",
           "buttons": [
-            "✅ Sí, quiero apartarla",
-            "💳 Ver formas de pago",
+            "✅ Apartar pieza",
+            "💳 Formas de pago",
             "💬 Hablar con asesor",
             "🔙 Volver"
           ]
@@ -1255,7 +1255,7 @@
       {
         "params": [
           {
-            "value": "✅ Sí, ver promociones",
+            "value": "✅ Ver promociones",
             "params": [
               {
                 "params": {
@@ -1267,7 +1267,7 @@
             ]
           },
           {
-            "value": "✅ Listo para ordenar",
+            "value": "✅ Ordenar ahora",
             "params": [
               {
                 "params": {
@@ -1307,8 +1307,8 @@
           "type": "buttons",
           "value": "🎉 *Promociones y Descuentos*\n\n¡Sí contamos con promociones especiales en ciertas piezas! 🌟\n\nPara conocer las promociones vigentes, un asesor te informará con gusto.\n\n¿Quieres que te cuenten las promociones de hoy?",
           "buttons": [
-            "✅ Sí, ver promociones",
-            "✅ Listo para ordenar",
+            "✅ Ver promociones",
+            "✅ Ordenar ahora",
             "🔙 Volver"
           ]
         },
@@ -1343,7 +1343,7 @@
             ]
           },
           {
-            "value": "❓ Tengo más preguntas",
+            "value": "❓ Más preguntas",
             "params": [
               {
                 "params": {
@@ -1384,7 +1384,7 @@
           "value": "🎉 ¡Excelente elección!\n\n¿Estás listo para realizar tu pedido?",
           "buttons": [
             "✅ Sí, hacer pedido",
-            "❓ Tengo más preguntas",
+            "❓ Más preguntas",
             "❌ Aún no, gracias"
           ]
         },
@@ -1451,7 +1451,7 @@
       {
         "params": [
           {
-            "value": "✅ Sí, contáctenme después",
+            "value": "✅ Contáctenme",
             "params": [
               {
                 "params": {
@@ -1491,7 +1491,7 @@
           "type": "buttons",
           "value": "No hay problema, ¡estamos aquí para cuando lo necesites! 😊\n\n¿Te gustaría que te contactemos después con novedades o promociones?",
           "buttons": [
-            "✅ Sí, contáctenme después",
+            "✅ Contáctenme",
             "❌ No, gracias"
           ]
         },
