@@ -56,6 +56,10 @@ ul{list-style:none}
 [data-aos-delay="300"].visible{transition-delay:.3s}
 
 /* ── WhatsApp button ─────────────────────────────────── */
+@keyframes btnShimmer{
+  0%{transform:translateX(-100%) skewX(-15deg)}
+  60%,100%{transform:translateX(200%) skewX(-15deg)}
+}
 .btn-wa{
   display:inline-flex;align-items:center;gap:.6rem;
   background:var(--green-wa);color:#fff;
@@ -63,11 +67,31 @@ ul{list-style:none}
   font-size:1rem;font-weight:700;
   box-shadow:0 4px 20px rgba(37,211,102,.35);
   transition:background .2s,transform .2s,box-shadow .2s;
+  position:relative;overflow:hidden;
 }
-.btn-wa:hover{background:#1db954;transform:translateY(-2px);box-shadow:0 8px 28px rgba(37,211,102,.45)}
+.btn-wa::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,.28) 50%,transparent 60%);
+  animation:btnShimmer 2.8s ease-in-out infinite;
+}
+.btn-wa:hover{background:#1db954;transform:translateY(-2px);box-shadow:0 8px 28px rgba(37,211,102,.5)}
 .btn-wa:active{transform:translateY(0)}
 .btn-wa-xl{padding:1.1rem 2.5rem;font-size:1.15rem;border-radius:var(--radius-lg)}
-.wa-icon{font-size:1.2em;line-height:1}
+.wa-icon{font-size:1.2em;line-height:1;position:relative;z-index:1}
+
+/* ── Mobile sticky CTA ───────────────────────────────── */
+.mobile-cta-bar{
+  display:none;
+  position:fixed;bottom:0;left:0;right:0;z-index:400;
+  padding:.85rem 1.25rem calc(.85rem + env(safe-area-inset-bottom));
+  background:rgba(13,31,60,.97);backdrop-filter:blur(14px);
+  border-top:1px solid rgba(255,255,255,.1);
+  transform:translateY(110%);
+  transition:transform .35s var(--ease);
+}
+.mobile-cta-bar.visible{transform:translateY(0)}
+.mobile-cta-bar .btn-wa{width:100%;justify-content:center;font-size:1rem}
+@media(max-width:700px){.mobile-cta-bar{display:block}}
 
 /* ── Navbar ──────────────────────────────────────────── */
 .navbar{
@@ -76,7 +100,7 @@ ul{list-style:none}
   border-bottom:1px solid rgba(255,255,255,.08);
   transition:box-shadow .3s;
 }
-.navbar.scrolled{box-shadow:0 4px 24px rgba(0,0,0,.25)}
+.navbar.scrolled{box-shadow:0 4px 32px rgba(0,0,0,.35);border-bottom-color:rgba(201,168,76,.2)}
 .nav-inner{
   max-width:var(--max);margin:0 auto;padding:.9rem 1.25rem;
   display:flex;align-items:center;justify-content:space-between;
@@ -100,6 +124,12 @@ ul{list-style:none}
   content:'';position:absolute;top:-200px;right:-200px;
   width:600px;height:600px;border-radius:50%;
   background:rgba(201,168,76,.07);pointer-events:none;
+}
+.hero::after{
+  content:'';position:absolute;bottom:60px;left:-120px;
+  width:420px;height:420px;border-radius:50%;
+  background:rgba(42,82,152,.35);pointer-events:none;
+  filter:blur(60px);
 }
 .hero-inner{
   max-width:var(--max);margin:0 auto;
@@ -168,8 +198,10 @@ ul{list-style:none}
   background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
   padding:1.25rem 1.5rem;box-shadow:var(--shadow);
   border-left:4px solid var(--gold);
+  transition:transform .25s var(--ease),box-shadow .25s;
 }
-.pstat-num{display:block;font-size:1.8rem;font-weight:900;color:var(--blue);line-height:1;margin-bottom:.3rem}
+.pstat:hover{transform:translateX(4px);box-shadow:var(--shadow-lg)}
+.pstat-num{display:block;font-size:1.8rem;font-weight:900;color:var(--blue);line-height:1;margin-bottom:.3rem;font-variant-numeric:tabular-nums}
 .pstat-label{font-size:.82rem;color:var(--muted)}
 
 /* ── Services ────────────────────────────────────────── */
@@ -180,7 +212,7 @@ ul{list-style:none}
   padding:2rem 1.5rem;box-shadow:var(--shadow);
   transition:transform .25s var(--ease),border-color .25s,box-shadow .25s;
 }
-.srv-card:hover{transform:translateY(-6px);border-color:var(--gold);box-shadow:var(--shadow-lg)}
+.srv-card:hover{transform:translateY(-6px);border-color:var(--gold);box-shadow:var(--shadow-lg),0 0 0 1px var(--gold)}
 .srv-icon{font-size:2.2rem;margin-bottom:.9rem}
 .srv-card h3{color:var(--blue-dark);margin-bottom:.4rem}
 .srv-card p{color:var(--muted);font-size:.9rem}
@@ -285,7 +317,7 @@ ul{list-style:none}
   padding:1.5rem;box-shadow:var(--shadow);
   transition:transform .25s,border-color .25s;
 }
-.ben-item:hover{transform:translateY(-4px);border-color:var(--gold)}
+.ben-item:hover{transform:translateY(-4px);border-color:var(--gold);box-shadow:var(--shadow-lg)}
 .ben-check{
   width:34px;height:34px;border-radius:50%;background:var(--blue);color:#fff;
   font-size:.9rem;font-weight:800;display:flex;align-items:center;justify-content:center;
@@ -302,7 +334,7 @@ ul{list-style:none}
   padding:2rem 1.75rem;box-shadow:var(--shadow);
   transition:transform .25s,border-color .25s;
 }
-.test-card:hover{transform:translateY(-5px);border-color:var(--gold)}
+.test-card:hover{transform:translateY(-5px);border-color:var(--gold);box-shadow:var(--shadow-lg)}
 .test-stars{color:var(--gold);font-size:1.1rem;letter-spacing:.1em;margin-bottom:.85rem}
 .test-card p{color:var(--muted);font-size:.92rem;line-height:1.7;margin-bottom:1.25rem}
 .test-card p strong{color:var(--blue-dark)}
