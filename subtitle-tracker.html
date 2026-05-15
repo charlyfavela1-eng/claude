@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Subtítulos Animados · Motion Tracking</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0f;
+      --surface: #12121a;
+      --border: #1e1e2e;
+      --accent: #7c3aed;
+      --accent2: #06b6d4;
+      --text: #e2e8f0;
+      --muted: #64748b;
+      --sub-bg: rgba(0,0,0,0.72);
+      --sub-border: rgba(124,58,237,0.6);
+      --radius: 12px;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    header {
+      width: 100%;
+      padding: 18px 32px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .logo-icon {
+      width: 38px; height: 38px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px;
+    }
+
+    header h1 { font-size: 1.1rem; font-weight: 700; }
+    header p { font-size: 0.78rem; color: var(--muted); margin-top: 2px; }
+
+    .main-layout {
+      display: flex;
+      gap: 24px;
+      padding: 28px 24px;
+      max-width: 1200px;
+      width: 100%;
+      flex-wrap: wrap;
+    }
+
+    /* ── Video stage ─────────────────────────── */
+    .stage-wrap {
+      flex: 1 1 580px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .stage {
+      position: relative;
+      background: #000;
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1px solid var(--border);
+      aspect-ratio: 16/9;
+    }
+
+    #video {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      transform: scaleX(-1); /* mirror */
+    }
+
+    #canvas-motion {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    #canvas-overlay {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+    }
+
+    /* Motion indicator dot */
+    .motion-dot {
+      position: absolute;
+      width: 16px; height: 16px;
+      border-radius: 50%;
+      background: var(--accent2);
+      box-shadow: 0 0 12px var(--accent2);
+      transform: translate(-50%, -50%);
+      transition: left 0.1s, top 0.1s;
+      pointer-events: none;
+      opacity: 0;
+    }
+
+    /* ── Subtitle overlay ────────────────────── */
+    .subtitle-overlay {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      text-align: center;
+    }
+
+    .subtitle-bubble {
+      display: inline-block;
+      background: var(--sub-bg);
+      border: 1.5px solid var(--sub-border);
+      border-radius: 10px;
+      padding: 8px 18px;
+      font-size: clamp(13px, 2vw, 18px);
+      font-weight: 600;
+      line-height: 1.4;
+      color: #fff;
+      backdrop-filter: blur(6px);
+      white-space: nowrap;
+      max-width: 320px;
+      white-space: normal;
+      text-align: center;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.5);
+    }
+
+    /* Animations */
+    @keyframes sub-in {
+      from { opacity: 0; transform: scale(0.85) translateY(6px); }
+      to   { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    @keyframes sub-out {
+      from { opacity: 1; transform: scale(1) translateY(0); }
+      to   { opacity: 0; transform: scale(0.85) translateY(6px); }
+    }
+    @keyframes word-pop {
+      0%   { transform: scale(1); }
+      50%  { transform: scale(1.18); color: var(--accent2); }
+      100% { transform: scale(1); }
+    }
+    @keyframes glow-pulse {
+      0%, 100% { text-shadow: 0 0 8px var(--accent); }
+      50%       { text-shadow: 0 0 20px var(--accent), 0 0 40px var(--accent2); }
+    }
+    @keyframes typewriter {
+      from { width: 0; }
+      to   { width: 100%; }
+    }
+    @keyframes bounce-in {
+      0%   { opacity: 0; transform: scale(0.3) rotate(-6deg); }
+      60%  { transform: scale(1.08) rotate(1deg); }
+      100% { opacity: 1; transform: scale(1) rotate(0); }
+    }
+    @keyframes slide-up {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      20%     { transform: translateX(-5px); }
+      40%     { transform: translateX(5px); }
+      60%     { transform: translateX(-3px); }
+      80%     { transform: translateX(3px); }
+    }
+    @keyframes rainbow {
+      0%   { color: #ff6b6b; }
+      16%  { color: #ffd93d; }
+      33%  { color: #6bcb77; }
+      50%  { color: #4d96ff; }
+      66%  { color: #c77dff; }
+      83%  { color: #ff6b9d; }
+      100% { color: #ff6b6b; }
+    }
+
+    /* No-cam placeholder */
+    .no-cam {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 12px; color: var(--muted);
+      font-size: 0.9rem;
+    }
+    .no-cam .cam-icon { font-size: 3rem; }
+
+    /* Status bar */
+    .status-bar {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 0.8rem; color: var(--muted);
+    }
+    .status-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--muted); flex-shrink: 0;
+    }
+    .status-dot.active { background: #22c55e; box-shadow: 0 0 6px #22c55e; }
+    .status-dot.motion { background: var(--accent2); box-shadow: 0 0 6px var(--accent2); }
+
+    /* ── Controls panel ──────────────────────── */
+    .panel {
+      flex: 0 0 280px;
+      display: flex; flex-direction: column; gap: 16px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+    }
+
+    .card-title {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin-bottom: 14px;
+    }
+
+    .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
+    .field label { font-size: 0.82rem; font-weight: 500; }
+    .field:last-child { margin-bottom: 0; }
+
+    input[type="text"], textarea, select {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      padding: 8px 12px;
+      font-size: 0.85rem;
+      font-family: inherit;
+      width: 100%;
+      transition: border-color 0.2s;
+    }
+    input[type="text"]:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+    textarea { resize: vertical; min-height: 80px; }
+
+    input[type="range"] {
+      width: 100%; accent-color: var(--accent);
+    }
+
+    .range-row { display: flex; align-items: center; gap: 10px; }
+    .range-val {
+      font-size: 0.8rem; color: var(--accent2);
+      min-width: 32px; text-align: right; font-weight: 600;
+    }
+
+    /* Color picker grid */
+    .color-grid {
+      display: flex; flex-wrap: wrap; gap: 6px;
+    }
+    .color-swatch {
+      width: 26px; height: 26px; border-radius: 6px;
+      cursor: pointer; border: 2px solid transparent;
+      transition: transform 0.15s, border-color 0.15s;
+    }
+    .color-swatch:hover { transform: scale(1.15); }
+    .color-swatch.active { border-color: #fff; transform: scale(1.1); }
+
+    /* Animation style chips */
+    .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+    .chip {
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.76rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1.5px solid var(--border);
+      background: var(--bg);
+      color: var(--muted);
+      transition: all 0.15s;
+    }
+    .chip:hover { border-color: var(--accent); color: var(--text); }
+    .chip.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+    /* Subtitle queue */
+    .queue-list {
+      display: flex; flex-direction: column; gap: 6px;
+      max-height: 160px; overflow-y: auto;
+    }
+    .queue-item {
+      display: flex; align-items: center; gap: 8px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 6px 10px;
+      font-size: 0.8rem;
+    }
+    .queue-item .del {
+      margin-left: auto; cursor: pointer;
+      color: var(--muted); font-size: 1rem;
+      transition: color 0.15s;
+    }
+    .queue-item .del:hover { color: #f43f5e; }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      gap: 6px; padding: 9px 16px; border-radius: 8px;
+      font-size: 0.85rem; font-weight: 600; cursor: pointer;
+      border: none; transition: all 0.18s; width: 100%;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), #9333ea);
+      color: #fff;
+    }
+    .btn-primary:hover { filter: brightness(1.12); }
+    .btn-secondary {
+      background: var(--bg); color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+    .btn-row { display: flex; gap: 8px; }
+    .btn-row .btn { flex: 1; }
+
+    /* Motion threshold indicator */
+    .thresh-bar {
+      height: 4px; border-radius: 2px;
+      background: var(--border); margin-top: 4px; overflow: hidden;
+    }
+    .thresh-fill {
+      height: 100%; border-radius: 2px;
+      background: linear-gradient(90deg, #22c55e, #fbbf24, #f43f5e);
+      transition: width 0.1s;
+    }
+
+    /* Subtitle list demo */
+    .sub-demo {
+      font-size: 0.78rem; color: var(--muted);
+      text-align: center; padding: 8px 0;
+    }
+
+    @media (max-width: 700px) {
+      .main-layout { flex-direction: column; padding: 16px; }
+      .panel { flex: none; width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo-icon">🎬</div>
+  <div>
+    <h1>Subtítulos Animados · Motion Tracking</h1>
+    <p>Detección de movimiento en tiempo real con subtítulos animados</p>
+  </div>
+</header>
+
+<div class="main-layout">
+
+  <!-- ── Video stage ────────────────────────────── -->
+  <div class="stage-wrap">
+    <div class="stage" id="stage">
+      <div class="no-cam" id="no-cam">
+        <div class="cam-icon">📷</div>
+        <span>Haz clic en "Iniciar cámara" para comenzar</span>
+      </div>
+      <video id="video" autoplay muted playsinline></video>
+      <canvas id="canvas-motion"></canvas>
+      <canvas id="canvas-overlay"></canvas>
+      <div class="motion-dot" id="motion-dot"></div>
+    </div>
+
+    <div class="status-bar">
+      <div class="status-dot" id="cam-dot"></div>
+      <span id="cam-status">Cámara inactiva</span>
+      <span style="margin-left:auto; color: var(--muted);" id="motion-status"></span>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" id="btn-cam">📷 Iniciar cámara</button>
+      <button class="btn btn-secondary" id="btn-demo">🎭 Demo sin cámara</button>
+    </div>
+  </div>
+
+  <!-- ── Controls ───────────────────────────────── -->
+  <div class="panel">
+
+    <!-- Subtítulos -->
+    <div class="card">
+      <div class="card-title">Subtítulos</div>
+
+      <div class="field">
+        <label>Texto del subtítulo</label>
+        <textarea id="sub-text" placeholder="Escribe el subtítulo aquí…&#10;Puedes usar múltiples líneas">Hola mundo 👋
+¡Motion tracking!</textarea>
+      </div>
+
+      <div class="field">
+        <label>Cola de subtítulos</label>
+        <div class="queue-list" id="queue-list">
+          <!-- populated by JS -->
+        </div>
+      </div>
+
+      <div class="btn-row" style="margin-top:8px">
+        <button class="btn btn-primary" id="btn-add">+ Agregar</button>
+        <button class="btn btn-secondary" id="btn-clear-q">Limpiar</button>
+      </div>
+    </div>
+
+    <!-- Animación -->
+    <div class="card">
+      <div class="card-title">Estilo de animación</div>
+      <div class="chips" id="anim-chips">
+        <div class="chip active" data-anim="bounce">Bounce</div>
+        <div class="chip" data-anim="slide">Slide</div>
+        <div class="chip" data-anim="glow">Glow</div>
+        <div class="chip" data-anim="shake">Shake</div>
+        <div class="chip" data-anim="rainbow">Rainbow</div>
+        <div class="chip" data-anim="typewriter">Typewriter</div>
+      </div>
+
+      <div class="field" style="margin-top:14px">
+        <label>Duración (seg)</label>
+        <div class="range-row">
+          <input type="range" id="sub-duration" min="1" max="10" step="0.5" value="3"/>
+          <span class="range-val" id="dur-val">3s</span>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Tamaño de fuente</label>
+        <div class="range-row">
+          <input type="range" id="font-size" min="12" max="36" step="1" value="18"/>
+          <span class="range-val" id="fs-val">18px</span>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Color del texto</label>
+        <div class="color-grid" id="color-grid"></div>
+      </div>
+    </div>
+
+    <!-- Motion tracking -->
+    <div class="card">
+      <div class="card-title">Motion Tracking</div>
+
+      <div class="field">
+        <label>Sensibilidad</label>
+        <div class="range-row">
+          <input type="range" id="sensitivity" min="5" max="80" step="5" value="25"/>
+          <span class="range-val" id="sens-val">25</span>
+        </div>
+        <div class="thresh-bar"><div class="thresh-fill" id="thresh-fill" style="width:0%"></div></div>
+      </div>
+
+      <div class="field">
+        <label>Modo de anclaje</label>
+        <select id="anchor-mode">
+          <option value="follow">Sigue al movimiento</option>
+          <option value="above">Encima del movimiento</option>
+          <option value="below">Debajo del movimiento</option>
+          <option value="fixed-bottom">Fijo abajo (clásico)</option>
+          <option value="fixed-top">Fijo arriba</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Disparo automático</label>
+        <select id="trigger-mode">
+          <option value="manual">Manual (botón)</option>
+          <option value="on-motion">Al detectar movimiento</option>
+          <option value="timed">Cada N segundos</option>
+        </select>
+      </div>
+
+      <div class="field" id="timed-field" style="display:none">
+        <label>Intervalo (seg)</label>
+        <div class="range-row">
+          <input type="range" id="timed-interval" min="2" max="30" step="1" value="5"/>
+          <span class="range-val" id="int-val">5s</span>
+        </div>
+      </div>
+
+      <button class="btn btn-primary" id="btn-show-sub" style="margin-top:4px">
+        ▶ Mostrar subtítulo ahora
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<!-- Hidden canvas for frame processing -->
+<canvas id="canvas-proc" style="display:none"></canvas>
+
+<script>
+// ────────────────────────────────────────────────
+//  State
+// ────────────────────────────────────────────────
+const state = {
+  streaming: false,
+  demoMode: false,
+  animStyle: 'bounce',
+  color: '#ffffff',
+  duration: 3,
+  fontSize: 18,
+  sensitivity: 25,
+  anchorMode: 'follow',
+  triggerMode: 'manual',
+  timedInterval: 5,
+  motionX: 0.5,
+  motionY: 0.5,
+  motionLevel: 0,
+  subtitleQueue: [
+    'Hola mundo 👋',
+    '¡Motion tracking!',
+    'Subtítulos animados',
+  ],
+  currentSubIndex: 0,
+  activeSubtitles: [],
+  lastFrameData: null,
+  motionTriggered: false,
+  timedTimerId: null,
+  onMotionCooldown: false,
+};
+
+// ────────────────────────────────────────────────
+//  DOM refs
+// ────────────────────────────────────────────────
+const video        = document.getElementById('video');
+const canvasMotion = document.getElementById('canvas-motion');
+const canvasOverlay= document.getElementById('canvas-overlay');
+const canvasProc   = document.getElementById('canvas-proc');
+const ctxProc      = canvasProc.getContext('2d', { willReadFrequently: true });
+const ctxOverlay   = canvasOverlay.getContext('2d');
+const motionDot    = document.getElementById('motion-dot');
+const stage        = document.getElementById('stage');
+const noCam        = document.getElementById('no-cam');
+const camDot       = document.getElementById('cam-dot');
+const camStatus    = document.getElementById('cam-status');
+const motionStatus = document.getElementById('motion-status');
+const threshFill   = document.getElementById('thresh-fill');
+const queueList    = document.getElementById('queue-list');
+
+// ────────────────────────────────────────────────
+//  Colors
+// ────────────────────────────────────────────────
+const COLORS = [
+  '#ffffff','#fbbf24','#f43f5e','#22c55e',
+  '#06b6d4','#7c3aed','#f97316','#ec4899',
+  '#a3e635','#0ea5e9','#8b5cf6','#14b8a6',
+];
+const colorGrid = document.getElementById('color-grid');
+COLORS.forEach(c => {
+  const s = document.createElement('div');
+  s.className = 'color-swatch' + (c === state.color ? ' active' : '');
+  s.style.background = c;
+  s.title = c;
+  s.addEventListener('click', () => {
+    state.color = c;
+    colorGrid.querySelectorAll('.color-swatch').forEach(el => el.classList.remove('active'));
+    s.classList.add('active');
+  });
+  colorGrid.appendChild(s);
+});
+
+// ────────────────────────────────────────────────
+//  Animation chips
+// ────────────────────────────────────────────────
+document.getElementById('anim-chips').addEventListener('click', e => {
+  const chip = e.target.closest('.chip');
+  if (!chip) return;
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  chip.classList.add('active');
+  state.animStyle = chip.dataset.anim;
+});
+
+// ────────────────────────────────────────────────
+//  Sliders
+// ────────────────────────────────────────────────
+function bindSlider(id, valId, key, suffix='', parse=parseFloat) {
+  const slider = document.getElementById(id);
+  const val    = document.getElementById(valId);
+  slider.value = state[key];
+  val.textContent = state[key] + suffix;
+  slider.addEventListener('input', () => {
+    state[key] = parse(slider.value);
+    val.textContent = state[key] + suffix;
+  });
+}
+bindSlider('sub-duration', 'dur-val', 'duration', 's');
+bindSlider('font-size',    'fs-val',  'fontSize', 'px', parseInt);
+bindSlider('sensitivity',  'sens-val','sensitivity', '', parseInt);
+bindSlider('timed-interval','int-val','timedInterval', 's', parseInt);
+
+// ────────────────────────────────────────────────
+//  Selects
+// ────────────────────────────────────────────────
+document.getElementById('anchor-mode').addEventListener('change', e => {
+  state.anchorMode = e.target.value;
+});
+document.getElementById('trigger-mode').addEventListener('change', e => {
+  state.triggerMode = e.target.value;
+  document.getElementById('timed-field').style.display =
+    e.target.value === 'timed' ? 'block' : 'none';
+  setupTrigger();
+});
+
+// ────────────────────────────────────────────────
+//  Queue management
+// ────────────────────────────────────────────────
+function renderQueue() {
+  queueList.innerHTML = '';
+  state.subtitleQueue.forEach((text, i) => {
+    const item = document.createElement('div');
+    item.className = 'queue-item';
+    item.innerHTML = `<span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${text}">${text}</span>
+      <span class="del" data-i="${i}">✕</span>`;
+    queueList.appendChild(item);
+  });
+}
+queueList.addEventListener('click', e => {
+  const del = e.target.closest('.del');
+  if (!del) return;
+  state.subtitleQueue.splice(+del.dataset.i, 1);
+  if (state.currentSubIndex >= state.subtitleQueue.length) state.currentSubIndex = 0;
+  renderQueue();
+});
+document.getElementById('btn-add').addEventListener('click', () => {
+  const t = document.getElementById('sub-text').value.trim();
+  if (!t) return;
+  t.split('\n').filter(Boolean).forEach(line => state.subtitleQueue.push(line));
+  document.getElementById('sub-text').value = '';
+  renderQueue();
+});
+document.getElementById('btn-clear-q').addEventListener('click', () => {
+  state.subtitleQueue = [];
+  state.currentSubIndex = 0;
+  renderQueue();
+});
+renderQueue();
+
+// ────────────────────────────────────────────────
+//  Camera
+// ────────────────────────────────────────────────
+document.getElementById('btn-cam').addEventListener('click', startCamera);
+document.getElementById('btn-demo').addEventListener('click', startDemo);
+
+async function startCamera() {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode:'user', width:1280, height:720 }, audio:false });
+    video.srcObject = stream;
+    video.style.display = 'block';
+    noCam.style.display = 'none';
+    state.streaming = true;
+    state.demoMode  = false;
+    camDot.className = 'status-dot active';
+    camStatus.textContent = 'Cámara activa';
+    video.addEventListener('loadedmetadata', () => {
+      resizeCanvases();
+      requestAnimationFrame(processFrame);
+    }, { once:true });
+    setupTrigger();
+  } catch(err) {
+    camStatus.textContent = 'Error: ' + err.message;
+    alert('No se pudo acceder a la cámara: ' + err.message + '\n\nUsa el modo Demo.');
+  }
+}
+
+function startDemo() {
+  state.demoMode  = true;
+  state.streaming = true;
+  video.style.display = 'none';
+  noCam.innerHTML = '<div class="cam-icon">🎭</div><span>Modo demo activo — movimiento simulado</span>';
+  camDot.className = 'status-dot active';
+  camStatus.textContent = 'Modo demo';
+  resizeCanvases();
+  requestAnimationFrame(demoLoop);
+  setupTrigger();
+}
+
+function resizeCanvases() {
+  const w = stage.clientWidth;
+  const h = stage.clientHeight;
+  [canvasMotion, canvasOverlay, canvasProc].forEach(c => {
+    c.width  = w;
+    c.height = h;
+  });
+}
+window.addEventListener('resize', resizeCanvases);
+
+// ────────────────────────────────────────────────
+//  Motion detection (frame diff)
+// ────────────────────────────────────────────────
+function processFrame() {
+  if (!state.streaming || state.demoMode) return;
+
+  const W = canvasProc.width;
+  const H = canvasProc.height;
+
+  ctxProc.save();
+  ctxProc.translate(W, 0);
+  ctxProc.scale(-1, 1); // mirror to match video
+  ctxProc.drawImage(video, 0, 0, W, H);
+  ctxProc.restore();
+
+  const frame = ctxProc.getImageData(0, 0, W, H);
+  const data  = frame.data;
+
+  if (state.lastFrameData) {
+    const prev = state.lastFrameData;
+    let sumX = 0, sumY = 0, count = 0, totalDiff = 0;
+    const step = 4; // sample every 4th pixel for speed
+
+    for (let y = 0; y < H; y += step) {
+      for (let x = 0; x < W; x += step) {
+        const i = (y * W + x) * 4;
+        const dr = Math.abs(data[i]   - prev[i]);
+        const dg = Math.abs(data[i+1] - prev[i+1]);
+        const db = Math.abs(data[i+2] - prev[i+2]);
+        const diff = (dr + dg + db) / 3;
+        if (diff > state.sensitivity) {
+          sumX  += x;
+          sumY  += y;
+          count++;
+        }
+        totalDiff += diff;
+      }
+    }
+
+    const pixels = (W / step) * (H / step);
+    state.motionLevel = Math.min(100, (totalDiff / pixels) * 2);
+    threshFill.style.width = state.motionLevel + '%';
+
+    if (count > 20) {
+      state.motionX = sumX / count / W;
+      state.motionY = sumY / count / H;
+      updateMotionDot(state.motionX, state.motionY);
+      motionStatus.textContent = `Movimiento: ${Math.round(state.motionLevel)}%`;
+
+      if (state.triggerMode === 'on-motion' && !state.onMotionCooldown && state.motionLevel > state.sensitivity) {
+        triggerSubtitle();
+        state.onMotionCooldown = true;
+        setTimeout(() => { state.onMotionCooldown = false; }, (state.duration + 1) * 1000);
+      }
+    } else {
+      motionDot.style.opacity = '0';
+      motionStatus.textContent = '';
+    }
+  }
+
+  state.lastFrameData = new Uint8ClampedArray(data);
+  requestAnimationFrame(processFrame);
+}
+
+// ────────────────────────────────────────────────
+//  Demo loop — simulated motion
+// ────────────────────────────────────────────────
+let demoT = 0;
+function demoLoop() {
+  if (!state.demoMode) return;
+  demoT += 0.018;
+  // Lissajous-like path
+  state.motionX = 0.5 + 0.35 * Math.sin(demoT * 1.3);
+  state.motionY = 0.5 + 0.28 * Math.sin(demoT * 0.9 + 1);
+  state.motionLevel = 40 + 30 * Math.abs(Math.sin(demoT));
+  threshFill.style.width = state.motionLevel + '%';
+  motionStatus.textContent = `Demo — nivel: ${Math.round(state.motionLevel)}%`;
+  updateMotionDot(state.motionX, state.motionY);
+
+  if (state.triggerMode === 'on-motion' && !state.onMotionCooldown) {
+    const chance = 0.004; // ~0.4% per frame ≈ every ~4s at 60fps
+    if (Math.random() < chance) {
+      triggerSubtitle();
+      state.onMotionCooldown = true;
+      setTimeout(() => { state.onMotionCooldown = false; }, (state.duration + 1) * 1000);
+    }
+  }
+
+  // Draw demo background
+  const ctx = ctxOverlay;
+  const W = canvasOverlay.width;
+  const H = canvasOverlay.height;
+  ctx.clearRect(0, 0, W, H);
+
+  // Grid
+  ctx.strokeStyle = 'rgba(124,58,237,0.08)';
+  ctx.lineWidth = 1;
+  const gs = 40;
+  for (let x = 0; x < W; x += gs) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke(); }
+  for (let y = 0; y < H; y += gs) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
+
+  // Trail
+  const cx = state.motionX * W;
+  const cy = state.motionY * H;
+  const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, 80);
+  grad.addColorStop(0, 'rgba(6,182,212,0.15)');
+  grad.addColorStop(1, 'transparent');
+  ctx.fillStyle = grad;
+  ctx.beginPath(); ctx.arc(cx, cy, 80, 0, Math.PI*2); ctx.fill();
+
+  drawActiveSubtitles();
+  requestAnimationFrame(demoLoop);
+}
+
+// ────────────────────────────────────────────────
+//  Motion dot
+// ────────────────────────────────────────────────
+function updateMotionDot(nx, ny) {
+  const rect = stage.getBoundingClientRect();
+  motionDot.style.left   = (nx * 100) + '%';
+  motionDot.style.top    = (ny * 100) + '%';
+  motionDot.style.opacity = '1';
+}
+
+// ────────────────────────────────────────────────
+//  Trigger logic
+// ────────────────────────────────────────────────
+function setupTrigger() {
+  clearInterval(state.timedTimerId);
+  if (state.triggerMode === 'timed' && state.streaming) {
+    state.timedTimerId = setInterval(triggerSubtitle, state.timedInterval * 1000);
+  }
+}
+
+document.getElementById('btn-show-sub').addEventListener('click', triggerSubtitle);
+
+function triggerSubtitle() {
+  if (!state.subtitleQueue.length) return;
+  const text = state.subtitleQueue[state.currentSubIndex % state.subtitleQueue.length];
+  state.currentSubIndex = (state.currentSubIndex + 1) % state.subtitleQueue.length;
+
+  const stageRect = stage.getBoundingClientRect();
+  let nx = state.motionX;
+  let ny = state.motionY;
+
+  // Compute subtitle position
+  let px, py;
+  switch (state.anchorMode) {
+    case 'follow':
+      px = nx; py = ny;
+      break;
+    case 'above':
+      px = nx; py = Math.max(0.08, ny - 0.18);
+      break;
+    case 'below':
+      px = nx; py = Math.min(0.92, ny + 0.18);
+      break;
+    case 'fixed-bottom':
+      px = 0.5; py = 0.88;
+      break;
+    case 'fixed-top':
+      px = 0.5; py = 0.1;
+      break;
+    default:
+      px = nx; py = ny;
+  }
+
+  const sub = {
+    id: Date.now() + Math.random(),
+    text,
+    px, py,
+    anim: state.animStyle,
+    color: state.color,
+    fontSize: state.fontSize,
+    duration: state.duration,
+    startTime: performance.now(),
+    opacity: 0,
+    phase: 'in', // in | show | out
+  };
+  state.activeSubtitles.push(sub);
+
+  // Auto-remove
+  setTimeout(() => {
+    sub.phase = 'out';
+    setTimeout(() => {
+      state.activeSubtitles = state.activeSubtitles.filter(s => s.id !== sub.id);
+    }, 400);
+  }, state.duration * 1000);
+}
+
+// ────────────────────────────────────────────────
+//  Draw subtitles on canvas overlay (non-demo)
+// ────────────────────────────────────────────────
+function drawActiveSubtitles() {
+  // For non-demo: reuse overlay canvas
+  if (!state.demoMode) {
+    const ctx = ctxOverlay;
+    const W = canvasOverlay.width;
+    const H = canvasOverlay.height;
+    ctx.clearRect(0, 0, W, H);
+  }
+  // Subtitles are rendered as DOM elements for rich CSS animations
+  // (canvas text doesn't support CSS @keyframes natively)
+  syncSubtitleDOM();
+}
+
+// ────────────────────────────────────────────────
+//  DOM subtitle rendering
+// ────────────────────────────────────────────────
+function syncSubtitleDOM() {
+  // Remove stale elements
+  stage.querySelectorAll('.subtitle-overlay').forEach(el => {
+    const id = el.dataset.id;
+    if (!state.activeSubtitles.find(s => s.id == id)) {
+      el.remove();
+    }
+  });
+
+  state.activeSubtitles.forEach(sub => {
+    let el = stage.querySelector(`.subtitle-overlay[data-id="${sub.id}"]`);
+    if (!el) {
+      el = createSubtitleElement(sub);
+      stage.appendChild(el);
+    }
+    // Update position
+    el.style.left = (sub.px * 100) + '%';
+    el.style.top  = (sub.py * 100) + '%';
+    // Phase
+    if (sub.phase === 'out') {
+      el.style.animation = 'sub-out 0.35s ease forwards';
+    }
+  });
+}
+
+function createSubtitleElement(sub) {
+  const wrap = document.createElement('div');
+  wrap.className = 'subtitle-overlay';
+  wrap.dataset.id = sub.id;
+  wrap.style.left = (sub.px * 100) + '%';
+  wrap.style.top  = (sub.py * 100) + '%';
+  wrap.style.zIndex = 100;
+
+  const bubble = document.createElement('div');
+  bubble.className = 'subtitle-bubble';
+  bubble.textContent = sub.text;
+  bubble.style.fontSize = sub.fontSize + 'px';
+  bubble.style.color = sub.color;
+
+  // Apply animation style
+  applyAnimStyle(bubble, sub.anim, sub.duration);
+  wrap.appendChild(bubble);
+  return wrap;
+}
+
+function applyAnimStyle(el, anim, duration) {
+  el.style.animation = '';
+  el.style.overflow = '';
+  el.style.whiteSpace = 'normal';
+
+  switch (anim) {
+    case 'bounce':
+      el.style.animation = `bounce-in 0.5s cubic-bezier(.17,.89,.32,1.28) both`;
+      break;
+    case 'slide':
+      el.style.animation = `slide-up 0.4s ease both`;
+      break;
+    case 'glow':
+      el.style.animation = `sub-in 0.35s ease both, glow-pulse ${duration * 0.5}s ease-in-out infinite`;
+      break;
+    case 'shake':
+      el.style.animation = `sub-in 0.3s ease both, shake 0.5s ease 0.3s both`;
+      break;
+    case 'rainbow':
+      el.style.animation = `sub-in 0.3s ease both, rainbow ${duration * 0.8}s linear infinite`;
+      break;
+    case 'typewriter':
+      el.style.overflow = 'hidden';
+      el.style.whiteSpace = 'nowrap';
+      el.style.animation = `typewriter ${duration * 0.7}s steps(30) both`;
+      break;
+    default:
+      el.style.animation = `sub-in 0.35s ease both`;
+  }
+}
+
+// Non-demo: run subtitle sync loop
+function overlayLoop() {
+  if (!state.demoMode) syncSubtitleDOM();
+  requestAnimationFrame(overlayLoop);
+}
+requestAnimationFrame(overlayLoop);
+
+// ────────────────────────────────────────────────
+//  Keyboard shortcut
+// ────────────────────────────────────────────────
+document.addEventListener('keydown', e => {
+  if ((e.key === ' ' || e.key === 'Enter') && e.target.tagName !== 'TEXTAREA' && e.target.tagName !== 'INPUT') {
+    e.preventDefault();
+    triggerSubtitle();
+  }
+});
+
+// Initial render
+renderQueue();
+</script>
+
+</body>
+</html>
