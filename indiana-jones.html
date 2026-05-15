@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Indiana Jones - El Látigo</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #1a0a00;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      font-family: 'Georgia', serif;
+      overflow: hidden;
+    }
+    h1 {
+      color: #d4a017;
+      font-size: 2rem;
+      text-shadow: 2px 2px 4px #000;
+      margin-bottom: 10px;
+      letter-spacing: 3px;
+    }
+    #hud {
+      display: flex;
+      gap: 40px;
+      margin-bottom: 8px;
+      color: #d4a017;
+      font-size: 1.1rem;
+      text-shadow: 1px 1px 3px #000;
+    }
+    canvas {
+      border: 3px solid #8b6914;
+      border-radius: 4px;
+      cursor: crosshair;
+      box-shadow: 0 0 30px #8b691480;
+    }
+    #instructions {
+      color: #a07830;
+      font-size: 0.85rem;
+      margin-top: 8px;
+      text-align: center;
+    }
+    #game-over {
+      display: none;
+      position: absolute;
+      background: rgba(0,0,0,0.85);
+      color: #d4a017;
+      font-size: 2rem;
+      padding: 30px 60px;
+      border: 3px solid #8b6914;
+      border-radius: 8px;
+      text-align: center;
+      flex-direction: column;
+      gap: 16px;
+    }
+    #game-over button {
+      background: #8b6914;
+      color: #fff8e7;
+      border: none;
+      padding: 10px 30px;
+      font-size: 1.1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: Georgia, serif;
+    }
+    #game-over button:hover { background: #d4a017; }
+  </style>
+</head>
+<body>
+  <h1>⚔ INDIANA JONES ⚔</h1>
+  <div id="hud">
+    <span>❤️ Vidas: <span id="lives">3</span></span>
+    <span>💎 Gemas: <span id="score">0</span></span>
+    <span>🌊 Nivel: <span id="level">1</span></span>
+  </div>
+  <canvas id="game" width="900" height="550"></canvas>
+  <div id="instructions">
+    🎮 Flechas: mover | 🖱️ Clic: lanzar látigo | ↑ o ESPACIO: saltar
+  </div>
+  <div id="game-over">
+    <div id="go-title">¡GAME OVER!</div>
+    <div id="go-score"></div>
+    <button onclick="restartGame()">Jugar de nuevo</button>
+  </div>
+
+<script>
+const canvas = document.getElementById('game');
+const ctx = canvas.getContext('2d');
+const W = canvas.width, H = canvas.height;
+
+// ── Constantes ──────────────────────────────────────────────────────────────
+const GRAVITY = 0.55;
+const GROUND_Y = H - 80;
+const TILE = 40;
+
+// ── Estado del juego ─────────────────────────────────────────────────────────
+let keys = {};
+let mouse = { x: 0, y: 0 };
+let gameState = 'playing'; // 'playing' | 'dead' | 'gameover'
+let score = 0;
+let lives = 3;
+let level = 1;
+let particles = [];
+let camera = { x: 0 };
+
+canvas.addEventListener('mousemove', e => {
+  const r = canvas.getBoundingClientRect();
+  mouse.x = e.clientX - r.left;
+  mouse.y = e.clientY - r.top;
+});
+canvas.addEventListener('click', () => {
+  if (gameState === 'playing') indy.fireWhip();
+});
+window.addEventListener('keydown', e => {
+  keys[e.code] = true;
+  e.preventDefault();
+});
+window.addEventListener('keyup', e => { keys[e.code] = false; });
+
+// ── Paleta de colores ────────────────────────────────────────────────────────
+const COL = {
+  sky:     '#87CEEB',
+  skyBot:  '#d4a656',
+  ground:  '#5c3d11',
+  groundT: '#7a5c2e',
+  stone:   '#888',
+  stoneD:  '#555',
+  indy:    '#8B4513',
+  indyH:   '#c8860a',
+  whip:    '#8b4513',
+  enemy:   '#c0392b',
+  gem:     '#2ecc71',
+  gold:    '#f1c40f',
+  spike:   '#aaa',
+};
+
+// ── Niveles ──────────────────────────────────────────────────────────────────
+function buildLevel(lvl) {
+  const platforms = [
+    { x: 0, y: GROUND_Y, w: 5000, h: 80, type: 'ground' },
+  ];
+  const gems = [];
+  const enemies = [];
+  const hazards = [];
+
+  // Genera plataformas, gemas y enemigos proceduralmente según nivel
+  const count = 12 + lvl * 3;
+  let px = 300;
+  for (let i = 0; i < count; i++) {
+    px += 100 + Math.random() * 180;
+    const py = GROUND_Y - 80 - Math.random() * 160;
+    const pw = 80 + Math.random() * 100;
+    platforms.push({ x: px, y: py, w: pw, h: 20, type: 'platform' });
+
+    // Gema encima de la plataforma
+    if (Math.random() > 0.3) {
+      gems.push({ x: px + pw / 2, y: py - 24, r: 10, collected: false });
+    }
+
+    // Puntas en el suelo cada tanto
+    if (Math.random() > 0.6) {
+      hazards.push({ x: px + 20 + Math.random() * 60, y: GROUND_Y, w: 18, h: 28 });
+    }
+  }
+
+  // Enemigos
+  const enemyCount = 3 + lvl * 2;
+  for (let i = 0; i < enemyCount; i++) {
+    const ex = 500 + Math.random() * (px - 400);
+    enemies.push({
+      x: ex, y: GROUND_Y - 40, w: 32, h: 40,
+      vx: (Math.random() > 0.5 ? 1 : -1) * (1 + lvl * 0.3),
+      hp: 1 + Math.floor(lvl / 2),
+      maxHp: 1 + Math.floor(lvl / 2),
+      stunTimer: 0,
+      dir: 1,
+      walkFrame: 0,
+    });
+  }
+
+  // Meta (ídolo de oro)
+  const endX = px + 300;
+  platforms.push({ x: 0, y: GROUND_Y, w: endX + 200, h: 0, type: 'ground' });
+
+  return { platforms, gems, enemies, hazards, endX, worldWidth: endX + 400 };
+}
+
+// ── Indiana Jones ────────────────────────────────────────────────────────────
+const indy = {
+  x: 80, y: GROUND_Y - 56,
+  w: 30, h: 56,
+  vx: 0, vy: 0,
+  onGround: false,
+  dir: 1,
+  walkFrame: 0,
+  invincible: 0,
+  whip: null,
+  hitCooldown: 0,
+
+  reset() {
+    this.x = 80; this.y = GROUND_Y - 56;
+    this.vx = 0; this.vy = 0;
+    this.onGround = false;
+    this.whip = null;
+    this.invincible = 60;
+    this.hitCooldown = 0;
+  },
+
+  fireWhip() {
+    if (this.whip && this.whip.state !== 'idle') return;
+    const wx = this.x + this.w / 2 - camera.x;
+    const wy = this.y + this.h * 0.3;
+    // dirección hacia el mouse (en coord mundo)
+    const tx = mouse.x + camera.x;
+    const ty = mouse.y;
+    const dx = tx - (this.x + this.w / 2);
+    const dy = ty - (this.y + this.h * 0.3);
+    const dist = Math.hypot(dx, dy);
+    this.whip = {
+      ox: this.x + this.w / 2, oy: this.y + this.h * 0.3,
+      tx: this.x + this.w / 2 + (dx / dist) * 220,
+      ty: this.y + this.h * 0.3 + (dy / dist) * 220,
+      t: 0, state: 'extend', // extend | retract
+      hitEnemies: new Set(),
+    };
+    if (dx > 0) this.dir = 1; else this.dir = -1;
+  },
+
+  update(platforms, enemies, gems, hazards) {
+    // Input
+    const spd = 3.5;
+    this.vx = 0;
+    if (keys['ArrowLeft'])  { this.vx = -spd; this.dir = -1; }
+    if (keys['ArrowRight']) { this.vx =  spd; this.dir =  1; }
+    if ((keys['ArrowUp'] || keys['Space']) && this.onGround) {
+      this.vy = -13;
+      this.onGround = false;
+    }
+
+    // Física
+    this.vy += GRAVITY;
+    this.x += this.vx;
+    this.y += this.vy;
+
+    // Colisión con plataformas
+    this.onGround = false;
+    for (const p of platforms) {
+      if (p.type === 'ground' && p.h === 0) continue;
+      if (this.x + this.w > p.x && this.x < p.x + p.w) {
+        const feetY = this.y + this.h;
+        const prevFeet = feetY - this.vy;
+        if (prevFeet <= p.y && feetY >= p.y && this.vy >= 0) {
+          this.y = p.y - this.h;
+          this.vy = 0;
+          this.onGround = true;
+        }
+      }
+    }
+
+    // Límite inferior (caer al vacío)
+    if (this.y > H + 100) this.takeDamage(true);
+
+    // Límite izquierdo
+    if (this.x < 0) this.x = 0;
+
+    // Animación caminata
+    if (this.vx !== 0 && this.onGround) this.walkFrame += 0.18;
+
+    // Látigo
+    if (this.whip) {
+      this.whip.ox = this.x + this.w / 2;
+      this.whip.oy = this.y + this.h * 0.3;
+      if (this.whip.state === 'extend') {
+        this.whip.t += 0.08;
+        if (this.whip.t >= 1) { this.whip.state = 'retract'; }
+      } else {
+        this.whip.t -= 0.09;
+        if (this.whip.t <= 0) this.whip = null;
+      }
+
+      // Golpear enemigos
+      if (this.whip) {
+        const tipX = this.whip.ox + (this.whip.tx - this.whip.ox) * this.whip.t;
+        const tipY = this.whip.oy + (this.whip.ty - this.whip.oy) * this.whip.t;
+        for (const e of enemies) {
+          if (this.whip.hitEnemies.has(e)) continue;
+          if (tipX > e.x && tipX < e.x + e.w && tipY > e.y && tipY < e.y + e.h) {
+            e.hp--;
+            e.stunTimer = 40;
+            e.vx = this.dir * 4;
+            this.whip.hitEnemies.add(e);
+            spawnParticles(e.x + e.w/2, e.y + e.h/2, '#f39c12', 8);
+            if (e.hp <= 0) {
+              spawnParticles(e.x + e.w/2, e.y + e.h/2, '#e74c3c', 14);
+              score += 100 * level;
+              updateHUD();
+            }
+          }
+        }
+      }
+    }
+
+    // Recoger gemas
+    for (const g of gems) {
+      if (g.collected) continue;
+      const cx = this.x + this.w / 2, cy = this.y + this.h / 2;
+      if (Math.hypot(cx - g.x, cy - g.y) < this.w / 2 + g.r) {
+        g.collected = true;
+        score += 50 * level;
+        spawnParticles(g.x, g.y, COL.gem, 10);
+        updateHUD();
+      }
+    }
+
+    // Daño por enemigos
+    if (this.invincible > 0) { this.invincible--; return; }
+    for (const e of enemies) {
+      if (e.hp <= 0) continue;
+      if (this.x < e.x + e.w && this.x + this.w > e.x &&
+          this.y < e.y + e.h && this.y + this.h > e.y) {
+        this.takeDamage(false);
+        break;
+      }
+    }
+
+    // Puntas
+    for (const h of hazards) {
+      if (this.x < h.x + h.w && this.x + this.w > h.x &&
+          this.y + this.h > h.y - h.h && this.y + this.h < h.y + 10) {
+        this.takeDamage(false);
+        break;
+      }
+    }
+  },
+
+  takeDamage(instant) {
+    if (this.invincible > 0) return;
+    lives--;
+    spawnParticles(this.x + this.w/2, this.y + this.h/2, '#e74c3c', 16);
+    updateHUD();
+    if (lives <= 0) {
+      gameState = 'gameover';
+      showGameOver();
+    } else {
+      this.reset();
+    }
+  },
+
+  draw() {
+    const sx = Math.round(this.x - camera.x);
+    const sy = Math.round(this.y);
+    if (this.invincible > 0 && Math.floor(this.invincible / 6) % 2 === 0) return;
+
+    ctx.save();
+    ctx.translate(sx + this.w / 2, sy + this.h / 2);
+    ctx.scale(this.dir, 1);
+    const ox = -this.w / 2, oy = -this.h / 2;
+
+    // Piernas con animación
+    const legSwing = Math.sin(this.walkFrame) * 8;
+    // Pierna trasera
+    ctx.fillStyle = '#5c3d11';
+    ctx.fillRect(ox + 2, oy + 34, 10, 22 + (this.onGround ? legSwing : 0));
+    // Pierna delantera
+    ctx.fillRect(ox + 18, oy + 34, 10, 22 - (this.onGround ? legSwing : 0));
+
+    // Cuerpo (chaqueta de cuero)
+    ctx.fillStyle = '#7a4a1e';
+    ctx.fillRect(ox + 2, oy + 20, 26, 18);
+    // Cinturón
+    ctx.fillStyle = '#3d2b0a';
+    ctx.fillRect(ox + 2, oy + 34, 26, 4);
+
+    // Cabeza
+    ctx.fillStyle = '#d4956a';
+    ctx.beginPath();
+    ctx.ellipse(ox + 15, oy + 13, 11, 13, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Sombrero fedora
+    ctx.fillStyle = '#3b2507';
+    ctx.fillRect(ox + 3, oy + 3, 24, 6);   // ala
+    ctx.fillRect(ox + 7, oy - 8, 16, 13);  // copa
+    ctx.fillStyle = '#5c3a0a';
+    ctx.fillRect(ox + 7, oy - 2, 16, 4);   // banda
+
+    // Ojo
+    ctx.fillStyle = '#222';
+    ctx.beginPath();
+    ctx.arc(ox + 19, oy + 14, 2, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Brazo extendido
+    ctx.fillStyle = '#7a4a1e';
+    ctx.fillRect(ox + 22, oy + 20, 10, 8);
+
+    ctx.restore();
+
+    // Látigo
+    if (this.whip) {
+      const tipX = this.whip.ox + (this.whip.tx - this.whip.ox) * this.whip.t - camera.x;
+      const tipY = this.whip.oy + (this.whip.ty - this.whip.oy) * this.whip.t;
+      const segments = 14;
+      ctx.beginPath();
+      ctx.strokeStyle = '#5c3010';
+      ctx.lineWidth = 3;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      const startX = this.whip.ox - camera.x + this.dir * 10;
+      const startY = this.whip.oy;
+      for (let i = 0; i <= segments; i++) {
+        const frac = i / segments;
+        const lx = startX + (tipX - startX) * frac;
+        // Curva sinusoidal que se reduce hacia la punta
+        const amplitude = 18 * (1 - frac) * Math.sin(this.whip.t * Math.PI);
+        const ly = startY + (tipY - startY) * frac + amplitude;
+        if (i === 0) ctx.moveTo(lx, ly); else ctx.lineTo(lx, ly);
+      }
+      ctx.stroke();
+      // Punta del látigo
+      ctx.beginPath();
+      ctx.arc(tipX, tipY, 4, 0, Math.PI * 2);
+      ctx.fillStyle = '#8b6914';
+      ctx.fill();
+    }
+  }
+};
+
+// ── Dibujar enemigo (guardia nazi) ──────────────────────────────────────────
+function drawEnemy(e) {
+  if (e.hp <= 0) return;
+  const sx = Math.round(e.x - camera.x);
+  const sy = Math.round(e.y);
+  ctx.save();
+  ctx.translate(sx + e.w / 2, sy + e.h / 2);
+  ctx.scale(e.dir, 1);
+  const ox = -e.w / 2, oy = -e.h / 2;
+
+  if (e.stunTimer > 0) {
+    ctx.globalAlpha = 0.7;
+    ctx.filter = 'hue-rotate(60deg)';
+  }
+
+  // Piernas
+  ctx.fillStyle = '#333';
+  ctx.fillRect(ox + 2,  oy + 24, 10, 16);
+  ctx.fillRect(ox + 18, oy + 24, 10, 16);
+  // Cuerpo (uniforme gris)
+  ctx.fillStyle = '#4a4a4a';
+  ctx.fillRect(ox + 2, oy + 10, 28, 16);
+  // Cabeza
+  ctx.fillStyle = '#c88b6a';
+  ctx.beginPath();
+  ctx.ellipse(ox + 16, oy + 5, 10, 11, 0, 0, Math.PI * 2);
+  ctx.fill();
+  // Casco
+  ctx.fillStyle = '#2a2a2a';
+  ctx.beginPath();
+  ctx.ellipse(ox + 16, oy + 0, 11, 8, 0, Math.PI, Math.PI * 2);
+  ctx.fill();
+  ctx.fillRect(ox + 5, oy - 2, 22, 5);
+
+  // Ojos (rojo si está stunned)
+  ctx.fillStyle = e.stunTimer > 0 ? '#ff0' : '#222';
+  ctx.beginPath();
+  ctx.arc(ox + 20, oy + 6, 2, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.restore();
+
+  // Barra de vida
+  if (e.maxHp > 1) {
+    const bx = sx, by = e.y - 10;
+    ctx.fillStyle = '#500';
+    ctx.fillRect(bx, by, e.w, 5);
+    ctx.fillStyle = '#e74c3c';
+    ctx.fillRect(bx, by, e.w * (e.hp / e.maxHp), 5);
+  }
+}
+
+// ── Gema ─────────────────────────────────────────────────────────────────────
+function drawGem(g) {
+  if (g.collected) return;
+  const sx = g.x - camera.x;
+  const bob = Math.sin(Date.now() / 400) * 3;
+  ctx.save();
+  ctx.translate(sx, g.y + bob);
+  // Diamante
+  ctx.beginPath();
+  ctx.moveTo(0, -g.r);
+  ctx.lineTo(g.r * 0.7, 0);
+  ctx.lineTo(0, g.r);
+  ctx.lineTo(-g.r * 0.7, 0);
+  ctx.closePath();
+  ctx.fillStyle = COL.gem;
+  ctx.fill();
+  ctx.strokeStyle = '#27ae60';
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+  // Brillo
+  ctx.fillStyle = 'rgba(255,255,255,0.5)';
+  ctx.beginPath();
+  ctx.moveTo(-g.r*0.2, -g.r*0.7);
+  ctx.lineTo(g.r*0.3, -g.r*0.1);
+  ctx.lineTo(0, -g.r*0.6);
+  ctx.closePath();
+  ctx.fill();
+  ctx.restore();
+}
+
+// ── Punta (hazard) ───────────────────────────────────────────────────────────
+function drawHazard(h) {
+  const sx = h.x - camera.x;
+  ctx.fillStyle = '#999';
+  ctx.beginPath();
+  ctx.moveTo(sx, h.y);
+  ctx.lineTo(sx + h.w / 2, h.y - h.h);
+  ctx.lineTo(sx + h.w, h.y);
+  ctx.closePath();
+  ctx.fill();
+  ctx.fillStyle = '#ccc';
+  ctx.beginPath();
+  ctx.moveTo(sx + 3, h.y);
+  ctx.lineTo(sx + h.w / 2, h.y - h.h + 4);
+  ctx.lineTo(sx + h.w - 3, h.y);
+  ctx.closePath();
+  ctx.fill();
+}
+
+// ── Ídolo de oro (meta) ───────────────────────────────────────────────────────
+function drawIdol(x) {
+  const sx = x - camera.x;
+  const bob = Math.sin(Date.now() / 500) * 4;
+  ctx.save();
+  ctx.translate(sx, GROUND_Y - 60 + bob);
+  // Pedestal
+  ctx.fillStyle = '#8b6914';
+  ctx.fillRect(-15, 30, 30, 20);
+  ctx.fillRect(-10, 20, 20, 14);
+  // Cuerpo
+  ctx.fillStyle = COL.gold;
+  ctx.beginPath();
+  ctx.ellipse(0, 0, 14, 22, 0, 0, Math.PI * 2);
+  ctx.fill();
+  // Cabeza
+  ctx.beginPath();
+  ctx.arc(0, -22, 12, 0, Math.PI * 2);
+  ctx.fill();
+  // Ojos
+  ctx.fillStyle = '#000';
+  ctx.beginPath(); ctx.arc(-5, -23, 2.5, 0, Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.arc(5, -23, 2.5, 0, Math.PI*2); ctx.fill();
+  // Brillo
+  ctx.fillStyle = 'rgba(255,255,255,0.4)';
+  ctx.beginPath();
+  ctx.ellipse(-4, -8, 4, 8, -0.4, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.restore();
+}
+
+// ── Partículas ───────────────────────────────────────────────────────────────
+function spawnParticles(x, y, color, count) {
+  for (let i = 0; i < count; i++) {
+    const angle = Math.random() * Math.PI * 2;
+    const spd = 1.5 + Math.random() * 4;
+    particles.push({
+      x, y,
+      vx: Math.cos(angle) * spd,
+      vy: Math.sin(angle) * spd - 2,
+      life: 1,
+      decay: 0.03 + Math.random() * 0.04,
+      r: 3 + Math.random() * 4,
+      color,
+    });
+  }
+}
+
+function updateParticles() {
+  particles = particles.filter(p => p.life > 0);
+  for (const p of particles) {
+    p.x += p.vx;
+    p.y += p.vy;
+    p.vy += 0.15;
+    p.life -= p.decay;
+  }
+}
+
+function drawParticles() {
+  for (const p of particles) {
+    ctx.globalAlpha = p.life;
+    ctx.fillStyle = p.color;
+    ctx.beginPath();
+    ctx.arc(p.x - camera.x, p.y, p.r * p.life, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+}
+
+// ── Fondo ────────────────────────────────────────────────────────────────────
+function drawBackground() {
+  // Cielo degradado
+  const sky = ctx.createLinearGradient(0, 0, 0, GROUND_Y);
+  sky.addColorStop(0, '#87CEEB');
+  sky.addColorStop(1, '#d4a656');
+  ctx.fillStyle = sky;
+  ctx.fillRect(0, 0, W, GROUND_Y);
+
+  // Nubes
+  drawClouds();
+
+  // Montañas de fondo (parallax)
+  ctx.fillStyle = '#7a9e6a';
+  const mx = camera.x * 0.2;
+  for (let i = 0; i < 12; i++) {
+    const bx = (i * 220 - mx % 220 + W) % (W + 220) - 60;
+    const bh = 80 + (i % 3) * 50;
+    ctx.beginPath();
+    ctx.moveTo(bx, GROUND_Y);
+    ctx.lineTo(bx + 100, GROUND_Y - bh);
+    ctx.lineTo(bx + 200, GROUND_Y);
+    ctx.closePath();
+    ctx.fill();
+  }
+}
+
+const cloudPositions = Array.from({length:6}, (_,i) => ({ x: i*250+80, y: 30+Math.random()*60, w: 80+Math.random()*60 }));
+function drawClouds() {
+  ctx.fillStyle = 'rgba(255,255,255,0.85)';
+  for (const c of cloudPositions) {
+    const cx = (c.x - camera.x * 0.05) % (W + 200) - 100;
+    ctx.beginPath();
+    ctx.arc(cx, c.y, c.w * 0.4, 0, Math.PI * 2);
+    ctx.arc(cx + c.w * 0.35, c.y - 8, c.w * 0.3, 0, Math.PI * 2);
+    ctx.arc(cx + c.w * 0.7, c.y, c.w * 0.35, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+// ── Plataformas ───────────────────────────────────────────────────────────────
+function drawPlatforms(platforms) {
+  for (const p of platforms) {
+    if (p.type === 'ground' && p.h === 0) continue;
+    const sx = p.x - camera.x;
+    if (sx + p.w < 0 || sx > W) continue;
+
+    if (p.type === 'ground') {
+      // Tierra
+      ctx.fillStyle = COL.groundT;
+      ctx.fillRect(sx, p.y, p.w, 16);
+      ctx.fillStyle = COL.ground;
+      ctx.fillRect(sx, p.y + 16, p.w, p.h - 16);
+      // Textura de hierba
+      for (let gx = sx; gx < sx + p.w; gx += 20) {
+        ctx.fillStyle = '#6aaa2a';
+        ctx.fillRect(gx, p.y, 3, 8);
+        ctx.fillRect(gx + 8, p.y - 4, 3, 10);
+        ctx.fillRect(gx + 16, p.y, 3, 7);
+      }
+    } else {
+      // Plataforma de piedra
+      ctx.fillStyle = COL.stone;
+      ctx.fillRect(sx, p.y, p.w, p.h);
+      ctx.fillStyle = COL.stoneD;
+      ctx.fillRect(sx, p.y, p.w, 4);
+      // Líneas de adorno
+      for (let bx = sx; bx < sx + p.w; bx += 20) {
+        ctx.strokeStyle = '#666';
+        ctx.lineWidth = 0.5;
+        ctx.strokeRect(bx, p.y + 4, 20, p.h - 4);
+      }
+    }
+  }
+}
+
+// ── HUD ───────────────────────────────────────────────────────────────────────
+function updateHUD() {
+  document.getElementById('lives').textContent = lives;
+  document.getElementById('score').textContent = score;
+  document.getElementById('level').textContent = level;
+}
+
+function showGameOver() {
+  const el = document.getElementById('game-over');
+  el.style.display = 'flex';
+  document.getElementById('go-title').textContent = lives <= 0 ? '¡GAME OVER!' : '¡COMPLETADO!';
+  document.getElementById('go-score').textContent = `Puntuación: ${score}`;
+}
+
+function restartGame() {
+  document.getElementById('game-over').style.display = 'none';
+  lives = 3; score = 0; level = 1;
+  particles = [];
+  gameState = 'playing';
+  initLevel(1);
+  updateHUD();
+}
+
+// ── Loop principal ────────────────────────────────────────────────────────────
+let levelData;
+
+function initLevel(lvl) {
+  level = lvl;
+  levelData = buildLevel(lvl);
+  indy.reset();
+  camera.x = 0;
+  updateHUD();
+}
+
+function update() {
+  if (gameState !== 'playing') return;
+
+  const { platforms, gems, enemies, hazards, endX, worldWidth } = levelData;
+
+  indy.update(platforms, enemies, gems, hazards);
+
+  // Cámara suave
+  const targetCamX = indy.x - W * 0.35;
+  camera.x += (targetCamX - camera.x) * 0.12;
+  camera.x = Math.max(0, Math.min(camera.x, worldWidth - W));
+
+  // Actualizar enemigos
+  for (const e of enemies) {
+    if (e.hp <= 0) continue;
+    if (e.stunTimer > 0) {
+      e.stunTimer--;
+      e.x += e.vx * 0.5;
+    } else {
+      e.x += e.vx;
+      e.walkFrame = (e.walkFrame || 0) + 0.15;
+    }
+    // Rebotar en bordes del mundo
+    if (e.x < 0) { e.x = 0; e.vx *= -1; e.dir = 1; }
+    if (e.x + e.w > worldWidth) { e.x = worldWidth - e.w; e.vx *= -1; e.dir = -1; }
+    e.dir = e.vx > 0 ? 1 : -1;
+    // Gravedad del enemigo (siempre en suelo)
+    e.y = GROUND_Y - e.h;
+  }
+
+  updateParticles();
+
+  // Llegada al ídolo
+  if (Math.abs(indy.x + indy.w/2 - endX) < 40 && indy.y + indy.h >= GROUND_Y - 5) {
+    score += 500 * level;
+    spawnParticles(endX, GROUND_Y - 60, COL.gold, 30);
+    setTimeout(() => {
+      level++;
+      initLevel(level);
+    }, 800);
+  }
+}
+
+function draw() {
+  ctx.clearRect(0, 0, W, H);
+  drawBackground();
+  drawPlatforms(levelData.platforms);
+
+  for (const h of levelData.hazards) drawHazard(h);
+  for (const g of levelData.gems) drawGem(g);
+  drawIdol(levelData.endX);
+  for (const e of levelData.enemies) drawEnemy(e);
+
+  indy.draw();
+  drawParticles();
+
+  // Cursor de puntería
+  ctx.strokeStyle = 'rgba(255,200,0,0.7)';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.arc(mouse.x, mouse.y, 10, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(mouse.x - 15, mouse.y);
+  ctx.lineTo(mouse.x + 15, mouse.y);
+  ctx.moveTo(mouse.x, mouse.y - 15);
+  ctx.lineTo(mouse.x, mouse.y + 15);
+  ctx.stroke();
+
+  // Indicador de dirección del látigo (línea sutil al cursor)
+  if (!indy.whip) {
+    const ix = indy.x + indy.w/2 - camera.x;
+    const iy = indy.y + indy.h * 0.3;
+    ctx.setLineDash([4, 8]);
+    ctx.strokeStyle = 'rgba(180,120,60,0.3)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(ix, iy);
+    ctx.lineTo(mouse.x, mouse.y);
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+}
+
+function gameLoop() {
+  update();
+  draw();
+  requestAnimationFrame(gameLoop);
+}
+
+initLevel(1);
+gameLoop();
+</script>
+</body>
+</html>
