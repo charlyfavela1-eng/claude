@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Indiana Jones 3D</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#000; overflow:hidden; font-family:Georgia,serif; }
+#c { display:block; width:100vw; height:100vh; cursor:crosshair; }
+#hud {
+  position:fixed; top:16px; left:50%; transform:translateX(-50%);
+  display:flex; gap:32px; color:#d4a017; font-size:1.2rem;
+  text-shadow:1px 1px 4px #000; pointer-events:none;
+  background:rgba(0,0,0,0.4); padding:8px 24px; border-radius:8px;
+  border:1px solid #8b6914;
+}
+#tips {
+  position:fixed; bottom:16px; left:50%; transform:translateX(-50%);
+  color:#a07830; font-size:0.85rem; text-align:center;
+  text-shadow:1px 1px 3px #000; pointer-events:none;
+}
+#overlay {
+  display:none; position:fixed; inset:0;
+  background:rgba(0,0,0,0.8); align-items:center; justify-content:center;
+  flex-direction:column; gap:20px; color:#d4a017;
+}
+#overlay.show { display:flex; }
+#overlay h2 { font-size:3rem; text-shadow:0 0 20px #d4a017; }
+#overlay p  { font-size:1.3rem; }
+#overlay button {
+  background:#8b6914; color:#fff8e7; border:none;
+  padding:12px 36px; font-size:1.1rem; border-radius:6px;
+  cursor:pointer; font-family:Georgia,serif;
+}
+#overlay button:hover { background:#d4a017; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="hud">
+  <span>❤️ <span id="hp">3</span></span>
+  <span>💎 <span id="sc">0</span></span>
+  <span>🌊 Nivel <span id="lv">1</span></span>
+</div>
+<div id="tips">⬅➡ Mover &nbsp;|&nbsp; ⬆ / Espacio: Saltar &nbsp;|&nbsp; 🖱️ Clic: Látigo</div>
+<div id="overlay" class="show">
+  <h2>⚔ INDIANA JONES 3D ⚔</h2>
+  <p>Recupera el ídolo de oro</p>
+  <button onclick="startGame()">¡JUGAR!</button>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+// ─── Setup ───────────────────────────────────────────────────────────────────
+const canvas = document.getElementById('c');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+renderer.setPixelRatio(devicePixelRatio);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x87CEEB);
+scene.fog = new THREE.Fog(0x87CEEB, 30, 120);
+
+const camera = new THREE.PerspectiveCamera(60, 1, 0.1, 200);
+camera.position.set(0, 8, 18);
+camera.lookAt(0, 3, 0);
+
+function resize() {
+  const w = window.innerWidth, h = window.innerHeight;
+  renderer.setSize(w, h);
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
+}
+window.addEventListener('resize', resize);
+resize();
+
+// ─── Lights ──────────────────────────────────────────────────────────────────
+const ambient = new THREE.AmbientLight(0xfff5e0, 0.6);
+scene.add(ambient);
+
+const sun = new THREE.DirectionalLight(0xffd580, 1.2);
+sun.position.set(20, 40, 10);
+sun.castShadow = true;
+sun.shadow.mapSize.set(2048, 2048);
+sun.shadow.camera.near = 1;
+sun.shadow.camera.far = 200;
+sun.shadow.camera.left = -60;
+sun.shadow.camera.right = 60;
+sun.shadow.camera.top = 40;
+sun.shadow.camera.bottom = -10;
+scene.add(sun);
+
+// ─── Materials ───────────────────────────────────────────────────────────────
+const MAT = {
+  ground:    new THREE.MeshLambertMaterial({ color: 0x7a5c2e }),
+  grass:     new THREE.MeshLambertMaterial({ color: 0x4a8c20 }),
+  stone:     new THREE.MeshLambertMaterial({ color: 0x888888 }),
+  stoneDark: new THREE.MeshLambertMaterial({ color: 0x555555 }),
+  jacket:    new THREE.MeshLambertMaterial({ color: 0x7a4a1e }),
+  hat:       new THREE.MeshLambertMaterial({ color: 0x3b2507 }),
+  skin:      new THREE.MeshLambertMaterial({ color: 0xd4956a }),
+  pants:     new THREE.MeshLambertMaterial({ color: 0x5c3d11 }),
+  enemyBody: new THREE.MeshLambertMaterial({ color: 0x4a4a4a }),
+  enemyHead: new THREE.MeshLambertMaterial({ color: 0xc88b6a }),
+  enemyHelm: new THREE.MeshLambertMaterial({ color: 0x2a2a2a }),
+  gem:       new THREE.MeshLambertMaterial({ color: 0x2ecc71, emissive: 0x0a4420 }),
+  gold:      new THREE.MeshLambertMaterial({ color: 0xf1c40f, emissive: 0x4a3a00 }),
+  whip:      new THREE.MeshLambertMaterial({ color: 0x5c3010 }),
+  spike:     new THREE.MeshLambertMaterial({ color: 0xaaaaaa }),
+  belt:      new THREE.MeshLambertMaterial({ color: 0x3d2b0a }),
+};
+
+// ─── Helpers ─────────────────────────────────────────────────────────────────
+function box(w, h, d, mat, castShadow=true, receiveShadow=true) {
+  const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat);
+  m.castShadow = castShadow;
+  m.receiveShadow = receiveShadow;
+  return m;
+}
+function cyl(rt, rb, h, seg, mat) {
+  const m = new THREE.Mesh(new THREE.CylinderGeometry(rt, rb, h, seg), mat);
+  m.castShadow = true;
+  return m;
+}
+function sphere(r, mat) {
+  const m = new THREE.Mesh(new THREE.SphereGeometry(r, 12, 10), mat);
+  m.castShadow = true;
+  return m;
+}
+
+// ─── Build Indiana Jones ──────────────────────────────────────────────────────
+function buildIndy() {
+  const root = new THREE.Group();
+
+  const torso = box(0.9, 1.0, 0.5, MAT.jacket);
+  torso.position.y = 0.5;
+  root.add(torso);
+
+  const belt = box(0.92, 0.18, 0.52, MAT.belt);
+  belt.position.y = 0.0;
+  root.add(belt);
+
+  // Legs
+  const legL = box(0.35, 0.9, 0.4, MAT.pants);
+  legL.position.set(-0.22, -0.45, 0);
+  root.add(legL);
+  const legR = box(0.35, 0.9, 0.4, MAT.pants);
+  legR.position.set(0.22, -0.45, 0);
+  root.add(legR);
+
+  // Arms
+  const armL = box(0.28, 0.8, 0.28, MAT.jacket);
+  armL.position.set(-0.6, 0.3, 0);
+  root.add(armL);
+  const armR = box(0.28, 0.8, 0.28, MAT.jacket);
+  armR.position.set(0.6, 0.3, 0);
+  root.add(armR);
+
+  // Head
+  const head = sphere(0.38, MAT.skin);
+  head.position.y = 1.3;
+  root.add(head);
+
+  // Hat brim + crown
+  const brim = cyl(0.55, 0.55, 0.06, 16, MAT.hat);
+  brim.position.y = 1.55;
+  root.add(brim);
+  const crown = cyl(0.32, 0.36, 0.5, 16, MAT.hat);
+  crown.position.y = 1.82;
+  root.add(crown);
+  const band = cyl(0.335, 0.365, 0.12, 16, MAT.belt);
+  band.position.y = 1.58;
+  root.add(band);
+
+  // Whip hand anchor
+  const whipAnchor = new THREE.Object3D();
+  whipAnchor.position.set(0.65, 0.6, 0);
+  root.add(whipAnchor);
+
+  root._legL = legL;
+  root._legR = legR;
+  root._armL = armL;
+  root._armR = armR;
+  root._whipAnchor = whipAnchor;
+  root._walkPhase = 0;
+
+  return root;
+}
+
+// ─── Build Enemy ──────────────────────────────────────────────────────────────
+function buildEnemy() {
+  const root = new THREE.Group();
+
+  const torso = box(0.85, 0.9, 0.5, MAT.enemyBody);
+  torso.position.y = 0.45;
+  root.add(torso);
+
+  const legL = box(0.32, 0.85, 0.38, MAT.enemyBody);
+  legL.position.set(-0.2, -0.43, 0);
+  root.add(legL);
+  const legR = box(0.32, 0.85, 0.38, MAT.enemyBody);
+  legR.position.set(0.2, -0.43, 0);
+  root.add(legR);
+
+  const armL = box(0.26, 0.75, 0.26, MAT.enemyBody);
+  armL.position.set(-0.55, 0.25, 0);
+  root.add(armL);
+  const armR = box(0.26, 0.75, 0.26, MAT.enemyBody);
+  armR.position.set(0.55, 0.25, 0);
+  root.add(armR);
+
+  const head = sphere(0.35, MAT.enemyHead);
+  head.position.y = 1.25;
+  root.add(head);
+
+  const helm = cyl(0.38, 0.36, 0.32, 16, MAT.enemyHelm);
+  helm.position.y = 1.42;
+  root.add(helm);
+  const brim = cyl(0.44, 0.44, 0.05, 16, MAT.enemyHelm);
+  brim.position.y = 1.28;
+  root.add(brim);
+
+  root._legL = legL;
+  root._legR = legR;
+  root._walkPhase = 0;
+  return root;
+}
+
+// ─── Build Gem ────────────────────────────────────────────────────────────────
+function buildGem() {
+  const g = new THREE.Mesh(
+    new THREE.OctahedronGeometry(0.35, 0),
+    MAT.gem.clone()
+  );
+  g.castShadow = true;
+  // Point light glow
+  const light = new THREE.PointLight(0x2ecc71, 0.8, 3);
+  g.add(light);
+  return g;
+}
+
+// ─── Build Idol ───────────────────────────────────────────────────────────────
+function buildIdol() {
+  const root = new THREE.Group();
+
+  const pedestal = box(0.8, 0.5, 0.8, MAT.stoneDark);
+  pedestal.position.y = 0.25;
+  root.add(pedestal);
+
+  const body = cyl(0.3, 0.4, 1.0, 8, MAT.gold);
+  body.position.y = 1.0;
+  root.add(body);
+
+  const head = sphere(0.32, MAT.gold);
+  head.position.y = 1.7;
+  root.add(head);
+
+  const light = new THREE.PointLight(0xf1c40f, 1.5, 5);
+  light.position.y = 1;
+  root.add(light);
+
+  return root;
+}
+
+// ─── Whip ─────────────────────────────────────────────────────────────────────
+class Whip {
+  constructor(startPos, targetPos) {
+    this.start = startPos.clone();
+    this.target = targetPos.clone();
+    this.t = 0;
+    this.state = 'extend'; // extend | hold | retract
+    this.holdTimer = 0;
+    this.line = null;
+    this.hitSet = new Set();
+    this._buildLine();
+  }
+
+  _buildLine() {
+    if (this.line) { scene.remove(this.line); this.line.geometry.dispose(); }
+    const pts = this._getPoints();
+    const geo = new THREE.BufferGeometry().setFromPoints(pts);
+    const mat = new THREE.LineBasicMaterial({ color: 0x5c3010, linewidth: 3 });
+    this.line = new THREE.Line(geo, mat);
+    scene.add(this.line);
+
+    // Tip sphere
+    if (this.tip) scene.remove(this.tip);
+    this.tip = new THREE.Mesh(
+      new THREE.SphereGeometry(0.07, 8, 6),
+      new THREE.MeshLambertMaterial({ color: 0x8b6914 })
+    );
+    scene.add(this.tip);
+  }
+
+  _getPoints() {
+    const pts = [];
+    const segs = 20;
+    for (let i = 0; i <= segs; i++) {
+      const f = i / segs;
+      const clamped = Math.min(f, this.t);
+      const x = this.start.x + (this.target.x - this.start.x) * clamped;
+      const y = this.start.y + (this.target.y - this.start.y) * clamped;
+      const z = this.start.z + (this.target.z - this.start.z) * clamped;
+      const sag = Math.sin(clamped * Math.PI) * 1.2 * (1 - this.t);
+      const wave = Math.sin(f * Math.PI * 2) * 0.3 * (1 - clamped) * Math.sin(this.t * Math.PI);
+      pts.push(new THREE.Vector3(x, y - sag + wave, z));
+    }
+    return pts;
+  }
+
+  getTipPosition() {
+    const f = Math.min(this.t, 1);
+    return new THREE.Vector3(
+      this.start.x + (this.target.x - this.start.x) * f,
+      this.start.y + (this.target.y - this.start.y) * f,
+      this.start.z
+    );
+  }
+
+  update(newStart) {
+    this.start.copy(newStart);
+
+    if (this.state === 'extend') {
+      this.t += 0.07;
+      if (this.t >= 1) { this.t = 1; this.state = 'hold'; this.holdTimer = 8; }
+    } else if (this.state === 'hold') {
+      this.holdTimer--;
+      if (this.holdTimer <= 0) this.state = 'retract';
+    } else {
+      this.t -= 0.09;
+      if (this.t <= 0) { this.t = 0; this.destroy(); return false; }
+    }
+
+    // Rebuild geometry
+    const pts = this._getPoints();
+    this.line.geometry.setFromPoints(pts);
+
+    const tip = this.getTipPosition();
+    this.tip.position.copy(tip);
+    return true;
+  }
+
+  destroy() {
+    if (this.line) { scene.remove(this.line); this.line.geometry.dispose(); }
+    if (this.tip) scene.remove(this.tip);
+  }
+}
+
+// ─── Game state ───────────────────────────────────────────────────────────────
+let keys = {};
+let mouse2d = { x: 0, y: 0 };
+let gameRunning = false;
+let score = 0;
+let lives = 3;
+let levelNum = 1;
+
+let indyMesh, whip, platforms, gems, enemies, hazards, idolMesh, idolX;
+let indyState = { x:0, y:0, vy:0, onGround:false, dir:1, invincible:0 };
+let worldWidth = 100;
+let particles3d = [];
+
+const GROUND_Y = 0;
+const GRAVITY = 0.025;
+const JUMP_FORCE = 0.55;
+const MOVE_SPEED = 0.12;
+const CHAR_HEIGHT = 1.8;
+
+// ─── Level builder ────────────────────────────────────────────────────────────
+function clearScene() {
+  // Remove all dynamic objects
+  for (const o of (platforms||[])) scene.remove(o.mesh);
+  for (const g of (gems||[])) scene.remove(g.mesh);
+  for (const e of (enemies||[])) scene.remove(e.mesh);
+  for (const h of (hazards||[])) scene.remove(h.mesh);
+  if (idolMesh) scene.remove(idolMesh);
+  if (whip) { whip.destroy(); whip = null; }
+  for (const p of particles3d) scene.remove(p.mesh);
+  particles3d = [];
+}
+
+function buildLevel(lvl) {
+  clearScene();
+  platforms = [];
+  gems = [];
+  enemies = [];
+  hazards = [];
+
+  // Ground (long strip)
+  const gw = 200 + lvl * 20;
+  worldWidth = gw;
+  const groundMesh = box(gw, 2, 6, MAT.ground, false, true);
+  groundMesh.position.set(gw / 2, -1, 0);
+  scene.add(groundMesh);
+  platforms.push({ x: 0, y: 0, w: gw, mesh: groundMesh, isGround: true });
+
+  // Grass top
+  const grassMesh = box(gw, 0.3, 6, MAT.grass, false, false);
+  grassMesh.position.set(gw / 2, 0.15, 0);
+  scene.add(grassMesh);
+
+  // Platforms
+  let px = 8;
+  const count = 10 + lvl * 3;
+  for (let i = 0; i < count; i++) {
+    px += 5 + Math.random() * 8;
+    const pw = 3 + Math.random() * 4;
+    const ph = 3 + Math.random() * 5;
+    const pm = box(pw, 0.5, 4, MAT.stone);
+    pm.position.set(px + pw/2, ph, 0);
+    scene.add(pm);
+    platforms.push({ x: px, y: ph + 0.25, w: pw, mesh: pm, isGround: false });
+
+    if (Math.random() > 0.35) {
+      const gm = buildGem();
+      gm.position.set(px + pw/2, ph + 1.0, 0);
+      scene.add(gm);
+      gems.push({ x: px + pw/2, y: ph + 1.0, mesh: gm, collected: false });
+    }
+
+    // Spikes on ground nearby
+    if (Math.random() > 0.55) {
+      const sx = px + 1 + Math.random() * 3;
+      const sm = cyl(0, 0.12, 0.9, 6, MAT.spike);
+      sm.position.set(sx, 0.45, 0);
+      scene.add(sm);
+      hazards.push({ x: sx, y: 0, mesh: sm });
+    }
+  }
+  px += 10;
+
+  // Enemies
+  const ec = 3 + lvl * 2;
+  for (let i = 0; i < ec; i++) {
+    const em = buildEnemy();
+    const ex = 12 + Math.random() * (px - 15);
+    em.position.set(ex, CHAR_HEIGHT * 0.5, 0);
+    scene.add(em);
+    enemies.push({
+      mesh: em, x: ex, y: 0,
+      vx: (Math.random()>0.5?1:-1) * (0.04 + lvl*0.015),
+      hp: 1+Math.floor(lvl/2), maxHp: 1+Math.floor(lvl/2),
+      stun: 0, dir: 1
+    });
+  }
+
+  // Idol
+  idolX = px + 6;
+  idolMesh = buildIdol();
+  idolMesh.position.set(idolX, 0, 0);
+  scene.add(idolMesh);
+
+  // Indy
+  indyState.x = 2;
+  indyState.y = 0;
+  indyState.vy = 0;
+  indyState.onGround = true;
+  indyState.dir = 1;
+  indyState.invincible = 60;
+  if (!indyMesh) {
+    indyMesh = buildIndy();
+    scene.add(indyMesh);
+  }
+  indyMesh.position.set(2, CHAR_HEIGHT * 0.5, 0);
+}
+
+// ─── Particles ────────────────────────────────────────────────────────────────
+function spawnParticles3d(pos, color, count) {
+  for (let i = 0; i < count; i++) {
+    const m = new THREE.Mesh(
+      new THREE.SphereGeometry(0.1 + Math.random()*0.12, 5, 4),
+      new THREE.MeshBasicMaterial({ color })
+    );
+    m.position.copy(pos);
+    const vel = new THREE.Vector3(
+      (Math.random()-0.5)*0.3, 0.1+Math.random()*0.25, (Math.random()-0.5)*0.2
+    );
+    scene.add(m);
+    particles3d.push({ mesh: m, vel, life: 1.0 });
+  }
+}
+
+// ─── Raycasting for whip target ───────────────────────────────────────────────
+const raycaster = new THREE.Raycaster();
+function getWhipTarget() {
+  const ndc = new THREE.Vector2(
+    (mouse2d.x / window.innerWidth) * 2 - 1,
+    -(mouse2d.y / window.innerHeight) * 2 + 1
+  );
+  raycaster.setFromCamera(ndc, camera);
+  // Intersect with a plane at z=0
+  const plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
+  const hit = new THREE.Vector3();
+  raycaster.ray.intersectPlane(plane, hit);
+  return hit;
+}
+
+// ─── Update ───────────────────────────────────────────────────────────────────
+const camTarget = new THREE.Vector3();
+const WHIP_RANGE = 9;
+
+function updateIndy() {
+  const s = indyState;
+
+  // Movement
+  let moving = false;
+  if (keys['ArrowLeft'])  { s.x -= MOVE_SPEED; s.dir = -1; moving = true; }
+  if (keys['ArrowRight']) { s.x += MOVE_SPEED; s.dir =  1; moving = true; }
+  if ((keys['ArrowUp'] || keys['Space']) && s.onGround) {
+    s.vy = JUMP_FORCE;
+    s.onGround = false;
+  }
+
+  s.vy -= GRAVITY;
+  s.y += s.vy;
+
+  // Platform collision
+  s.onGround = false;
+  for (const p of platforms) {
+    if (s.x + 0.4 > p.x && s.x - 0.4 < p.x + p.w) {
+      const feet = s.y;
+      const prevFeet = feet - s.vy;
+      if (prevFeet >= p.y - 0.05 && feet <= p.y + 0.05 && s.vy <= 0) {
+        s.y = p.y;
+        s.vy = 0;
+        s.onGround = true;
+      }
+    }
+  }
+
+  // Fall off world
+  if (s.y < -8) {
+    loseLife();
+    return;
+  }
+
+  if (s.x < 0) s.x = 0;
+
+  // Animate limbs
+  if (moving && s.onGround) indyMesh._walkPhase += 0.15;
+  const lSwing = Math.sin(indyMesh._walkPhase) * 0.4;
+  indyMesh._legL.rotation.x = lSwing;
+  indyMesh._legR.rotation.x = -lSwing;
+  indyMesh._armL.rotation.x = -lSwing * 0.6;
+  indyMesh._armR.rotation.x = lSwing * 0.6;
+
+  // Position mesh
+  indyMesh.position.set(s.x, s.y + CHAR_HEIGHT * 0.5, 0);
+  indyMesh.rotation.y = s.dir === 1 ? 0 : Math.PI;
+
+  // Invincibility
+  if (s.invincible > 0) {
+    s.invincible--;
+    indyMesh.visible = Math.floor(s.invincible / 6) % 2 === 0;
+  } else {
+    indyMesh.visible = true;
+  }
+
+  // Whip update
+  if (whip) {
+    const anchor = new THREE.Vector3();
+    indyMesh._whipAnchor.getWorldPosition(anchor);
+    const alive = whip.update(anchor);
+    if (!alive) { whip = null; }
+    else {
+      // Check hits
+      const tip = whip.getTipPosition();
+      for (const e of enemies) {
+        if (whip.hitSet.has(e) || e.hp <= 0) continue;
+        if (Math.abs(tip.x - e.x) < 0.8 && Math.abs(tip.y - (e.y + CHAR_HEIGHT*0.5)) < 1.2) {
+          e.hp--;
+          e.stun = 40;
+          e.vx = s.dir * 0.15;
+          whip.hitSet.add(e);
+          spawnParticles3d(new THREE.Vector3(e.x, e.y+1, 0), 0xf39c12, 8);
+          if (e.hp <= 0) {
+            spawnParticles3d(new THREE.Vector3(e.x, e.y+1, 0), 0xe74c3c, 14);
+            score += 100 * levelNum;
+            updateHUD();
+          }
+        }
+      }
+    }
+  }
+
+  // Collect gems
+  for (const g of gems) {
+    if (g.collected) continue;
+    if (Math.abs(s.x - g.x) < 0.8 && Math.abs(s.y - g.y + CHAR_HEIGHT*0.5) < 1.2) {
+      g.collected = true;
+      scene.remove(g.mesh);
+      score += 50 * levelNum;
+      spawnParticles3d(new THREE.Vector3(g.x, g.y, 0), 0x2ecc71, 10);
+      updateHUD();
+    }
+  }
+
+  // Hazard spikes
+  if (s.invincible === 0) {
+    for (const h of hazards) {
+      if (Math.abs(s.x - h.x) < 0.4 && s.y < 0.9 && s.y > -0.2) {
+        loseLife(); return;
+      }
+    }
+    // Enemy contact
+    for (const e of enemies) {
+      if (e.hp <= 0) continue;
+      if (Math.abs(s.x - e.x) < 0.9 && Math.abs(s.y - e.y) < 1.4) {
+        loseLife(); return;
+      }
+    }
+  }
+
+  // Reach idol
+  if (Math.abs(s.x - idolX) < 1.5 && s.y < 0.5) {
+    score += 500 * levelNum;
+    spawnParticles3d(new THREE.Vector3(idolX, 1, 0), 0xf1c40f, 30);
+    updateHUD();
+    setTimeout(() => {
+      levelNum++;
+      buildLevel(levelNum);
+      updateHUD();
+    }, 900);
+  }
+}
+
+function updateEnemies() {
+  for (const e of enemies) {
+    if (e.hp <= 0) {
+      e.mesh.visible = false;
+      continue;
+    }
+    if (e.stun > 0) {
+      e.stun--;
+      e.x += e.vx * 0.3;
+    } else {
+      e.x += e.vx;
+    }
+    if (e.x < 1) { e.x = 1; e.vx = Math.abs(e.vx); }
+    if (e.x > worldWidth - 1) { e.x = worldWidth - 1; e.vx = -Math.abs(e.vx); }
+    e.dir = e.vx > 0 ? 1 : -1;
+
+    e.mesh._walkPhase = (e.mesh._walkPhase || 0) + (e.stun > 0 ? 0.05 : 0.12);
+    const sw = Math.sin(e.mesh._walkPhase) * 0.35;
+    e.mesh._legL.rotation.x = sw;
+    e.mesh._legR.rotation.x = -sw;
+
+    e.mesh.position.set(e.x, e.y + CHAR_HEIGHT * 0.5, 0);
+    e.mesh.rotation.y = e.dir === 1 ? 0 : Math.PI;
+
+    if (e.stun > 0) {
+      e.mesh.children.forEach(c => {
+        if (c.material) c.material.emissive = new THREE.Color(0.3, 0.1, 0);
+      });
+    } else {
+      e.mesh.children.forEach(c => {
+        if (c.material && c.material.emissive) c.material.emissive.set(0, 0, 0);
+      });
+    }
+  }
+}
+
+function updateParticles() {
+  particles3d = particles3d.filter(p => p.life > 0);
+  for (const p of particles3d) {
+    p.mesh.position.add(p.vel);
+    p.vel.y -= 0.012;
+    p.life -= 0.035;
+    p.mesh.material.opacity = p.life;
+    p.mesh.material.transparent = true;
+    if (p.life <= 0) scene.remove(p.mesh);
+  }
+}
+
+function updateCamera() {
+  const tx = indyState.x + 4;
+  const ty = indyState.y + 7;
+  camTarget.set(tx, ty, 18);
+  camera.position.lerp(camTarget, 0.08);
+  camera.lookAt(indyState.x, indyState.y + 2, 0);
+
+  // Move sun with camera
+  sun.position.x = indyState.x + 20;
+  sun.target.position.x = indyState.x;
+  sun.target.updateMatrixWorld();
+}
+
+function updateIdol() {
+  if (idolMesh) idolMesh.rotation.y += 0.015;
+}
+
+// ─── Control ─────────────────────────────────────────────────────────────────
+window.addEventListener('keydown', e => { keys[e.code] = true; e.preventDefault(); });
+window.addEventListener('keyup',   e => { keys[e.code] = false; });
+canvas.addEventListener('mousemove', e => { mouse2d.x = e.clientX; mouse2d.y = e.clientY; });
+canvas.addEventListener('click', () => {
+  if (!gameRunning) return;
+  if (whip) return;
+  const anchor = new THREE.Vector3();
+  indyMesh._whipAnchor.getWorldPosition(anchor);
+  const target = getWhipTarget();
+  if (!target) return;
+  // Clamp range
+  const dir = target.clone().sub(anchor);
+  if (dir.length() > WHIP_RANGE) dir.setLength(WHIP_RANGE);
+  const finalTarget = anchor.clone().add(dir);
+  whip = new Whip(anchor, finalTarget);
+  if (target.x < indyState.x) indyState.dir = -1;
+  else indyState.dir = 1;
+});
+
+// ─── HUD ─────────────────────────────────────────────────────────────────────
+function updateHUD() {
+  document.getElementById('hp').textContent = lives;
+  document.getElementById('sc').textContent = score;
+  document.getElementById('lv').textContent = levelNum;
+}
+
+function loseLife() {
+  lives--;
+  spawnParticles3d(new THREE.Vector3(indyState.x, indyState.y+1, 0), 0xe74c3c, 16);
+  updateHUD();
+  if (lives <= 0) {
+    gameRunning = false;
+    document.getElementById('go-title').textContent = '¡GAME OVER!';
+    document.getElementById('go-score').textContent = 'Puntuación: ' + score;
+    document.getElementById('overlay').classList.add('show');
+    document.getElementById('overlay').querySelector('button').textContent = 'Reiniciar';
+  } else {
+    indyState.x = 2;
+    indyState.y = 3;
+    indyState.vy = 0;
+    indyState.invincible = 90;
+    if (whip) { whip.destroy(); whip = null; }
+  }
+}
+
+// ─── Background sky ──────────────────────────────────────────────────────────
+function buildSkybox() {
+  // Gradient sky via large sphere
+  const sky = new THREE.Mesh(
+    new THREE.SphereGeometry(180, 16, 8),
+    new THREE.MeshBasicMaterial({ color: 0x87CEEB, side: THREE.BackSide })
+  );
+  scene.add(sky);
+
+  // Clouds (flat boxes)
+  for (let i = 0; i < 18; i++) {
+    const cg = box(4+Math.random()*5, 0.6, 1.5,
+      new THREE.MeshBasicMaterial({ color: 0xffffff, transparent:true, opacity:0.85 }), false, false);
+    cg.position.set(Math.random()*200-10, 18+Math.random()*12, -20-Math.random()*30);
+    scene.add(cg);
+  }
+}
+
+// ─── Start / loop ─────────────────────────────────────────────────────────────
+function startGame() {
+  document.getElementById('overlay').classList.remove('show');
+  lives = 3; score = 0; levelNum = 1;
+  gameRunning = true;
+  buildLevel(1);
+  updateHUD();
+}
+
+// Add overlay elements for game over
+const overlay = document.getElementById('overlay');
+overlay.innerHTML = `
+  <h2 id="go-title">⚔ INDIANA JONES 3D ⚔</h2>
+  <p id="go-score">Recupera el ídolo de oro</p>
+  <button onclick="startGame()">¡JUGAR!</button>
+`;
+
+buildSkybox();
+
+let lastTime = 0;
+function loop(time) {
+  requestAnimationFrame(loop);
+  const dt = time - lastTime;
+  lastTime = time;
+  if (dt > 200) return; // skip big gaps
+
+  if (gameRunning) {
+    updateIndy();
+    updateEnemies();
+    updateParticles();
+    updateIdol();
+    updateCamera();
+  }
+
+  renderer.render(scene, camera);
+}
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>
