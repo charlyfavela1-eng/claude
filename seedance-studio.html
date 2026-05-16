@@ -293,12 +293,6 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);height:100vh
 <!-- FILE INPUT -->
 <input type="file" id="file-inp" accept="image/*" style="display:none" onchange="onFileChange(event)">
 
-<!-- CORS BANNER (shown in topbar when file://) -->
-<div class="cors-banner" id="cors-banner">
-  <strong>⚠ CORS bloqueado</strong> — Estás abriendo este archivo desde <code>file://</code>. El navegador bloquea las peticiones a APIs externas.<br>
-  Solución rápida: abre una terminal en la carpeta del archivo y ejecuta <code>python3 -m http.server 8080</code>, luego abre <code>http://localhost:8080/seedance-studio.html</code>
-</div>
-
 <!-- SETTINGS MODAL -->
 <div class="overlay hidden" id="settings-overlay">
   <div class="modal" style="width:430px">
@@ -328,14 +322,6 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);height:100vh
         <option value="seedance-2-0-fast-260128">Seedance 2.0 Fast</option>
         <option value="seedance-1-5-pro">Seedance 1.5 Pro</option>
       </select>
-    </div>
-    <div class="field" id="s-proxy-wrap">
-      <label>Proxy CORS (opcional)</label>
-      <input type="text" id="s-proxy" placeholder="http://localhost:8010/proxy — deja vacío si no necesitas">
-      <div style="font-size:10px;color:var(--text3);margin-top:3px">
-        Si ves "Failed to fetch", levanta un proxy local:<br>
-        <code style="font-family:var(--mono);background:var(--surface);padding:2px 5px;border-radius:4px">npx local-cors-proxy --proxyUrl https://api.byteplus.com</code>
-      </div>
     </div>
     <div id="s-key-status"></div>
     <div id="verify-result" class="verify-result"></div>
@@ -439,27 +425,44 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);height:100vh
 <script>
 // ──── STATE ────
 let S = {
-  boards:[],
-  cur:null,
-  cfg:{ provider:'byteplus',key:'',url:'',model:'seedance-2-0-260128',proxy:'' },
-  gen:{ dur:'8',res:'1080p',aspect:'16:9',cam:'' },
+  boards:[], cur:null,
+  serverCfg:{ hasKey:false, keyHint:'', provider:'byteplus', model:'seedance-2-0-260128' },
+  gen:{ dur:'8', res:'1080p', aspect:'16:9', cam:'' },
   img:null, imgB64:null
 };
 
 // ──── INIT ────
-(function(){
+(async function(){
   try{ const s=localStorage.getItem('sds2'); if(s) Object.assign(S,JSON.parse(s)); }catch(e){}
   if(!S.boards||!S.boards.length){
     S.boards=[{id:'b1',name:'Mi proyecto',type:'VIDEO',groups:[],createdAt:new Date().toISOString()}];
     S.cur='b1';
   }
   if(!S.cur) S.cur=S.boards[0].id;
-  syncConfigUI(); renderBoardList(); renderCanvas(); initChat();
-  if(location.protocol==='file:') document.getElementById('cors-banner').style.display='block';
+  await loadServerConfig();
+  renderBoardList(); renderCanvas(); initChat();
 })();
 
-function save(){ try{ localStorage.setItem('sds2',JSON.stringify(S)); }catch(e){} }
+function save(){ try{ localStorage.setItem('sds2',JSON.stringify({boards:S.boards,cur:S.cur,gen:S.gen})); }catch(e){} }
 function board(){ return S.boards.find(b=>b.id===S.cur)||S.boards[0]; }
+
+async function loadServerConfig(){
+  try{
+    const r=await fetch('/api/config');
+    if(r.ok){ Object.assign(S.serverCfg, await r.json()); }
+  }catch(e){ /* servidor no disponible */ }
+  updateApiStatusUI();
+}
+
+function updateApiStatusUI(){
+  const dot=document.getElementById('api-dot');
+  const txt=document.getElementById('api-status-txt');
+  if(S.serverCfg.hasKey){
+    dot.className='dot green'; txt.textContent='Conectado';
+  } else {
+    dot.className='dot'; txt.textContent='Sin API';
+  }
+}
 
 // ──── BOARD LIST ────
 function renderBoardList(){
@@ -475,50 +478,39 @@ function renderBoardList(){
   });
 }
 
-function switchBoard(id){
-  S.cur=id; save();
-  renderBoardList(); renderCanvas(); initChat();
-}
+function switchBoard(id){ S.cur=id; save(); renderBoardList(); renderCanvas(); initChat(); }
 
 // ──── CANVAS ────
 function renderCanvas(){
   const b=board();
   document.getElementById('board-display').innerHTML=`<strong>${b.name.toUpperCase()}</strong> <span>${b.type}</span>`;
-  const canvas=document.getElementById('canvas');
-  canvas.innerHTML='';
+  const canvas=document.getElementById('canvas'); canvas.innerHTML='';
   if(!b.groups||!b.groups.length){
     canvas.innerHTML='<div class="empty" id="canvas-empty"><div class="empty-icon">✦</div><div class="empty-title">Board vacío</div><div class="empty-sub">Describe lo que quieres en el chat →</div></div>';
     return;
   }
-  b.groups.forEach((g)=>appendGroup(g,canvas,false));
+  b.groups.forEach(g=>appendGroup(g,canvas,false));
 }
 
-function appendGroup(g, container, prepend){
+function appendGroup(g,container,prepend){
   const el=document.createElement('div');
   el.className='gen-group'; el.id='gg-'+g.id;
   const cols=Math.min(g.tiles.length,4);
   const short=g.prompt.length>72?g.prompt.slice(0,72)+'…':g.prompt;
   const t=new Date(g.createdAt).toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'});
-  const refImg = g.refImg
-    ? `<div class="ref-img-tile" style="width:120px;flex-shrink:0">
-        <img src="${g.refImg}" alt="Referencia">
-        <div class="ref-img-badge">REF</div>
-      </div>
-      <div class="ref-arrow">→</div>`
-    : '';
+  const refImg=g.refImg
+    ?`<div class="ref-img-tile" style="width:120px;flex-shrink:0"><img src="${g.refImg}" alt="Ref"><div class="ref-img-badge">REF</div></div><div class="ref-arrow">→</div>`:'';
   el.innerHTML=`
-    <div class="gen-container">
-      <div class="gen-container-inner">
-        ${refImg}
-        <div class="gen-grid c${cols}" id="grid-${g.id}" style="flex:1;min-width:0">
-          ${g.tiles.map(tile=>tileHTML(tile,g.id)).join('')}
-        </div>
+    <div class="gen-container"><div class="gen-container-inner">
+      ${refImg}
+      <div class="gen-grid c${cols}" id="grid-${g.id}" style="flex:1;min-width:0">
+        ${g.tiles.map(tile=>tileHTML(tile,g.id)).join('')}
       </div>
-    </div>
+    </div></div>
     <div class="gen-meta">
       ${g.warn?'<div class="gen-warn">!</div>':''}
       ${g.refImg?'<svg viewBox="0 0 24 24" style="width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;flex-shrink:0"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>':''}
-      <div class="gen-prompt">${short}</div>
+      <div class="gen-prompt">${escHtml(short)}</div>
       <div class="gen-time">${t}</div>
     </div>`;
   if(prepend&&container.firstChild) container.insertBefore(el,container.firstChild);
@@ -531,42 +523,37 @@ function tileHTML(t,gid){
     <div class="gen-bar-w"><div class="gen-bar"></div></div></div>`;
   if(t.status==='error') return `<div class="video-tile err-tile" id="tile-${t.id}">
     <div class="err-icon">⚠️</div>
-    <div class="err-msg">${escHtml((t.err||'Error desconocido').slice(0,60))}</div>
-    <div class="err-detail">${escHtml((t.errDetail||'').slice(0,120))}</div></div>`;
+    <div class="err-msg">${escHtml((t.err||'Error').slice(0,70))}</div>
+    <div class="err-detail">${escHtml((t.errDetail||'').slice(0,140))}</div></div>`;
   return `<div class="video-tile" id="tile-${t.id}" onclick="openLb('${t.id}','${gid}')">
     <video src="${t.url}" muted loop preload="metadata" onmouseenter="this.play()" onmouseleave="this.pause();this.currentTime=0"></video>
     <button class="tile-like${t.liked?' on':''}" id="like-${t.id}" onclick="event.stopPropagation();like('${t.id}','${gid}')">♥</button>
     <div class="tile-dur">▶ ${t.dur||S.gen.dur+'s'}</div>
-    <div class="tile-overlay">
-      <div class="tile-actions">
-        <button class="tile-btn" title="Descargar" onclick="event.stopPropagation();dl('${t.url}','${t.id}')">↓</button>
-        <button class="tile-btn" title="Usar referencia" onclick="event.stopPropagation();useRef('${t.id}','${gid}')">⎘</button>
-        <button class="tile-btn" title="Eliminar" onclick="event.stopPropagation();delTile('${t.id}','${gid}')">✕</button>
-      </div>
-    </div></div>`;
+    <div class="tile-overlay"><div class="tile-actions">
+      <button class="tile-btn" title="Descargar" onclick="event.stopPropagation();dl('${t.url}','${t.id}')">↓</button>
+      <button class="tile-btn" title="Usar referencia" onclick="event.stopPropagation();useRef('${t.id}','${gid}')">⎘</button>
+      <button class="tile-btn" title="Eliminar" onclick="event.stopPropagation();delTile('${t.id}','${gid}')">✕</button>
+    </div></div></div>`;
 }
 
-function escHtml(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function escHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
 // ──── CHAT ────
 function initChat(){
   document.getElementById('rp-msgs').innerHTML='';
   addSysMsg('Board activo: <strong>'+board().name+'</strong>. Describe qué videos quieres generar y cuántas variantes.');
 }
-
 function addSysMsg(html){
   const el=document.createElement('div'); el.className='msg';
   el.innerHTML=`<div class="msg-av">✦</div><div class="msg-body"><div class="msg-who">Seedance Studio</div><div class="msg-txt">${html}</div></div>`;
   const msgs=document.getElementById('rp-msgs'); msgs.appendChild(el); msgs.scrollTop=msgs.scrollHeight;
 }
-
 function addUserMsg(txt,imgB64){
   const el=document.createElement('div'); el.className='msg';
   const imgHtml=imgB64?`<div class="msg-thumbs"><img class="msg-thumb" src="${imgB64}"></div>`:'';
   el.innerHTML=`<div class="msg-av user">U</div><div class="msg-body"><div class="msg-who">Tú</div><div class="msg-txt">${escHtml(txt)}${imgHtml}</div></div>`;
   const msgs=document.getElementById('rp-msgs'); msgs.appendChild(el); msgs.scrollTop=msgs.scrollHeight;
 }
-
 function taResize(el){ el.style.height='auto'; el.style.height=Math.min(el.scrollHeight,80)+'px'; }
 function taKey(e){ if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendChat();} }
 
@@ -579,7 +566,7 @@ async function sendChat(){
   ta.value=''; taResize(ta);
   S.img=null; S.imgB64=null;
   document.getElementById('img-preview-chat').innerHTML='';
-  if(!S.cfg.key||S.cfg.key.length<5){
+  if(!S.serverCfg.hasKey){
     addSysMsg('⚠️ Configura tu <strong>API key</strong> primero haciendo clic en "+ Conectar API" arriba.'); return;
   }
   addSysMsg(`Generando <strong>${variants}</strong> variante${variants>1?'s':''} de "<em>${escHtml(prompt.slice(0,50))}${prompt.length>50?'…':''}</em>"${imgB64?' (imagen a video)':''}…`);
@@ -595,167 +582,43 @@ async function sendChat(){
   save();
   const results=await Promise.allSettled(tiles.map(t=>genTile(t,prompt,imgB64,group)));
   const ok=results.filter(r=>r.status==='fulfilled').length;
-  addSysMsg(ok>0?`✓ ${ok} video${ok>1?'s listos':'listo'}. Pasa el cursor para previsualizar. ¿Quieres ajustar algo?`:'❌ Error en la generación. Verifica tu API key en "+ Conectar API".');
+  addSysMsg(ok>0
+    ?`✓ ${ok} video${ok>1?'s listos':'listo'}. Pasa el cursor para previsualizar. ¿Quieres ajustar algo?`
+    :'❌ Error en la generación. Verifica tu API key en "+ Conectar API".');
 }
 
-// ──── API HELPERS ────
-function applyProxy(endpoint){
-  const p=S.cfg.proxy.trim();
-  if(!p) return endpoint;
-  // local-cors-proxy style: http://localhost:8010/proxy → strips original host
-  return p.replace(/\/$/, '')+'/'+endpoint.replace(/^https?:\/\//,'');
-}
-
-function buildRequest(prompt, imgB64){
-  const {provider,key,url,model}=S.cfg;
-  const {dur,res,aspect,cam}=S.gen;
-  let endpoint,headers,body;
-
-  if(provider==='atlascloud'){
-    endpoint=applyProxy('https://api.atlascloud.ai/v1/video/generate');
-    headers={'Authorization':'Bearer '+key,'Content-Type':'application/json'};
-    body={model,prompt,duration:parseInt(dur),resolution:res,aspect_ratio:aspect};
-    if(imgB64) body.image=imgB64;
-
-  } else if(provider==='volcengine'){
-    endpoint=applyProxy('https://ark.cn-beijing.volces.com/api/v3/video/generation');
-    headers={'Authorization':'Bearer '+key,'Content-Type':'application/json'};
-    body={model:'dreamina-'+model,prompt,duration:parseInt(dur),aspect_ratio:aspect};
-    if(imgB64) body.image=imgB64;
-
-  } else {
-    // byteplus — model name used as-is, no prefix
-    const base=url||'https://api.byteplus.com';
-    endpoint=applyProxy(base+'/v1/video/generation');
-    headers={'Authorization':'Bearer '+key,'Content-Type':'application/json'};
-    body={model,req_key:'seedance_video_01',prompt,duration:parseInt(dur),
-          resolution:res,aspect_ratio:aspect};
-    if(res==='2k') body.scale=2;
-    if(cam) body.camera_motion=cam;
-    if(imgB64){
-      if(imgB64.startsWith('http')) body.image_url=imgB64;
-      else body.image=imgB64;
-    }
-  }
-  return {endpoint,headers,body};
-}
-
-function isCorsError(err){
-  const m=err.message||'';
-  return m==='Failed to fetch'||m.includes('NetworkError')||m.includes('network')||m.includes('CORS')||m.includes('Load failed');
-}
-
-// ──── API VERIFY ────
-async function verifyApi(){
-  const key=document.getElementById('s-key').value.trim();
-  const prov=document.getElementById('s-prov').value;
-  const customUrl=document.getElementById('s-url').value.trim();
-  if(!key||key.length<5){
-    showVerifyResult(false,'Ingresa una API key válida primero.'); return;
-  }
-  const btn=document.getElementById('btn-test');
-  btn.classList.add('testing'); btn.innerHTML='<div class="spin" style="width:12px;height:12px;border-width:1.5px"></div> Verificando…';
-  document.getElementById('verify-result').style.display='none';
-  try{
-    let endpoint,headers;
-    if(prov==='atlascloud'){
-      endpoint='https://api.atlascloud.ai/v1/models';
-      headers={'Authorization':'Bearer '+key};
-    } else if(prov==='volcengine'){
-      endpoint='https://ark.cn-beijing.volces.com/api/v3/models';
-      headers={'Authorization':'Bearer '+key};
-    } else {
-      endpoint=applyProxy((customUrl||'https://api.byteplus.com')+'/v1/video/generation');
-      headers={'Authorization':'Bearer '+key,'Content-Type':'application/json'};
-      // send a minimal request; 400/422 = auth OK but bad params, 401/403 = auth fail
-      const r=await fetch(endpoint,{
-        method:'POST',headers,
-        body:JSON.stringify({model:'seedance-2-0-260128',req_key:'seedance_video_01',prompt:'test',duration:5})
-      });
-      const txt=await r.text();
-      if(r.status===401||r.status===403){
-        showVerifyResult(false,`Auth fallida (${r.status}): API key inválida o sin permisos.`);
-      } else if(r.status===400||r.status===422||r.status===200||r.status===202){
-        showVerifyResult(true,`Conexión OK (${r.status}) — API key válida y endpoint accesible.`);
-      } else if(r.status===0||!r.status){
-        showVerifyResult(false,'Error de red / CORS. El navegador bloqueó la petición. Usa la extensión o un proxy.');
-      } else {
-        showVerifyResult(false,`Respuesta inesperada HTTP ${r.status}: ${txt.slice(0,120)}`);
-      }
-      return;
-    }
-    const r=await fetch(endpoint,{headers});
-    if(r.ok) showVerifyResult(true,`Conexión OK (${r.status}) — API key válida.`);
-    else if(r.status===401||r.status===403) showVerifyResult(false,`Auth fallida (${r.status}): API key inválida o sin permisos.`);
-    else showVerifyResult(false,`HTTP ${r.status} — revisa la configuración.`);
-  } catch(e){
-    showVerifyResult(false, isCorsError(e)
-      ? (location.protocol==='file:'
-          ? 'CORS bloqueado (archivo local). Abre desde un servidor: python3 -m http.server 8080'
-          : 'CORS bloqueado. Configura el campo "Proxy CORS" o usa la extensión Allow-CORS en Chrome.')
-      : 'Error: '+e.message);
-  } finally{
-    btn.classList.remove('testing');
-    btn.innerHTML='<svg viewBox="0 0 24 24" style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round"><polyline points="20 6 9 17 4 12"/></svg> Verificar';
-  }
-}
-
-function showVerifyResult(ok, msg){
-  const el=document.getElementById('verify-result');
-  el.className='verify-result '+(ok?'ok':'err');
-  el.textContent=(ok?'✓ ':'✗ ')+msg;
-}
-
-// ──── GENERATE TILE ────
+// ──── GENERATE (via server proxy) ────
 async function genTile(tile,prompt,imgB64,group){
-  const {endpoint,headers,body}=buildRequest(prompt,imgB64);
   try{
-    const r=await fetch(endpoint,{method:'POST',headers,body:JSON.stringify(body)});
-    let rawText='';
-    try{ rawText=await r.text(); }catch(_){}
-    if(!r.ok){
-      let detail=rawText.slice(0,200);
-      let msg=`HTTP ${r.status}`;
-      if(r.status===401||r.status===403) msg='API key inválida o sin permisos';
-      else if(r.status===422) msg='Parámetros incorrectos';
-      else if(r.status===429) msg='Límite de requests alcanzado';
-      throw Object.assign(new Error(msg),{detail});
-    }
-    let d;
-    try{ d=JSON.parse(rawText); }catch(e){ throw new Error('Respuesta no es JSON: '+rawText.slice(0,80)); }
-    let vurl;
+    const r=await fetch('/api/generate',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        prompt, image:imgB64||undefined,
+        duration:S.gen.dur, resolution:S.gen.res,
+        aspect_ratio:S.gen.aspect, camera_motion:S.gen.cam||undefined
+      })
+    });
+    const d=await r.json();
+    if(!r.ok) throw Object.assign(new Error(d.error||`HTTP ${r.status}`),{detail:d.detail||''});
     const taskId=d.task_id||d.id||d.data?.task_id;
-    if(taskId) vurl=await poll(taskId,headers,S.cfg.provider,S.cfg.url);
+    let vurl;
+    if(taskId) vurl=await poll(taskId);
     else vurl=d.video_url||d.url||d.output?.video_url||d.data?.video_url||d.data?.videos?.[0]?.url;
-    if(!vurl) throw new Error('No se recibió URL de video. Respuesta: '+JSON.stringify(d).slice(0,120));
+    if(!vurl) throw new Error('No se recibió URL de video. Respuesta: '+JSON.stringify(d).slice(0,100));
     tile.url=vurl; tile.status='done'; tile.dur=S.gen.dur+'s';
     updateTile(tile,group); swapTileEl(tile,group.id); return vurl;
   } catch(err){
-    tile.status='error';
-    if(isCorsError(err)){
-      tile.err='CORS — petición bloqueada';
-      tile.errDetail=location.protocol==='file:'
-        ? 'Abre el archivo desde un servidor local: python3 -m http.server 8080'
-        : 'Configura un proxy CORS en "+ Conectar API" → campo Proxy CORS. Ejemplo: npx local-cors-proxy --proxyUrl https://api.byteplus.com';
-    } else {
-      tile.err=err.message;
-      tile.errDetail=err.detail||'';
-    }
-    group.warn=true;
-    updateTile(tile,group); swapTileEl(tile,group.id); throw err;
+    tile.status='error'; tile.err=err.message; tile.errDetail=err.detail||'';
+    group.warn=true; updateTile(tile,group); swapTileEl(tile,group.id); throw err;
   }
 }
 
-async function poll(taskId,headers,provider,customUrl){
-  let rawBase;
-  if(provider==='atlascloud') rawBase='https://api.atlascloud.ai/v1/video/';
-  else if(provider==='volcengine') rawBase='https://ark.cn-beijing.volces.com/api/v3/video/';
-  else rawBase=(customUrl||'https://api.byteplus.com')+'/v1/video/generation/';
-  const base=applyProxy(rawBase);
+async function poll(taskId){
   for(let i=0;i<72;i++){
     await new Promise(r=>setTimeout(r,5000));
     try{
-      const r=await fetch(base.endsWith('/')?base+taskId:base+'/'+taskId,{headers});
+      const r=await fetch('/api/status/'+taskId);
       if(!r.ok) continue;
       const d=await r.json();
       const st=d.status||d.data?.status||d.state;
@@ -763,9 +626,7 @@ async function poll(taskId,headers,provider,customUrl){
         const vurl=d.video_url||d.output?.video_url||d.data?.video_url||d.data?.videos?.[0]?.url;
         if(vurl) return vurl;
       }
-      if(st==='failed'||st==='error'){
-        throw new Error(d.message||d.data?.message||'Falló en servidor');
-      }
+      if(st==='failed'||st==='error') throw new Error(d.message||d.data?.message||'Falló en servidor');
     } catch(e){ if(e.message.includes('Falló')||e.message.includes('failed')) throw e; }
   }
   throw new Error('Tiempo de espera agotado (6 min)');
@@ -776,10 +637,8 @@ function updateTile(tile,group){
   if(g){const t=g.tiles.find(t=>t.id===tile.id); if(t) Object.assign(t,tile);}
   save();
 }
-
 function swapTileEl(tile,gid){
-  const el=document.getElementById('tile-'+tile.id);
-  if(!el) return;
+  const el=document.getElementById('tile-'+tile.id); if(!el) return;
   const tmp=document.createElement('div'); tmp.innerHTML=tileHTML(tile,gid);
   el.replaceWith(tmp.firstChild);
 }
@@ -787,10 +646,8 @@ function swapTileEl(tile,gid){
 // ──── TILE ACTIONS ────
 function like(tid,gid){
   const b=board(); b.groups.forEach(g=>g.tiles.forEach(t=>{if(t.id===tid) t.liked=!t.liked;}));
-  save();
-  document.getElementById('like-'+tid)?.classList.toggle('on');
+  save(); document.getElementById('like-'+tid)?.classList.toggle('on');
 }
-
 function delTile(tid,gid){
   const b=board(); const g=b.groups.find(g=>g.id===gid); if(!g) return;
   g.tiles=g.tiles.filter(t=>t.id!==tid);
@@ -798,14 +655,10 @@ function delTile(tid,gid){
   if(!g.tiles.length){ b.groups=b.groups.filter(g=>g.id!==gid); document.getElementById('gg-'+gid)?.remove(); }
   save();
 }
-
 function useRef(tid,gid){
-  const b=board(); let tile;
-  b.groups.forEach(g=>g.tiles.forEach(t=>{if(t.id===tid) tile=t;}));
   showNotif('Video como referencia ✓ — describe la modificación en el chat');
   addSysMsg('Referencia guardada. Ahora describe cómo quieres modificar o continuar este video.');
 }
-
 function dl(url,id){ const a=document.createElement('a'); a.href=url; a.download='seedance-'+id+'.mp4'; a.click(); }
 
 // ──── LIGHTBOX ────
@@ -832,15 +685,11 @@ function onFileChange(e){
     document.getElementById('img-preview-chat').innerHTML=`
       <div class="img-preview-wrap">
         <img src="${ev.target.result}" alt="Preview">
-        <div class="img-preview-info">
-          ${escHtml(name)}
-          <span>Imagen · imagen a video</span>
-        </div>
-        <button class="img-preview-rm" onclick="clearImg()" title="Quitar imagen">✕</button>
+        <div class="img-preview-info">${escHtml(name)}<span>Imagen · imagen a video</span></div>
+        <button class="img-preview-rm" onclick="clearImg()" title="Quitar">✕</button>
       </div>`;
   };
-  r.readAsDataURL(file);
-  e.target.value='';
+  r.readAsDataURL(file); e.target.value='';
 }
 function clearImg(){
   S.img=null; S.imgB64=null;
@@ -860,40 +709,67 @@ function createBoard(){
   S.cur=id; save(); renderBoardList(); renderCanvas(); initChat(); closeNewBoard();
 }
 
-// ──── SETTINGS ────
-function syncConfigUI(){
-  document.getElementById('s-prov').value=S.cfg.provider||'byteplus';
-  document.getElementById('s-key').value=S.cfg.key||'';
-  document.getElementById('s-model').value=S.cfg.model||'seedance-2-0-260128';
-  if(S.cfg.url) document.getElementById('s-url').value=S.cfg.url;
-  document.getElementById('s-proxy').value=S.cfg.proxy||'';
-  onProvChange(); checkKeyUI();
-  const dot=document.getElementById('api-dot');
-  const txt=document.getElementById('api-status-txt');
-  if(S.cfg.key&&S.cfg.key.length>5){dot.classList.add('green');txt.textContent='Conectado';}
-  else{dot.classList.remove('green');txt.textContent='Sin API';}
-}
-
+// ──── SETTINGS (guarda en servidor, no en browser) ────
 function openSettingsModal(){
-  syncConfigUI();
+  // pre-fill from server config
+  document.getElementById('s-prov').value=S.serverCfg.provider||'byteplus';
+  document.getElementById('s-model').value=S.serverCfg.model||'seedance-2-0-260128';
+  document.getElementById('s-key').value='';
+  document.getElementById('s-url').value='';
+  document.getElementById('s-key-status').innerHTML=S.serverCfg.hasKey
+    ?`<div class="api-pill ok"><div class="pill-dot"></div>Key guardada en servidor: <strong>${escHtml(S.serverCfg.keyHint)}</strong></div>`
+    :'<div class="api-pill err"><div class="pill-dot"></div>Sin API key</div>';
   document.getElementById('verify-result').style.display='none';
+  onProvChange();
   document.getElementById('settings-overlay').classList.remove('hidden');
 }
 function closeSettings(){ document.getElementById('settings-overlay').classList.add('hidden'); }
 function onProvChange(){ document.getElementById('s-url-wrap').style.display=document.getElementById('s-prov').value==='custom'?'block':'none'; }
 function checkKeyUI(){
   const k=document.getElementById('s-key').value.trim();
+  if(!k){ document.getElementById('s-key-status').innerHTML=S.serverCfg.hasKey
+    ?`<div class="api-pill ok"><div class="pill-dot"></div>Key guardada: <strong>${escHtml(S.serverCfg.keyHint)}</strong> — ingresa una nueva para reemplazar</div>`
+    :'<div class="api-pill err"><div class="pill-dot"></div>Sin API key</div>'; return; }
   document.getElementById('s-key-status').innerHTML=k.length>8
-    ?'<div class="api-pill ok"><div class="pill-dot"></div>API key lista</div>'
-    :'<div class="api-pill err"><div class="pill-dot"></div>Sin API key</div>';
+    ?'<div class="api-pill ok"><div class="pill-dot"></div>API key lista para guardar</div>'
+    :'<div class="api-pill err"><div class="pill-dot"></div>Key muy corta</div>';
 }
-function saveSettings(){
-  S.cfg.provider=document.getElementById('s-prov').value;
-  S.cfg.key=document.getElementById('s-key').value.trim();
-  S.cfg.url=document.getElementById('s-url').value.trim();
-  S.cfg.model=document.getElementById('s-model').value;
-  S.cfg.proxy=document.getElementById('s-proxy').value.trim();
-  save(); closeSettings(); syncConfigUI(); showNotif('Configuración guardada ✓');
+async function saveSettings(){
+  const key=document.getElementById('s-key').value.trim();
+  const provider=document.getElementById('s-prov').value;
+  const url=document.getElementById('s-url').value.trim();
+  const model=document.getElementById('s-model').value;
+  if(!key&&!S.serverCfg.hasKey){ showNotif('Ingresa una API key'); return; }
+  if(key){
+    const r=await fetch('/api/config',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({provider,key,url,model})});
+    const d=await r.json();
+    if(!r.ok){ showNotif('Error: '+d.error); return; }
+    S.serverCfg.hasKey=true; S.serverCfg.keyHint=d.keyHint;
+  }
+  S.serverCfg.provider=provider; S.serverCfg.model=model;
+  updateApiStatusUI(); closeSettings(); showNotif('Configuración guardada en servidor ✓');
+}
+
+async function verifyApi(){
+  const btn=document.getElementById('btn-test');
+  btn.classList.add('testing'); btn.innerHTML='<div class="spin" style="width:12px;height:12px;border-width:1.5px"></div> Verificando…';
+  document.getElementById('verify-result').style.display='none';
+  try{
+    // save first if there's a new key in the field
+    const key=document.getElementById('s-key').value.trim();
+    if(key) await saveSettings();
+    const r=await fetch('/api/verify');
+    const d=await r.json();
+    const el=document.getElementById('verify-result');
+    if(d.ok){ el.className='verify-result ok'; el.textContent=`✓ Conexión OK (HTTP ${d.status}) — API key válida.`; }
+    else { el.className='verify-result err'; el.textContent='✗ '+d.error+(d.detail?'\n'+d.detail:''); }
+  } catch(e){
+    const el=document.getElementById('verify-result');
+    el.className='verify-result err'; el.textContent='✗ No se pudo contactar el servidor local. ¿Está corriendo?';
+  } finally{
+    btn.classList.remove('testing');
+    btn.innerHTML='<svg viewBox="0 0 24 24" style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round"><polyline points="20 6 9 17 4 12"/></svg> Verificar';
+  }
 }
 
 function openGenModal(){ document.getElementById('gen-overlay').classList.remove('hidden'); }
@@ -910,9 +786,10 @@ function saveGenConfig(){
 const PANEL_TITLES=['Video Production Planning','Image Direction','Story Planning','Prompt Workshop','Campaign Strategy'];
 let panelIdx=0;
 function cyclePanelTitle(){ panelIdx=(panelIdx+1)%PANEL_TITLES.length; document.getElementById('rp-title').textContent=PANEL_TITLES[panelIdx]; }
-function togglePanel(){ const rp=document.getElementById('rp'); rp.classList.toggle('collapsed'); }
+function togglePanel(){ document.getElementById('rp').classList.toggle('collapsed'); }
 function showNotif(msg){ const n=document.createElement('div'); n.className='notif'; n.textContent=msg; document.body.appendChild(n); setTimeout(()=>n.remove(),2800); }
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeLb();closeSettings();closeGenModal();closeNewBoard();}});
 </script>
+
 </body>
 </html>
