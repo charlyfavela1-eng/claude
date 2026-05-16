@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="Especialistas en demandas de pensión mínima garantizada ante el IMSS. Aumenta tu pensión de forma 100% legal. Solo pagas si ganas. Consulta gratuita."/>
+  <meta name="keywords" content="pensión IMSS, pensión mínima garantizada, aumentar pensión, demanda IMSS, abogados pensiones México"/>
+  <title>Todo Pensiones &amp; Legal | Aumenta tu Pensión del IMSS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<style>
+/* ── Variables ─────────────────────────────────────────── */
+:root {
+  --blue:       #1a3a6e;
+  --blue-mid:   #2a5298;
+  --blue-dark:  #0d1f3c;
+  --blue-light: #eef2fb;
+  --gold:       #c9a84c;
+  --gold-l:     #e8c96a;
+  --gold-bg:    #fffbf0;
+  --green-wa:   #25D366;
+  --green-wa2:  #1db954;
+  --white:      #ffffff;
+  --bg:         #f5f7ff;
+  --surface:    #ffffff;
+  --text:       #1c2340;
+  --muted:      #5a6380;
+  --border:     #dde3f0;
+  --radius:     14px;
+  --radius-lg:  22px;
+  --shadow:     0 4px 24px rgba(26,58,110,.10);
+  --shadow-lg:  0 12px 48px rgba(26,58,110,.18);
+  --max:        1120px;
+  --ease:       cubic-bezier(.4,0,.2,1);
+}
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0 }
+html { scroll-behavior:smooth; font-size:16px; -webkit-text-size-adjust:100% }
+body { background:var(--bg); color:var(--text); font-family:'Inter',system-ui,sans-serif; line-height:1.65; overflow-x:hidden }
+img  { max-width:100%; display:block }
+a    { text-decoration:none }
+ul   { list-style:none }
+button { cursor:pointer; border:none; background:none; font-family:inherit }
+.container { max-width:var(--max); margin:0 auto; padding:0 1.5rem }
+.section-header { text-align:center; margin-bottom:3rem }
+.section-title { font-size:clamp(1.7rem,3.5vw,2.5rem); font-weight:900; color:var(--blue-dark); margin-bottom:.6rem; line-height:1.15 }
+.section-title.white { color:#fff }
+.section-sub { color:var(--muted); font-size:1.05rem; max-width:620px; margin:0 auto }
+.section-sub.light { color:rgba(255,255,255,.7) }
+.section-tag { display:inline-block; background:rgba(201,168,76,.15); border:1px solid var(--gold); color:var(--gold); padding:.28rem 1.1rem; border-radius:999px; font-size:.76rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; margin-bottom:.85rem }
+.section-tag.light { background:rgba(201,168,76,.2); border-color:var(--gold-l); color:var(--gold-l) }
+.gold { color:var(--gold) }
+.gold-light { color:var(--gold-l) }
+
+/* AOS */
+[data-aos] { opacity:0; transform:translateY(30px); transition:opacity .6s var(--ease),transform .6s var(--ease) }
+[data-aos].visible { opacity:1; transform:none }
+[data-aos-delay="60"].visible  { transition-delay:.06s }
+[data-aos-delay="80"].visible  { transition-delay:.08s }
+[data-aos-delay="100"].visible { transition-delay:.1s }
+[data-aos-delay="120"].visible { transition-delay:.12s }
+[data-aos-delay="150"].visible { transition-delay:.15s }
+[data-aos-delay="160"].visible { transition-delay:.16s }
+[data-aos-delay="180"].visible { transition-delay:.18s }
+[data-aos-delay="200"].visible { transition-delay:.2s }
+[data-aos-delay="240"].visible { transition-delay:.24s }
+[data-aos-delay="300"].visible { transition-delay:.3s }
+[data-aos-delay="320"].visible { transition-delay:.32s }
+[data-aos-delay="400"].visible { transition-delay:.4s }
+
+/* WhatsApp */
+.btn-wa { display:inline-flex; align-items:center; gap:.65rem; background:var(--green-wa); color:#fff; padding:.9rem 1.85rem; border-radius:var(--radius); font-size:1rem; font-weight:700; box-shadow:0 6px 24px rgba(37,211,102,.38); transition:background .2s,transform .2s,box-shadow .2s }
+.btn-wa:hover { background:var(--green-wa2); transform:translateY(-2px); box-shadow:0 10px 32px rgba(37,211,102,.48) }
+.btn-wa:active { transform:none }
+.btn-wa-xl { padding:1.1rem 2.6rem; font-size:1.15rem; border-radius:var(--radius-lg) }
+.wa-svg-sm { width:22px; height:22px; border-radius:50%; flex-shrink:0 }
+.wa-svg    { width:28px; height:28px; border-radius:50%; flex-shrink:0 }
+
+/* Navbar */
+.navbar { position:fixed; top:0; left:0; right:0; z-index:500; background:rgba(13,31,60,.96); backdrop-filter:blur(14px); border-bottom:1px solid rgba(255,255,255,.08); transition:box-shadow .3s }
+.navbar.scrolled { box-shadow:0 4px 30px rgba(0,0,0,.3) }
+.nav-inner { max-width:var(--max); margin:0 auto; padding:.85rem 1.5rem; display:flex; align-items:center; gap:1.5rem }
+.nav-logo { display:flex; align-items:center; gap:.6rem; flex-shrink:0 }
+.nav-logo-icon { font-size:1.4rem; line-height:1 }
+.nav-logo-main { font-size:1rem; font-weight:800; color:#fff; display:block; line-height:1.2 }
+.nav-logo-amp  { font-size:.8rem; color:var(--gold); font-weight:700; display:block }
+.nav-links { display:flex; align-items:center; gap:.25rem; margin:0 auto }
+.nav-links a { color:rgba(255,255,255,.7); font-size:.88rem; font-weight:500; padding:.4rem .85rem; border-radius:8px; transition:color .2s,background .2s }
+.nav-links a:hover { color:#fff; background:rgba(255,255,255,.08) }
+.nav-actions { display:flex; align-items:center; gap:.75rem; flex-shrink:0 }
+.nav-cta { display:flex; align-items:center; gap:.5rem; background:var(--green-wa); color:#fff; padding:.5rem 1.1rem; border-radius:var(--radius); font-size:.88rem; font-weight:700; transition:background .2s,transform .2s }
+.nav-cta:hover { background:var(--green-wa2); transform:translateY(-1px) }
+.nav-burger { display:none; flex-direction:column; gap:5px; padding:4px }
+.nav-burger span { display:block; width:22px; height:2px; background:#fff; border-radius:2px; transition:all .3s }
+
+/* Hero */
+.hero { background:linear-gradient(145deg,var(--blue-dark) 0%,#1a3a6e 50%,#0f2d5a 100%); padding:8rem 1.5rem 0; position:relative; overflow:hidden }
+.hero-bg-orbs { position:absolute; inset:0; pointer-events:none; overflow:hidden }
+.orb { position:absolute; border-radius:50%; filter:blur(80px); opacity:.15 }
+.orb-1 { width:500px; height:500px; background:var(--gold); top:-150px; right:-150px }
+.orb-2 { width:400px; height:400px; background:#4a90d9; bottom:-100px; left:-100px }
+.orb-3 { width:300px; height:300px; background:var(--gold-l); top:40%; left:40%; opacity:.08 }
+.hero-inner { max-width:var(--max); margin:0 auto; display:flex; align-items:center; gap:3.5rem; flex-wrap:wrap; padding-bottom:5rem }
+.hero-text { flex:1; min-width:300px; color:#fff }
+.hero-tag { display:inline-flex; align-items:center; gap:.55rem; background:rgba(201,168,76,.15); border:1px solid rgba(201,168,76,.45); color:var(--gold-l); padding:.35rem 1.1rem; border-radius:999px; font-size:.78rem; font-weight:700; margin-bottom:1.4rem }
+.tag-dot { width:7px; height:7px; border-radius:50%; background:var(--gold-l); animation:pulse 2s infinite }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+.hero-text h1 { font-size:clamp(2rem,4.5vw,3.2rem); font-weight:900; line-height:1.1; margin-bottom:1.2rem }
+.hero-sub { color:rgba(255,255,255,.82); font-size:1.05rem; margin-bottom:1.85rem; max-width:520px }
+.hero-sub strong { color:var(--gold-l) }
+.hero-btns { display:flex; align-items:center; gap:1rem; flex-wrap:wrap; margin-bottom:1.5rem }
+.btn-outline { color:rgba(255,255,255,.8); border:1.5px solid rgba(255,255,255,.3); padding:.88rem 1.5rem; border-radius:var(--radius); font-size:.95rem; font-weight:600; transition:border-color .2s,color .2s,background .2s }
+.btn-outline:hover { border-color:#fff; color:#fff; background:rgba(255,255,255,.08) }
+.hero-trust { display:flex; flex-wrap:wrap; gap:.75rem 1.5rem }
+.trust-item { display:flex; align-items:center; gap:.45rem; font-size:.82rem; color:rgba(255,255,255,.65) }
+.trust-icon { color:var(--gold-l); font-weight:800 }
+.hero-visual { flex:0 0 auto; width:360px; max-width:100% }
+.hero-card { background:rgba(255,255,255,.09); border:1px solid rgba(255,255,255,.2); backdrop-filter:blur(12px); border-radius:var(--radius-lg); padding:1.75rem; margin-bottom:1rem }
+.hc-header { font-size:.75rem; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:rgba(255,255,255,.5); margin-bottom:1.25rem }
+.hc-row { display:flex; align-items:center; gap:.85rem; margin-bottom:1.25rem }
+.hc-vs { color:var(--gold-l); font-size:1.6rem; font-weight:900; flex-shrink:0 }
+.hc-col { flex:1; text-align:center; padding:1rem .75rem; border-radius:var(--radius); background:rgba(255,255,255,.07) }
+.hc-col.bad  { border:1px solid rgba(248,113,113,.4) }
+.hc-col.good { border:1px solid rgba(74,222,128,.4) }
+.hc-label  { font-size:.7rem; color:rgba(255,255,255,.55); margin-bottom:.4rem }
+.hc-amount { font-size:1.65rem; font-weight:900; color:#fff; line-height:1 }
+.hc-col.bad  .hc-amount { color:#f87171 }
+.hc-col.good .hc-amount { color:#4ade80 }
+.hc-period { font-size:.7rem; color:rgba(255,255,255,.45); margin:.2rem 0 .5rem }
+.hc-badge  { font-size:.68rem; font-weight:700; padding:.2rem .7rem; border-radius:999px; display:inline-block }
+.bad-badge  { background:rgba(248,113,113,.2); color:#f87171 }
+.good-badge { background:rgba(74,222,128,.2);  color:#4ade80 }
+.hc-retro { background:linear-gradient(135deg,var(--gold),#b8860b); border-radius:var(--radius); padding:1rem 1.1rem; text-align:center }
+.hc-retro-label { font-size:.78rem; font-weight:600; color:var(--blue-dark); margin-bottom:.35rem }
+.hc-retro-val   { font-size:2rem; font-weight:900; color:var(--blue-dark); line-height:1 }
+.hc-retro-note  { font-size:.7rem; color:rgba(13,31,60,.6); margin-top:.25rem }
+.hero-stats-row { display:flex; align-items:center; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.15); border-radius:var(--radius); padding:1rem 1.25rem; gap:.5rem }
+.hstat { flex:1; text-align:center }
+.hstat-div { width:1px; height:30px; background:rgba(255,255,255,.15) }
+.hstat-n { display:block; font-size:1.2rem; font-weight:900; color:#fff }
+.hstat-l { display:block; font-size:.72rem; color:rgba(255,255,255,.55) }
+.hero-wave { margin-top:0; line-height:0 }
+.hero-wave svg { width:100%; height:70px; display:block }
+
+/* Problem */
+.problem { padding:5rem 1.5rem }
+.problem-inner { display:flex; align-items:flex-start; gap:1.5rem; background:linear-gradient(135deg,#fff4e6,#fffbf0); border:1px solid rgba(201,168,76,.3); border-radius:var(--radius-lg); padding:2rem 2.5rem; margin-bottom:2.5rem }
+.prob-icon { font-size:2.5rem; flex-shrink:0; line-height:1 }
+.prob-content h2 { font-size:clamp(1.3rem,2.5vw,1.8rem); font-weight:800; color:var(--blue-dark); margin-bottom:.65rem }
+.prob-content p  { color:var(--muted); font-size:.95rem }
+.prob-stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:1.25rem }
+.prob-stat { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg); padding:1.75rem 1.5rem; box-shadow:var(--shadow); border-top:4px solid var(--gold); text-align:center }
+.ps-icon  { font-size:2rem; margin-bottom:.75rem }
+.ps-num   { font-size:2rem; font-weight:900; color:var(--blue); margin-bottom:.4rem }
+.ps-label { font-size:.85rem; color:var(--muted) }
+
+/* Services */
+.services { padding:5.5rem 1.5rem; background:var(--blue-light) }
+.srv-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:1.25rem }
+.srv-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg); padding:2rem 1.75rem; box-shadow:var(--shadow); position:relative; transition:transform .25s var(--ease),border-color .25s,box-shadow .25s }
+.srv-card:hover { transform:translateY(-7px); border-color:var(--gold); box-shadow:var(--shadow-lg) }
+.srv-icon-wrap { width:56px; height:56px; border-radius:14px; background:linear-gradient(135deg,rgba(201,168,76,.15),rgba(201,168,76,.05)); border:1px solid rgba(201,168,76,.25); display:flex; align-items:center; justify-content:center; margin-bottom:1.1rem }
+.srv-icon { font-size:1.75rem; line-height:1 }
+.srv-card h3 { color:var(--blue-dark); font-size:1rem; font-weight:700; margin-bottom:.5rem }
+.srv-card p  { color:var(--muted); font-size:.88rem }
+.srv-tag { display:inline-block; margin-top:.85rem; background:rgba(201,168,76,.12); border:1px solid rgba(201,168,76,.3); color:var(--gold); font-size:.7rem; font-weight:700; padding:.2rem .75rem; border-radius:999px }
+
+/* Proceso */
+.proceso { padding:5.5rem 1.5rem; background:linear-gradient(145deg,var(--blue-dark),var(--blue-mid)); position:relative; overflow:hidden }
+.proceso::before { content:''; position:absolute; inset:0; background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E") }
+.steps-grid { display:flex; align-items:flex-start; gap:0; flex-wrap:wrap; max-width:960px; margin:0 auto; position:relative }
+.step-card { flex:1; min-width:180px; background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.15); border-radius:var(--radius-lg); padding:2rem 1.5rem; text-align:center; color:#fff; position:relative; transition:background .25s,border-color .25s }
+.step-card:hover { background:rgba(255,255,255,.12); border-color:rgba(201,168,76,.5) }
+.step-num { position:absolute; top:-15px; left:50%; transform:translateX(-50%); width:32px; height:32px; border-radius:50%; background:var(--gold); color:var(--blue-dark); font-size:.9rem; font-weight:900; display:flex; align-items:center; justify-content:center }
+.step-icon { font-size:2.2rem; margin:0 0 .85rem }
+.step-card h3 { font-size:1rem; font-weight:700; margin-bottom:.5rem }
+.step-card p  { font-size:.85rem; color:rgba(255,255,255,.7); line-height:1.6 }
+.step-time { display:inline-block; margin-top:.85rem; font-size:.75rem; color:var(--gold-l); font-weight:600 }
+.step-connector { flex:0 0 40px; height:2px; background:linear-gradient(90deg,rgba(201,168,76,.6),rgba(201,168,76,.2)); align-self:center; margin:0 -1px; position:relative; top:-10px }
+
+/* Costs */
+.costs { padding:5.5rem 1.5rem }
+.cost-grid { display:flex; align-items:center; justify-content:center; gap:1.5rem; flex-wrap:wrap; margin-bottom:2.5rem }
+.cost-plus { font-size:2.5rem; font-weight:900; color:var(--muted); flex-shrink:0 }
+.cost-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg); padding:2.5rem 2rem; flex:1; min-width:260px; max-width:380px; box-shadow:var(--shadow); transition:transform .25s,box-shadow .25s }
+.cost-card:hover { transform:translateY(-5px); box-shadow:var(--shadow-lg) }
+.cost-card.featured { background:var(--blue-dark); color:#fff; border-color:var(--gold); box-shadow:0 12px 48px rgba(201,168,76,.25); transform:translateY(-12px) }
+.cost-card.featured:hover { transform:translateY(-16px) }
+.cost-badge-top      { display:inline-block; background:var(--blue-light); color:var(--blue); font-size:.72rem; font-weight:700; padding:.2rem .9rem; border-radius:999px; margin-bottom:1.25rem }
+.cost-badge-featured { display:inline-block; background:var(--gold); color:var(--blue-dark); font-size:.72rem; font-weight:800; padding:.2rem .9rem; border-radius:999px; margin-bottom:1.25rem }
+.cost-icon   { font-size:2.5rem; margin-bottom:.85rem }
+.cost-amount { font-size:2.8rem; font-weight:900; color:var(--blue); line-height:1; margin-bottom:.6rem }
+.cost-card.featured .cost-amount { color:var(--gold-l) }
+.cost-amount small { font-size:1rem; font-weight:400 }
+.cost-card h3 { font-size:1.05rem; font-weight:700; margin-bottom:.5rem; color:var(--blue-dark) }
+.cost-card.featured h3 { color:#fff }
+.cost-card p  { font-size:.88rem; color:var(--muted); margin-bottom:1.25rem }
+.cost-card.featured p { color:rgba(255,255,255,.65) }
+.cost-list { display:flex; flex-direction:column; gap:.45rem }
+.cost-list li { font-size:.85rem; color:var(--muted) }
+.cost-list.dark li { color:rgba(255,255,255,.7) }
+.guarantee-row { display:grid; grid-template-columns:1fr 1fr; gap:1.25rem; max-width:900px; margin:0 auto }
+.guarantee-card { display:flex; gap:1rem; align-items:flex-start; background:var(--blue-light); border:1px solid var(--border); border-radius:var(--radius); padding:1.4rem 1.5rem }
+.gc-icon { font-size:1.75rem; flex-shrink:0; margin-top:2px }
+.gc-text strong { display:block; color:var(--blue-dark); margin-bottom:.3rem; font-size:.95rem }
+.gc-text p { font-size:.85rem; color:var(--muted); margin:0 }
+
+/* Calculadora */
+.calculadora { padding:5.5rem 1.5rem; background:var(--blue-light) }
+.calc-wrap { display:grid; grid-template-columns:1fr 1fr; gap:2rem; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg); padding:2.5rem; box-shadow:var(--shadow-lg); max-width:900px; margin:0 auto }
+.calc-field { margin-bottom:1.25rem }
+.calc-field label { display:block; font-size:.85rem; font-weight:600; color:var(--blue-dark); margin-bottom:.5rem }
+.calc-input-wrap { display:flex; align-items:center; border:1.5px solid var(--border); border-radius:var(--radius); overflow:hidden; transition:border-color .2s }
+.calc-input-wrap:focus-within { border-color:var(--blue-mid) }
+.calc-prefix,.calc-suffix { padding:.7rem .9rem; background:var(--blue-light); color:var(--muted); font-size:.88rem; font-weight:600; flex-shrink:0 }
+.calc-input-wrap input[type="number"] { flex:1; border:none; outline:none; padding:.72rem .85rem; font-size:1rem; font-weight:700; color:var(--blue-dark); font-family:inherit; min-width:0 }
+.calc-field select { width:100%; padding:.75rem 1rem; border:1.5px solid var(--border); border-radius:var(--radius); background:var(--surface); font-family:inherit; font-size:.9rem; color:var(--text); transition:border-color .2s; outline:none; cursor:pointer }
+.calc-field select:focus { border-color:var(--blue-mid) }
+.btn-calc { width:100%; padding:1rem; border-radius:var(--radius); background:linear-gradient(135deg,var(--blue),var(--blue-mid)); color:#fff; font-size:1rem; font-weight:700; box-shadow:0 6px 24px rgba(26,58,110,.3); transition:filter .2s,transform .2s; margin-top:.5rem }
+.btn-calc:hover { filter:brightness(1.12); transform:translateY(-2px) }
+.calc-result { background:linear-gradient(145deg,var(--blue-dark),#1a3a6e); border-radius:var(--radius-lg); padding:2rem; color:#fff }
+.cr-header { font-size:.75rem; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:rgba(255,255,255,.5); margin-bottom:1.25rem }
+.cr-row { display:flex; justify-content:space-between; align-items:center; padding:.5rem 0; border-bottom:1px solid rgba(255,255,255,.08); font-size:.9rem; color:rgba(255,255,255,.7) }
+.cr-val { font-weight:700; color:#fff }
+.cr-divider { height:1px; background:rgba(255,255,255,.15); margin:1rem 0 }
+.cr-total-row { display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem }
+.cr-total-row span:first-child { font-size:.9rem; color:rgba(255,255,255,.8) }
+.cr-total { font-size:2.2rem; font-weight:900; color:var(--gold-l); transition:transform .3s }
+.cr-sub-row { display:flex; gap:1rem; margin-bottom:1.25rem }
+.cr-sub { flex:1; background:rgba(255,255,255,.06); border-radius:var(--radius); padding:.75rem; text-align:center }
+.cr-sub span:first-child { display:block; font-size:.72rem; color:rgba(255,255,255,.5); margin-bottom:.3rem }
+.cr-sub-val { font-size:1.1rem; font-weight:800 }
+.cr-sub-val.good  { color:#4ade80 }
+.cr-sub-val.muted { color:rgba(255,255,255,.55) }
+.cr-new-pension { background:var(--gold); border-radius:var(--radius); padding:1rem; text-align:center; margin-bottom:1rem }
+.crp-label { font-size:.78rem; font-weight:600; color:var(--blue-dark); margin-bottom:.25rem }
+.crp-val { font-size:1.8rem; font-weight:900; color:var(--blue-dark) }
+.crp-val span { font-size:.85rem; font-weight:400 }
+.cr-disclaimer { font-size:.72rem; color:rgba(255,255,255,.35); margin-bottom:1rem; line-height:1.5 }
+.cr-cta { width:100%; justify-content:center }
+
+/* Testimonials */
+.testimonials { padding:5.5rem 1.5rem; background:linear-gradient(145deg,var(--blue-dark),#1a3a6e) }
+.test-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:1.5rem }
+.test-card { background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12); border-radius:var(--radius-lg); padding:1.75rem; transition:background .25s,border-color .25s,transform .25s }
+.test-card:hover { background:rgba(255,255,255,.1); border-color:rgba(201,168,76,.4); transform:translateY(-5px) }
+.test-card.featured-test { background:rgba(255,255,255,.12); border-color:rgba(201,168,76,.4) }
+.test-top { display:flex; align-items:center; gap:.9rem; margin-bottom:1.1rem }
+.test-avatar { width:46px; height:46px; border-radius:50%; color:#fff; font-size:.9rem; font-weight:800; display:flex; align-items:center; justify-content:center; flex-shrink:0 }
+.test-top strong { display:block; color:#fff; font-size:.95rem }
+.test-top span   { font-size:.75rem; color:rgba(255,255,255,.55) }
+.test-stars { color:var(--gold); font-size:.85rem; margin-top:.2rem }
+.test-card p { font-size:.88rem; color:rgba(255,255,255,.75); line-height:1.7; margin-bottom:1.1rem }
+.test-card p strong { color:#fff }
+.test-result { background:rgba(201,168,76,.15); border:1px solid rgba(201,168,76,.3); border-radius:var(--radius); padding:.65rem 1rem; display:flex; justify-content:space-between; align-items:center }
+.tr-label { font-size:.73rem; color:rgba(255,255,255,.6) }
+.tr-val   { font-size:1rem; font-weight:800; color:var(--gold-l) }
+
+/* Benefits */
+.benefits { padding:5.5rem 1.5rem }
+.ben-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:1.25rem }
+.ben-card { display:flex; flex-direction:column; background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-lg); padding:2rem 1.75rem; box-shadow:var(--shadow); transition:transform .25s,border-color .25s,box-shadow .25s }
+.ben-card:hover { transform:translateY(-6px); border-color:var(--gold); box-shadow:var(--shadow-lg) }
+.ben-icon { font-size:2.2rem; margin-bottom:.85rem }
+.ben-card h3 { color:var(--blue-dark); font-size:1rem; font-weight:700; margin-bottom:.45rem }
+.ben-card p  { color:var(--muted); font-size:.88rem; line-height:1.6 }
+
+/* FAQ */
+.faq { padding:5.5rem 1.5rem; background:linear-gradient(145deg,var(--blue-dark),var(--blue-mid)) }
+.faq-grid { max-width:800px; margin:0 auto; display:flex; flex-direction:column; gap:.85rem }
+.faq-item { background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12); border-radius:var(--radius); overflow:hidden; transition:border-color .2s }
+.faq-item:has(.faq-q[aria-expanded="true"]) { border-color:rgba(201,168,76,.5) }
+.faq-q { width:100%; display:flex; justify-content:space-between; align-items:center; gap:1rem; padding:1.25rem 1.5rem; text-align:left; color:#fff; font-size:.95rem; font-weight:600; transition:background .2s }
+.faq-q:hover { background:rgba(255,255,255,.04) }
+.faq-icon { font-size:1.4rem; font-weight:300; flex-shrink:0; color:var(--gold-l); transition:transform .3s }
+.faq-q[aria-expanded="true"] .faq-icon { transform:rotate(45deg) }
+.faq-a { display:grid; grid-template-rows:0fr; transition:grid-template-rows .35s var(--ease) }
+.faq-a.open { grid-template-rows:1fr }
+.faq-a > p { overflow:hidden; padding:0 1.5rem; font-size:.9rem; color:rgba(255,255,255,.7); line-height:1.7 }
+.faq-a.open > p { padding-bottom:1.25rem }
+
+/* Final CTA */
+.final-cta { padding:5.5rem 1.5rem; background:var(--bg) }
+.fcta-inner { max-width:720px; margin:0 auto; text-align:center; background:linear-gradient(145deg,var(--blue-dark),var(--blue-mid)); border-radius:var(--radius-lg); padding:3.5rem 2.5rem; box-shadow:var(--shadow-lg) }
+.fcta-emoji { font-size:3.5rem; margin-bottom:1.25rem }
+.fcta-inner h2 { font-size:clamp(1.6rem,3.5vw,2.3rem); font-weight:900; color:#fff; margin-bottom:.85rem }
+.fcta-inner p  { color:rgba(255,255,255,.78); font-size:1.05rem; margin-bottom:2rem }
+.fcta-inner strong { color:var(--gold-l) }
+.fcta-info { display:flex; flex-wrap:wrap; justify-content:center; gap:.5rem 2rem; margin-top:1.25rem }
+.fcta-info span { font-size:.82rem; color:rgba(255,255,255,.5) }
+
+/* Footer */
+.footer { background:var(--blue-dark); padding:4.5rem 1.5rem 2rem }
+.footer-grid { display:grid; grid-template-columns:2fr 1fr 1.5fr; gap:2.5rem; padding-bottom:2.5rem; border-bottom:1px solid rgba(255,255,255,.1); margin-bottom:1.75rem }
+.footer-logo { font-size:1.15rem; font-weight:800; color:#fff; margin-bottom:.75rem }
+.footer-logo span { color:var(--gold) }
+.footer-brand p { font-size:.87rem; color:rgba(255,255,255,.5); margin-bottom:1.1rem; line-height:1.6 }
+.footer-wa { display:inline-flex; align-items:center; gap:.5rem; background:var(--green-wa); color:#fff; padding:.55rem 1.1rem; border-radius:var(--radius); font-size:.88rem; font-weight:700; transition:background .2s }
+.footer-wa:hover { background:var(--green-wa2) }
+.footer-nav h4,.footer-contact h4 { color:#fff; font-size:.9rem; margin-bottom:1rem }
+.footer-nav ul { display:flex; flex-direction:column; gap:.5rem }
+.footer-nav a { color:rgba(255,255,255,.5); font-size:.87rem; transition:color .2s }
+.footer-nav a:hover { color:#fff }
+.fc-item { display:flex; align-items:baseline; gap:.5rem; color:rgba(255,255,255,.5); font-size:.87rem; margin-bottom:.6rem }
+.fc-item a { color:var(--gold-l); transition:color .2s }
+.fc-item a:hover { color:#fff }
+.footer-trust-seal { margin-top:.85rem; color:var(--gold-l); font-style:italic; font-size:.82rem }
+.footer-bottom { text-align:center }
+.footer-bottom p { font-size:.8rem; color:rgba(255,255,255,.28) }
+.footer-bottom p + p { margin-top:.4rem }
+.footer-disc { font-size:.72rem !important; color:rgba(255,255,255,.18) !important }
+
+/* WhatsApp float */
+.wa-float { position:fixed; bottom:1.75rem; right:1.75rem; z-index:999; width:62px; height:62px; border-radius:50%; box-shadow:0 6px 30px rgba(37,211,102,.55); transition:transform .25s,box-shadow .25s; display:flex; align-items:center; justify-content:center }
+.wa-float svg { width:100%; height:100%; border-radius:50% }
+.wa-float:hover { transform:scale(1.1); box-shadow:0 10px 40px rgba(37,211,102,.65) }
+.wa-pulse { position:absolute; inset:-6px; border-radius:50%; border:2px solid rgba(37,211,102,.5); animation:wa-ring 2.5s ease-out infinite }
+@keyframes wa-ring { 0%{transform:scale(1);opacity:.8} 100%{transform:scale(1.5);opacity:0} }
+.wa-tooltip { position:absolute; right:72px; top:50%; transform:translateY(-50%); background:var(--blue-dark); color:#fff; padding:.35rem .9rem; border-radius:var(--radius); font-size:.8rem; font-weight:600; white-space:nowrap; pointer-events:none; opacity:0; transition:opacity .2s }
+.wa-float:hover .wa-tooltip { opacity:1 }
+
+/* Responsive */
+@media(max-width:960px) {
+  .footer-grid { grid-template-columns:1fr 1fr }
+  .footer-brand { grid-column:1/-1 }
+  .steps-grid { flex-direction:column; max-width:480px }
+  .step-connector { display:none }
+}
+@media(max-width:768px) {
+  .nav-links { display:none; position:fixed; top:60px; left:0; right:0; background:var(--blue-dark); flex-direction:column; align-items:flex-start; padding:1rem 1.5rem 1.5rem; gap:.25rem; border-bottom:1px solid rgba(255,255,255,.1) }
+  .nav-links.open { display:flex }
+  .nav-links a { padding:.65rem .85rem; width:100% }
+  .nav-burger { display:flex }
+  .nav-burger.open span:nth-child(1) { transform:translateY(7px) rotate(45deg) }
+  .nav-burger.open span:nth-child(2) { opacity:0 }
+  .nav-burger.open span:nth-child(3) { transform:translateY(-7px) rotate(-45deg) }
+  .hero-inner { flex-direction:column; padding-bottom:3rem }
+  .hero-text { text-align:center }
+  .hero-sub  { margin:0 auto 1.5rem }
+  .hero-btns { justify-content:center }
+  .hero-trust { justify-content:center }
+  .hero-visual { width:100%; max-width:400px; margin:0 auto }
+  .calc-wrap { grid-template-columns:1fr }
+  .guarantee-row { grid-template-columns:1fr }
+  .cost-card.featured { transform:none }
+  .cost-grid { flex-direction:column; align-items:center }
+  .cost-plus { transform:rotate(90deg) }
+  .fcta-inner { padding:2.5rem 1.5rem }
+  .footer-grid { grid-template-columns:1fr }
+}
+@media(max-width:500px) {
+  .hero { padding-top:7rem }
+  .cr-sub-row { flex-direction:column }
+  .hc-row { gap:.5rem }
+  .hc-amount { font-size:1.35rem }
+}
+</style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-inner">
+      <a href="#inicio" class="nav-logo">
+        <div class="nav-logo-icon">⚖️</div>
+        <div>
+          <span class="nav-logo-main">Todo Pensiones</span>
+          <span class="nav-logo-amp">&amp; Legal</span>
+        </div>
+      </a>
+      <div class="nav-links" id="nav-links">
+        <a href="#servicios">Servicios</a>
+        <a href="#proceso">Proceso</a>
+        <a href="#calculadora">Calculadora</a>
+        <a href="#testimonios">Casos reales</a>
+        <a href="#faq">FAQ</a>
+      </div>
+      <div class="nav-actions">
+        <a href="https://wa.me/521XXXXXXXXXX?text=Hola,%20quiero%20una%20asesoría%20gratuita%20sobre%20mi%20pensión%20IMSS" class="nav-cta" target="_blank" rel="noopener">
+          <svg viewBox="0 0 32 32" class="wa-svg-sm"><circle cx="16" cy="16" r="16" fill="#25D366"/><path d="M23.5 8.5C21.7 6.7 19.3 5.7 16.7 5.7c-5.3 0-9.6 4.3-9.6 9.6 0 1.7.4 3.3 1.3 4.7L7 27l7.2-1.9c1.4.8 2.9 1.1 4.5 1.1 5.3 0 9.6-4.3 9.6-9.6.1-2.6-.9-5-2.8-6.9zm-6.8 14.7c-1.4 0-2.8-.4-4-1.1l-.3-.2-3 .8.8-2.9-.2-.3c-.8-1.2-1.2-2.7-1.2-4.2 0-4.3 3.5-7.8 7.8-7.8 2.1 0 4 .8 5.5 2.3 1.5 1.5 2.3 3.4 2.3 5.5 0 4.4-3.5 7.9-7.7 7.9zm4.3-5.8c-.2-.1-1.4-.7-1.6-.8-.2-.1-.4-.1-.5.1-.2.2-.6.8-.8 1-.1.2-.3.2-.5.1-.7-.4-1.5-.7-2.1-1.4-.5-.6-1-1.3-1.1-1.5-.1-.2 0-.4.1-.5l.4-.4c.1-.1.2-.3.3-.4.1-.1.1-.3 0-.4-.1-.1-.5-1.3-.7-1.7-.2-.5-.4-.4-.5-.4h-.5c-.2 0-.4.1-.6.3-.7.7-.9 1.6-.5 2.6.6 1.5 2.2 3.8 4.8 4.9.7.3 1.2.4 1.6.5.7.2 1.3.1 1.8-.1.5-.3.9-.7 1-1.3.1-.3.1-.5 0-.6-.1-.2-.3-.3-.6-.4z" fill="white"/></svg>
+          WhatsApp
+        </a>
+        <button class="nav-burger" id="nav-burger" aria-label="Menú">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero" id="inicio">
+    <div class="hero-bg-orbs">
+      <div class="orb orb-1"></div>
+      <div class="orb orb-2"></div>
+      <div class="orb orb-3"></div>
+    </div>
+    <div class="hero-inner">
+      <div class="hero-text" data-aos>
+        <div class="hero-tag"><span class="tag-dot"></span> Especialistas en Pensiones IMSS · 100% Legal</div>
+        <h1>¿Tu pensión del IMSS <br/>es menor a <span class="gold">$10,600</span>?</h1>
+        <p class="hero-sub">Tienes derecho a la <strong>pensión mínima garantizada</strong>. Te ayudamos a reclamarla legalmente, con retroactivo incluido. <strong class="gold-light">Sin riesgo. Solo pagas si ganas.</strong></p>
+        <div class="hero-btns">
+          <a href="https://wa.me/521XXXXXXXXXX?text=Hola,%20quiero%20saber%20si%20puedo%20aumentar%20mi%20pensión%20del%20IMSS" class="btn-wa" target="_blank" rel="noopener">
+            <svg viewBox="0 0 32 32" class="wa-svg-sm"><circle cx="16" cy="16" r="16" fill="white" fill-opacity=".2"/><path d="M23.5 8.5C21.7 6.7 19.3 5.7 16.7 5.7c-5.3 0-9.6 4.3-9.6 9.6 0 1.7.4 3.3 1.3 4.7L7 27l7.2-1.9c1.4.8 2.9 1.1 4.5 1.1 5.3 0 9.6-4.3 9.6-9.6.1-2.6-.9-5-2.8-6.9zm-6.8 14.7c-1.4 0-2.8-.4-4-1.1l-.3-.2-3 .8.8-2.9-.2-.3c-.8-1.2-1.2-2.7-1.2-4.2 0-4.3 3.5-7.8 7.8-7.8 2.1 0 4 .8 5.5 2.3 1.5 1.5 2.3 3.4 2.3 5.5 0 4.4-3.5 7.9-7.7 7.9zm4.3-5.8c-.2-.1-1.4-.7-1.6-.8-.2-.1-.4-.1-.5.1-.2.2-.6.8-.8 1-.1.2-.3.2-.5.1-.7-.4-1.5-.7-2.1-1.4-.5-.6-1-1.3-1.1-1.5-.1-.2 0-.4.1-.5l.4-.4c.1-.1.2-.3.3-.4.1-.1.1-.3 0-.4-.1-.1-.5-1.3-.7-1.7-.2-.5-.4-.4-.5-.4h-.5c-.2 0-.4.1-.6.3-.7.7-.9 1.6-.5 2.6.6 1.5 2.2 3.8 4.8 4.9.7.3 1.2.4 1.6.5.7.2 1.3.1 1.8-.1.5-.3.9-.7 1-1.3.1-.3.1-.5 0-.6-.1-.2-.3-.3-.6-.4z" fill="white"/></svg>
+            Asesoría gratis por WhatsApp
+          </a>
+          <a href="#calculadora" class="btn-outline">Calcular mi pensión →</a>
+        </div>
+        <div class="hero-trust">
+          <div class="trust-item"><span class="trust-icon">✓</span> Respuesta en menos de 1 hora</div>
+          <div class="trust-item"><span class="trust-icon">✓</span> Sin costo inicial de consulta</div>
+          <div class="trust-item"><span class="trust-icon">✓</span> Proceso 100% legal</div>
+        </div>
+      </div>
+      <div class="hero-visual" data-aos data-aos-delay="180">
+        <div class="hero-card">
+          <div class="hc-header">Comparativo de pensión</div>
+          <div class="hc-row">
+            <div class="hc-col bad">
+              <div class="hc-label">Pensión actual</div>
+              <div class="hc-amount">$3,100</div>
+              <div class="hc-period">/mes</div>
+              <div class="hc-badge bad-badge">❌ Incorrecta</div>
+            </div>
+            <div class="hc-vs">→</div>
+            <div class="hc-col good">
+              <div class="hc-label">Lo que mereces</div>
+              <div class="hc-amount">$10,600</div>
+              <div class="hc-period">/mes</div>
+              <div class="hc-badge good-badge">✅ Garantizada</div>
+            </div>
+          </div>
+          <div class="hc-retro">
+            <div class="hc-retro-label">💰 Retroactivo estimado (2 años)</div>
+            <div class="hc-retro-val">$180,000</div>
+            <div class="hc-retro-note">El IMSS te paga con cheque</div>
+          </div>
+        </div>
+        <div class="hero-stats-row">
+          <div class="hstat"><span class="hstat-n">+500</span><span class="hstat-l">Casos ganados</span></div>
+          <div class="hstat-div"></div>
+          <div class="hstat"><span class="hstat-n">98%</span><span class="hstat-l">Tasa de éxito</span></div>
+          <div class="hstat-div"></div>
+          <div class="hstat"><span class="hstat-n">20 años</span><span class="hstat-l">De experiencia</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="hero-wave">
+      <svg viewBox="0 0 1440 90" preserveAspectRatio="none"><path d="M0,45 C240,90 480,0 720,45 C960,90 1200,0 1440,45 L1440,90 L0,90 Z" fill="#f5f7ff"/></svg>
+    </div>
+  </section>
+
+  <!-- PROBLEMA -->
+  <section class="problem" id="problema">
+    <div class="container">
+      <div class="problem-inner" data-aos>
+        <div class="prob-icon">⚠️</div>
+        <div class="prob-content">
+          <h2><span class="gold">7 de cada 10</span> pensionados reciben menos de lo que les corresponde</h2>
+          <p>El IMSS comete errores constantemente: semanas no contadas, periodos no reconocidos, homonimias, salarios mal calculados. Trabajaste toda tu vida para que hoy te roben tu pensión.</p>
+        </div>
+      </div>
+      <div class="prob-stats">
+        <div class="prob-stat" data-aos><div class="ps-icon">📉</div><div class="ps-num">$7,500</div><div class="ps-label">diferencia mensual promedio que se puede recuperar</div></div>
+        <div class="prob-stat" data-aos data-aos-delay="100"><div class="ps-icon">📋</div><div class="ps-num">$180,000</div><div class="ps-label">retroactivo promedio que el IMSS paga directamente</div></div>
+        <div class="prob-stat" data-aos data-aos-delay="200"><div class="ps-icon">⚖️</div><div class="ps-num">100%</div><div class="ps-label">legal, respaldado por la Ley del Seguro Social</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICIOS -->
+  <section class="services" id="servicios">
+    <div class="container">
+      <div class="section-header" data-aos>
+        <div class="section-tag">Nuestra solución</div>
+        <h2 class="section-title">Corregimos tu pensión ante el IMSS</h2>
+        <p class="section-sub">Analizamos tu caso sin costo y actuamos legalmente para que recibas lo que te corresponde.</p>
+      </div>
+      <div class="srv-grid">
+        <div class="srv-card" data-aos><div class="srv-icon-wrap"><div class="srv-icon">📋</div></div><h3>Corrección de pensión</h3><p>Revisamos tu resolución del IMSS línea por línea. Si hay errores, los corregimos legalmente.</p><div class="srv-tag">Más solicitado</div></div>
+        <div class="srv-card" data-aos data-aos-delay="80"><div class="srv-icon-wrap"><div class="srv-icon">🔗</div></div><h3>Unificación de semanas</h3><p>Unificamos periodos cotizados dispersos en distintas empresas para maximizar tu pensión.</p></div>
+        <div class="srv-card" data-aos data-aos-delay="160"><div class="srv-icon-wrap"><div class="srv-icon">🪪</div></div><h3>Resolución de homonimia</h3><p>Resolvemos confusiones de identidad ante el IMSS que bloquean tu historial de cotizaciones.</p></div>
+        <div class="srv-card" data-aos data-aos-delay="240"><div class="srv-icon-wrap"><div class="srv-icon">📅</div></div><h3>Periodos no reconocidos</h3><p>Recuperamos semanas cotizadas que el IMSS "olvidó" registrar o que no aparecen en tu expediente.</p></div>
+        <div class="srv-card" data-aos data-aos-delay="320"><div class="srv-icon-wrap"><div class="srv-icon">💼</div></div><h3>Demanda de pensión mínima</h3><p>Si tu pensión es inferior a la mínima garantizada, tienes derecho legal a reclamar la diferencia.</p><div class="srv-tag">Ley 73 y Ley 97</div></div>
+        <div class="srv-card" data-aos data-aos-delay="400"><div class="srv-icon-wrap"><div class="srv-icon">🏦</div></div><h3>Cobro de retroactivo</h3><p>Te ayudamos a cobrar el retroactivo completo que el IMSS te adeuda desde el inicio del proceso.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROCESO -->
+  <section class="proceso" id="proceso">
+    <div class="container">
+      <div class="section-header" data-aos>
+        <div class="section-tag light">Paso a paso</div>
+        <h2 class="section-title white">¿Cómo funciona el proceso?</h2>
+        <p class="section-sub light">Simple, transparente y sin sorpresas. Así trabajamos contigo desde el primer día.</p>
+      </div>
+      <div class="steps-grid">
+        <div class="step-card" data-aos><div class="step-num">1</div><div class="step-icon">💬</div><h3>Consulta gratuita</h3><p>Cuéntanos tu situación por WhatsApp. Analizamos tu caso sin costo y sin compromiso en menos de 1 hora.</p><div class="step-time">⏱ Mismo día</div></div>
+        <div class="step-connector"></div>
+        <div class="step-card" data-aos data-aos-delay="100"><div class="step-num">2</div><div class="step-icon">📄</div><h3>Revisión de expediente</h3><p>Solicitamos tu historial laboral al IMSS y lo analizamos para identificar errores o semanas faltantes.</p><div class="step-time">⏱ 1–3 días</div></div>
+        <div class="step-connector"></div>
+        <div class="step-card" data-aos data-aos-delay="200"><div class="step-num">3</div><div class="step-icon">⚖️</div><h3>Demanda ante el IMSS</h3><p>Presentamos la demanda formal. Solo pagás $1,000 para iniciar. El resto solo si ganamos.</p><div class="step-time">⏱ 1–2 semanas</div></div>
+        <div class="step-connector"></div>
+        <div class="step-card" data-aos data-aos-delay="300"><div class="step-num">4</div><div class="step-icon">🏆</div><h3>Cobras tu retroactivo</h3><p>El IMSS emite un cheque a tu nombre con el retroactivo completo. Nosotros cobramos solo el 30%.</p><div class="step-time">⏱ 18–24 meses</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COSTOS -->
+  <section class="costs" id="costos">
+    <div class="container">
+      <div class="section-header" data-aos>
+        <div class="section-tag">Sin letras pequeñas</div>
+        <h2 class="section-title">Modelo de pago justo y transparente</h2>
+        <p class="section-sub">Diseñado para que cualquier trabajador acceda a la justicia, sin importar su situación económica.</p>
+      </div>
+      <div class="cost-grid">
+        <div class="cost-card" data-aos>
+          <div class="cost-badge-top">Pago único para iniciar</div>
+          <div class="cost-icon">🚀</div>
+          <div class="cost-amount">$1,000 <small>MXN</small></div>
+          <h3>Al comenzar la demanda</h3>
+          <p>Cubre los trámites iniciales, apertura de expediente y gestión ante el IMSS.</p>
+          <ul class="cost-list"><li>✓ Revisión completa de tu caso</li><li>✓ Recopilación de documentos</li><li>✓ Presentación de demanda</li></ul>
+        </div>
+        <div class="cost-plus">+</div>
+        <div class="cost-card featured" data-aos data-aos-delay="150">
+          <div class="cost-badge-featured">Solo si ganas ✅</div>
+          <div class="cost-icon">💰</div>
+          <div class="cost-amount">30% <small>del retroactivo</small></div>
+          <h3>Al ganar tu caso</h3>
+          <p>Si no ganamos, no cobramos. Nuestro éxito está 100% ligado al tuyo.</p>
+          <ul class="cost-list dark"><li>✓ Sin costos ocultos</li><li>✓ Sin cargos adicionales</li><li>✓ Pago solo al cobrar</li></ul>
+        </div>
+      </div>
+      <div class="guarantee-row" data-aos>
+        <div class="guarantee-card"><div class="gc-icon">🛡️</div><div class="gc-text"><strong>Garantía de transparencia total</strong><p>No existen costos ocultos, cargos sorpresa ni comisiones adicionales. Lo que ves es exactamente lo que pagas.</p></div></div>
+        <div class="guarantee-card"><div class="gc-icon">📜</div><div class="gc-text"><strong>Contrato por escrito</strong><p>Todo queda firmado en un contrato legal. Tienes evidencia de cada acuerdo antes de iniciar cualquier trámite.</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CALCULADORA -->
+  <section class="calculadora" id="calculadora">
+    <div class="container">
+      <div class="section-header" data-aos>
+        <div class="section-tag">Herramienta gratuita</div>
+        <h2 class="section-title">Calcula tu retroactivo estimado</h2>
+        <p class="section-sub">Introduce tus datos y descubre cuánto podría pagarte el IMSS si inicias una demanda hoy.</p>
+      </div>
+      <div class="calc-wrap" data-aos>
+        <div class="calc-inputs">
+          <div class="calc-field">
+            <label>Tu pensión mensual actual</label>
+            <div class="calc-input-wrap">
+              <span class="calc-prefix">$</span>
+              <input type="number" id="pension-actual" min="0" max="50000" value="3100"/>
+              <span class="calc-suffix">MXN/mes</span>
+            </div>
+          </div>
+          <div class="calc-field">
+            <label>¿Cuándo empezaste a cobrar tu pensión?</label>
+            <select id="meses-pension">
+              <option value="12">Hace 1 año</option>
+              <option value="18">Hace 1 año y medio</option>
+              <option value="24" selected>Hace 2 años</option>
+              <option value="36">Hace 3 años</option>
+              <option value="48">Hace 4 años</option>
+              <option value="60">Hace 5 años o más</option>
+            </select>
+          </div>
+          <div class="calc-field">
+            <label>Pensión mínima garantizada 2026</label>
+            <div class="calc-input-wrap">
+              <span class="calc-prefix">$</span>
+              <input type="number" id="pension-minima" value="10600" min="0" max="50000"/>
+              <span class="calc-suffix">MXN/mes</span>
+            </div>
+          </div>
+          <button class="btn-calc" id="btn-calcular">Calcular retroactivo →</button>
+        </div>
+        <div class="calc-result">
+          <div class="cr-header">Estimación de tu caso</div>
+          <div class="cr-row"><span>Diferencia mensual</span><span class="cr-val" id="r-diferencia">$7,500/mes</span></div>
+          <div class="cr-row"><span>Meses a reclamar</span><span class="cr-val" id="r-meses">24 meses</span></div>
+          <div class="cr-divider"></div>
+          <div class="cr-total-row"><span>💰 Retroactivo estimado</span><span class="cr-total" id="r-total">$180,000</span></div>
+          <div class="cr-sub-row">
+            <div class="cr-sub"><span>Tu ganancia neta (70%)</span><span class="cr-sub-val good" id="r-neto">$126,000</span></div>
+            <div class="cr-sub"><span>Honorarios (30%)</span><span class="cr-sub-val muted" id="r-honorarios">$54,000</span></div>
+          </div>
+          <div class="cr-new-pension"><div class="crp-label">Tu nueva pensión mensual</div><div class="crp-val" id="r-nueva">$10,600 <span>/mes</span></div></div>
+          <div class="cr-disclaimer">*Estimación ilustrativa. El monto real depende de tu expediente. Consulta gratuita para evaluación precisa.</div>
+          <a href="https://wa.me/521XXXXXXXXXX?text=Hola,%20quiero%20saber%20exactamente%20cuánto%20puedo%20recuperar%20de%20mi%20pensión%20IMSS" class="btn-wa cr-cta" target="_blank" rel="noopener">💬 Verificar mi caso gratis</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIOS -->
+  <section class="testimonials" id="testimonios">
+    <div class="container">
+      <div class="section-header" data-aos>
+        <div class="section-tag light">Casos reales</div>
+        <h2 class="section-title white">Lo que dicen quienes ya ganaron</h2>
+        <p class="section-sub light">Trabajadores reales, resultados reales. Sus historias hablan por nosotros.</p>
+      </div>
+      <div class="test-grid">
+        <div class="test-card" data-aos>
+          <div class="test-top"><div class="test-avatar" style="background:#7c3aed">MR</div><div><strong>María R.</strong><span>Jubilada · Guadalajara, Jal.</span><div class="test-stars">★★★★★</div></div></div>
+          <p>"Llevaba 3 años recibiendo $2,800 y pensé que era lo normal. Gracias a Todo Pensiones &amp; Legal descubrí que me correspondían $10,600. Recibí un cheque del IMSS por <strong>$183,600</strong>. No lo podía creer."</p>
+          <div class="test-result"><span class="tr-label">Retroactivo cobrado</span><span class="tr-val">$183,600</span></div>
+        </div>
+        <div class="test-card featured-test" data-aos data-aos-delay="100">
+          <div class="test-top"><div class="test-avatar" style="background:#059669">JL</div><div><strong>José L.</strong><span>Pensionado · Ciudad de México</span><div class="test-stars">★★★★★</div></div></div>
+          <p>"Al principio tenía miedo de que fuera algo irregular. Me explicaron todo muy claro, es completamente legal. En 20 meses cobré mi retroactivo. Mi pensión subió de $4,200 a $10,600. <strong>Les estaré eternamente agradecido.</strong>"</p>
+          <div class="test-result"><span class="tr-label">Aumento mensual</span><span class="tr-val">+$6,400/mes</span></div>
+        </div>
+        <div class="test-card" data-aos data-aos-delay="200">
+          <div class="test-top"><div class="test-avatar" style="background:#b45309">CA</div><div><strong>Carlos A.</strong><span>Jubilado · Monterrey, N.L.</span><div class="test-stars">★★★★★</div></div></div>
+          <p>"Tenía semanas que el IMSS nunca reconoció. En menos de 2 años resolvieron todo y ahora recibo casi el triple de lo que me daban. <strong>Mi familia y yo estamos muy agradecidos.</strong>"</p>
+          <div class="test-result"><span class="tr-label">Retroactivo cobrado</span><span class="tr-val">$214,800</span></div>
+        </div>
+        <div class="test-card" data-aos data-aos-delay="300">
+          <div class="test-top"><div class="test-avatar" style="background:#0369a1">RM</div><div><strong>Rosa M.</strong><span>Pensionada · Puebla, Pue.</span><div class="test-stars">★★★★★</div></div></div>
+          <p>"Mi hijo me dijo que buscara ayuda porque mi pensión era muy baja. Contacté a Todo Pensiones y en dos años cobré lo que me debían. <strong>Es un proceso largo pero vale completamente la pena.</strong>"</p>
+          <div class="test-result"><span class="tr-label">Aumento mensual</span><span class="tr-val">+$7,100/mes</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BENEFICIOS -->
+  <section class="benefits" id="beneficios">
+    <div class="container">
+      <div class="section-header" data-aos>
+        <div class="section-tag">¿Por qué elegirnos?</div>
+        <h2 class="section-title">Lo que nos hace diferentes</h2>
+      </div>
+      <div class="ben-grid">
+        <div class="ben-card" data-aos><div class="ben-icon">⚖️</div><h3>Proceso 100% legal</h3><p>Todo se realiza con base en la Ley del Seguro Social. Sin trucos, sin riesgos, sin irregularidades.</p></div>
+        <div class="ben-card" data-aos data-aos-delay="60"><div class="ben-icon">💸</div><h3>Inversión mínima</h3><p>Solo $1,000 para iniciar el proceso. El resto, únicamente si tú ganas. Tu riesgo es casi cero.</p></div>
+        <div class="ben-card" data-aos data-aos-delay="120"><div class="ben-icon">🤝</div><h3>Acompañamiento total</h3><p>Te explicamos cada paso, cada documento y cada decisión. Nunca estarás solo en el proceso.</p></div>
+        <div class="ben-card" data-aos data-aos-delay="180"><div class="ben-icon">🏆</div><h3>Resultados comprobados</h3><p>Más de 500 casos ganados. Llevamos 20 años en la materia con una tasa de éxito del 98%.</p></div>
+        <div class="ben-card" data-aos data-aos-delay="240"><div class="ben-icon">🆓</div><h3>Consulta sin costo</h3><p>Analizamos tu caso gratuitamente y te decimos si tienes derecho antes de firmar cualquier contrato.</p></div>
+        <div class="ben-card" data-aos data-aos-delay="300"><div class="ben-icon">👩‍⚖️</div><h3>Abogados especializados</h3><p>Equipo exclusivamente enfocado en pensiones IMSS. No somos generalistas: este es nuestro único tema.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="faq" id="faq">
+    <div class="container">
+      <div class="section-header" data-aos>
+        <div class="section-tag light">Preguntas frecuentes</div>
+        <h2 class="section-title white">Todo lo que necesitas saber</h2>
+      </div>
+      <div class="faq-grid">
+        <div class="faq-item" data-aos><button class="faq-q" aria-expanded="false"><span>¿Es realmente legal demandar al IMSS por mi pensión?</span><span class="faq-icon">+</span></button><div class="faq-a"><p>Sí, completamente. La pensión mínima garantizada está establecida en la Ley del Seguro Social. Cuando el IMSS te paga menos de lo que te corresponde, tienes derecho legal a reclamarlo ante el Tribunal Federal de Justicia Administrativa. Es un proceso judicial formal, no un truco.</p></div></div>
+        <div class="faq-item" data-aos><button class="faq-q" aria-expanded="false"><span>¿Cuánto tiempo tarda el proceso?</span><span class="faq-icon">+</span></button><div class="faq-a"><p>El proceso típico dura entre 18 y 24 meses. Durante ese tiempo, el IMSS sigue pagándote tu pensión actual. Al ganar, cobras la diferencia acumulada de todos esos meses como retroactivo, más el aumento permanente desde ese momento.</p></div></div>
+        <div class="faq-item" data-aos><button class="faq-q" aria-expanded="false"><span>¿Qué pasa si no ganamos el caso?</span><span class="faq-icon">+</span></button><div class="faq-a"><p>Si no ganamos, no te cobramos honorarios. Solo perderías los $1,000 iniciales del trámite administrativo. Antes de iniciar, analizamos tu caso gratuitamente para asegurarnos de que tienes fundamentos sólidos para ganar.</p></div></div>
+        <div class="faq-item" data-aos><button class="faq-q" aria-expanded="false"><span>¿Aplica para pensiones de Ley 73 y Ley 97?</span><span class="faq-icon">+</span></button><div class="faq-a"><p>Sí. Trabajamos con ambas leyes. La pensión mínima garantizada aplica principalmente bajo la Ley 73, aunque también existen mecanismos bajo la Ley 97 cuando hay errores en el cálculo del saldo de tu AFORE o en las semanas cotizadas reconocidas.</p></div></div>
+        <div class="faq-item" data-aos><button class="faq-q" aria-expanded="false"><span>¿Necesito ir a la Ciudad de México?</span><span class="faq-icon">+</span></button><div class="faq-a"><p>No. Llevamos casos de todo México de forma remota. El proceso se gestiona principalmente por WhatsApp, correo y videoconferencia. Solo necesitas enviarnos copias de tus documentos; nosotros hacemos el resto.</p></div></div>
+        <div class="faq-item" data-aos><button class="faq-q" aria-expanded="false"><span>¿Qué documentos necesito para empezar?</span><span class="faq-icon">+</span></button><div class="faq-a"><p>Para la consulta inicial no necesitas ningún documento. Para iniciar el proceso formal necesitaremos: tu resolución de pensión del IMSS, CURP, INE vigente, comprobante de domicilio y, si los tienes, tus estados de cuenta del IMSS. Nosotros te guiamos paso a paso.</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA FINAL -->
+  <section class="final-cta" id="contacto">
+    <div class="container">
+      <div class="fcta-inner" data-aos>
+        <div class="fcta-emoji">💬</div>
+        <h2>Descubre hoy si puedes aumentar tu pensión</h2>
+        <p>Miles de trabajadores como tú ya están recibiendo lo que merecen. La consulta es <strong>completamente gratuita</strong>, sin compromiso y sin papeles iniciales.</p>
+        <a href="https://wa.me/521XXXXXXXXXX?text=Hola,%20quiero%20saber%20si%20puedo%20aumentar%20mi%20pensión%20del%20IMSS.%20¿Cuándo%20podemos%20hablar?" class="btn-wa btn-wa-xl" target="_blank" rel="noopener">
+          <svg viewBox="0 0 32 32" class="wa-svg"><circle cx="16" cy="16" r="16" fill="white" fill-opacity=".2"/><path d="M23.5 8.5C21.7 6.7 19.3 5.7 16.7 5.7c-5.3 0-9.6 4.3-9.6 9.6 0 1.7.4 3.3 1.3 4.7L7 27l7.2-1.9c1.4.8 2.9 1.1 4.5 1.1 5.3 0 9.6-4.3 9.6-9.6.1-2.6-.9-5-2.8-6.9zm-6.8 14.7c-1.4 0-2.8-.4-4-1.1l-.3-.2-3 .8.8-2.9-.2-.3c-.8-1.2-1.2-2.7-1.2-4.2 0-4.3 3.5-7.8 7.8-7.8 2.1 0 4 .8 5.5 2.3 1.5 1.5 2.3 3.4 2.3 5.5 0 4.4-3.5 7.9-7.7 7.9zm4.3-5.8c-.2-.1-1.4-.7-1.6-.8-.2-.1-.4-.1-.5.1-.2.2-.6.8-.8 1-.1.2-.3.2-.5.1-.7-.4-1.5-.7-2.1-1.4-.5-.6-1-1.3-1.1-1.5-.1-.2 0-.4.1-.5l.4-.4c.1-.1.2-.3.3-.4.1-.1.1-.3 0-.4-.1-.1-.5-1.3-.7-1.7-.2-.5-.4-.4-.5-.4h-.5c-.2 0-.4.1-.6.3-.7.7-.9 1.6-.5 2.6.6 1.5 2.2 3.8 4.8 4.9.7.3 1.2.4 1.6.5.7.2 1.3.1 1.8-.1.5-.3.9-.7 1-1.3.1-.3.1-.5 0-.6-.1-.2-.3-.3-.6-.4z" fill="white"/></svg>
+          Enviar mensaje por WhatsApp ahora
+        </a>
+        <div class="fcta-info">
+          <span>📞 Lunes a Viernes · 9:00 – 19:00 hrs</span>
+          <span>⚡ Respuesta en menos de 1 hora</span>
+          <span>🆓 Consulta 100% gratuita</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="footer-logo">⚖️ Todo Pensiones <span>&amp; Legal</span></div>
+          <p>Especialistas en demandas de pensión mínima garantizada ante el IMSS. Proceso 100% legal con más de 20 años de experiencia.</p>
+          <a href="https://wa.me/521XXXXXXXXXX" class="footer-wa" target="_blank" rel="noopener">💬 Escríbenos por WhatsApp</a>
+        </div>
+        <div class="footer-nav">
+          <h4>Navegación</h4>
+          <ul>
+            <li><a href="#inicio">Inicio</a></li>
+            <li><a href="#servicios">Servicios</a></li>
+            <li><a href="#proceso">Proceso</a></li>
+            <li><a href="#costos">Costos</a></li>
+            <li><a href="#calculadora">Calculadora</a></li>
+            <li><a href="#testimonios">Testimonios</a></li>
+            <li><a href="#faq">Preguntas frecuentes</a></li>
+          </ul>
+        </div>
+        <div class="footer-contact">
+          <h4>Contacto</h4>
+          <div class="fc-item">📱 <a href="https://wa.me/521XXXXXXXXXX">WhatsApp: 55 XXXX XXXX</a></div>
+          <div class="fc-item">📧 <a href="mailto:contacto@todopensiones.mx">contacto@todopensiones.mx</a></div>
+          <div class="fc-item">🕘 Lun–Vie 9:00–19:00 hrs</div>
+          <div class="fc-item">📍 Servicio en toda la República</div>
+          <div class="footer-trust-seal">"Tu pensión justa es nuestro compromiso"</div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 Todo Pensiones &amp; Legal · Todos los derechos reservados</p>
+        <p class="footer-disc">Los resultados varían según cada caso. Los ejemplos presentados son ilustrativos. Todos los procesos se basan en la Ley del Seguro Social vigente.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- BOTÓN FLOTANTE WHATSAPP -->
+  <a href="https://wa.me/521XXXXXXXXXX?text=Hola,%20quiero%20saber%20si%20puedo%20aumentar%20mi%20pensión%20del%20IMSS" class="wa-float" target="_blank" rel="noopener" aria-label="Contactar por WhatsApp">
+    <svg viewBox="0 0 32 32" fill="none"><circle cx="16" cy="16" r="16" fill="#25D366"/><path d="M23.5 8.5C21.7 6.7 19.3 5.7 16.7 5.7c-5.3 0-9.6 4.3-9.6 9.6 0 1.7.4 3.3 1.3 4.7L7 27l7.2-1.9c1.4.8 2.9 1.1 4.5 1.1 5.3 0 9.6-4.3 9.6-9.6.1-2.6-.9-5-2.8-6.9zm-6.8 14.7c-1.4 0-2.8-.4-4-1.1l-.3-.2-3 .8.8-2.9-.2-.3c-.8-1.2-1.2-2.7-1.2-4.2 0-4.3 3.5-7.8 7.8-7.8 2.1 0 4 .8 5.5 2.3 1.5 1.5 2.3 3.4 2.3 5.5 0 4.4-3.5 7.9-7.7 7.9zm4.3-5.8c-.2-.1-1.4-.7-1.6-.8-.2-.1-.4-.1-.5.1-.2.2-.6.8-.8 1-.1.2-.3.2-.5.1-.7-.4-1.5-.7-2.1-1.4-.5-.6-1-1.3-1.1-1.5-.1-.2 0-.4.1-.5l.4-.4c.1-.1.2-.3.3-.4.1-.1.1-.3 0-.4-.1-.1-.5-1.3-.7-1.7-.2-.5-.4-.4-.5-.4h-.5c-.2 0-.4.1-.6.3-.7.7-.9 1.6-.5 2.6.6 1.5 2.2 3.8 4.8 4.9.7.3 1.2.4 1.6.5.7.2 1.3.1 1.8-.1.5-.3.9-.7 1-1.3.1-.3.1-.5 0-.6-.1-.2-.3-.3-.6-.4z" fill="white"/></svg>
+    <span class="wa-pulse"></span>
+    <span class="wa-tooltip">¡Escríbenos gratis!</span>
+  </a>
+
+<script>
+// Navbar scroll + burger
+const navbar   = document.getElementById('navbar');
+const burger   = document.getElementById('nav-burger');
+const navLinks = document.getElementById('nav-links');
+
+window.addEventListener('scroll', () => {
+  navbar.classList.toggle('scrolled', window.scrollY > 40);
+}, { passive: true });
+
+burger.addEventListener('click', () => {
+  burger.classList.toggle('open');
+  navLinks.classList.toggle('open');
+});
+
+navLinks.querySelectorAll('a').forEach(a => {
+  a.addEventListener('click', () => {
+    burger.classList.remove('open');
+    navLinks.classList.remove('open');
+  });
+});
+
+// AOS
+const aosObs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); aosObs.unobserve(e.target); } });
+}, { threshold: 0.1 });
+document.querySelectorAll('[data-aos]').forEach(el => aosObs.observe(el));
+
+// Smooth anchor scroll
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    const target = document.querySelector(a.getAttribute('href'));
+    if (!target) return;
+    e.preventDefault();
+    window.scrollTo({ top: target.getBoundingClientRect().top + window.scrollY - 70, behavior: 'smooth' });
+  });
+});
+
+// FAQ accordion
+document.querySelectorAll('.faq-q').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const isOpen = btn.getAttribute('aria-expanded') === 'true';
+    document.querySelectorAll('.faq-q').forEach(b => {
+      b.setAttribute('aria-expanded', 'false');
+      b.closest('.faq-item').querySelector('.faq-a').classList.remove('open');
+    });
+    if (!isOpen) {
+      btn.setAttribute('aria-expanded', 'true');
+      btn.closest('.faq-item').querySelector('.faq-a').classList.add('open');
+    }
+  });
+});
+
+// Calculadora
+function fmt(n) { return '$' + Math.round(n).toLocaleString('es-MX'); }
+
+function calcular() {
+  const actual  = parseFloat(document.getElementById('pension-actual').value) || 0;
+  const minima  = parseFloat(document.getElementById('pension-minima').value) || 10600;
+  const meses   = parseInt(document.getElementById('meses-pension').value) || 24;
+  const diff    = Math.max(0, minima - actual);
+  const retro   = diff * meses;
+  const hon     = retro * 0.30;
+  const neto    = retro * 0.70;
+
+  document.getElementById('r-diferencia').textContent = fmt(diff) + '/mes';
+  document.getElementById('r-meses').textContent      = meses + ' meses';
+  document.getElementById('r-honorarios').textContent = fmt(hon);
+  document.getElementById('r-neto').textContent       = fmt(neto);
+  document.getElementById('r-nueva').innerHTML        = fmt(minima) + ' <span>/mes</span>';
+
+  const totalEl = document.getElementById('r-total');
+  totalEl.textContent = fmt(retro);
+  totalEl.style.transform = 'scale(1.1)';
+  setTimeout(() => { totalEl.style.transform = ''; }, 300);
+}
+
+document.getElementById('btn-calcular').addEventListener('click', calcular);
+['pension-actual','pension-minima','meses-pension'].forEach(id => {
+  document.getElementById(id).addEventListener('input', calcular);
+});
+calcular();
+
+// WA float pulse
+const waFloat = document.querySelector('.wa-float');
+if (waFloat) {
+  setInterval(() => {
+    waFloat.style.transform = 'scale(1.12)';
+    setTimeout(() => { waFloat.style.transform = ''; }, 250);
+  }, 4500);
+}
+</script>
+</body>
+</html>
