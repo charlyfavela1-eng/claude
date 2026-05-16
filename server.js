@@ -11,6 +11,10 @@ const CONFIG_FILE = path.join(__dirname, '.seedance-config.json');
 app.use(express.json({ limit: '20mb' }));
 app.use(express.static(__dirname));
 
+app.get('/', (_req, res) => {
+  res.sendFile(path.join(__dirname, 'seedance-studio.html'));
+});
+
 // ──── CONFIG (API key stored server-side) ────
 
 function readConfig() {
