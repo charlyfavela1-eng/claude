@@ -301,8 +301,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);height:100vh
     <div class="field">
       <label>Proveedor</label>
       <select id="s-prov" onchange="onProvChange()">
+        <option value="atlascloud">Atlas Cloud (atlascloud.ai)</option>
         <option value="byteplus">BytePlus — ByteDance oficial</option>
-        <option value="atlascloud">Atlas Cloud</option>
         <option value="volcengine">Volcengine ModelArk</option>
         <option value="custom">URL personalizada</option>
       </select>
@@ -318,8 +318,9 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);height:100vh
     <div class="field">
       <label>Modelo por defecto</label>
       <select id="s-model">
-        <option value="seedance-2-0-260128">Seedance 2.0 Pro</option>
-        <option value="seedance-2-0-fast-260128">Seedance 2.0 Fast</option>
+        <option value="bytedance/seedance-2.0/text-to-video">Seedance 2.0 (Atlas Cloud)</option>
+        <option value="seedance-2-0-260128">Seedance 2.0 Pro (BytePlus)</option>
+        <option value="seedance-2-0-fast-260128">Seedance 2.0 Fast (BytePlus)</option>
         <option value="seedance-1-5-pro">Seedance 1.5 Pro</option>
       </select>
     </div>

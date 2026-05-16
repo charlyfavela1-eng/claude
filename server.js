@@ -25,8 +25,8 @@ function writeConfig(data) {
 app.get('/api/config', (_req, res) => {
   const cfg = readConfig();
   res.json({
-    provider: cfg.provider || 'byteplus',
-    model:    cfg.model    || 'seedance-2-0-260128',
+    provider: cfg.provider || 'atlascloud',
+    model:    cfg.model    || 'bytedance/seedance-2.0/text-to-video',
     url:      cfg.url      || '',
     hasKey:   !!(cfg.key && cfg.key.length > 5),
     keyHint:  cfg.key ? cfg.key.slice(0, 4) + '…' + cfg.key.slice(-4) : '',
@@ -49,24 +49,32 @@ app.delete('/api/config', (_req, res) => {
 
 // ──── PROXY HELPERS ────
 
-function getEndpoint(provider, customUrl) {
-  if (provider === 'atlascloud')  return 'https://api.atlascloud.ai/v1/video/generate';
-  if (provider === 'volcengine')  return 'https://ark.cn-beijing.volces.com/api/v3/video/generation';
-  return (customUrl || 'https://api.byteplus.com') + '/v1/video/generation';
-}
+// Atlas Cloud endpoints (from official docs)
+const ATLAS_GENERATE = 'https://api.atlascloud.ai/api/v1/model/generateVideo';
+const ATLAS_STATUS   = 'https://api.atlascloud.ai/api/v1/model/taskStatus';
 
-function getPollBase(provider, customUrl) {
-  if (provider === 'atlascloud')  return 'https://api.atlascloud.ai/v1/video/';
-  if (provider === 'volcengine')  return 'https://ark.cn-beijing.volces.com/api/v3/video/';
-  return (customUrl || 'https://api.byteplus.com') + '/v1/video/generation/';
+function getEndpoint(provider, customUrl) {
+  if (provider === 'atlascloud') return ATLAS_GENERATE;
+  if (provider === 'volcengine') return 'https://ark.cn-beijing.volces.com/api/v3/video/generation';
+  return (customUrl || 'https://api.byteplus.com') + '/v1/video/generation';
 }
 
 function buildBody(provider, model, params, imgB64) {
   const { prompt, duration, resolution, aspect_ratio, camera_motion } = params;
-  const dur = parseInt(duration) || 8;
+  const dur = Math.min(Math.max(parseInt(duration) || 5, 4), 15);
 
   if (provider === 'atlascloud') {
-    const b = { model, prompt, duration: dur, resolution, aspect_ratio };
+    // Atlas Cloud format per official docs
+    const b = {
+      model: 'bytedance/seedance-2.0/text-to-video',
+      prompt,
+      duration: dur,
+      resolution: resolution || '720p',
+      ratio: aspect_ratio || 'adaptive',
+      generate_audio: true,
+      watermark: false,
+      return_last_frame: false,
+    };
     if (imgB64) b.image = imgB64;
     return b;
   }
@@ -117,11 +125,18 @@ app.get('/api/status/:taskId', async (req, res) => {
   const cfg = readConfig();
   if (!cfg.key) return res.status(401).json({ error: 'Sin API key' });
 
-  const base    = getPollBase(cfg.provider, cfg.url);
   const headers = { 'Authorization': 'Bearer ' + cfg.key };
+  let url;
+  if (cfg.provider === 'atlascloud') {
+    url = `${ATLAS_STATUS}?task_id=${req.params.taskId}`;
+  } else if (cfg.provider === 'volcengine') {
+    url = `https://ark.cn-beijing.volces.com/api/v3/video/${req.params.taskId}`;
+  } else {
+    url = `${cfg.url || 'https://api.byteplus.com'}/v1/video/generation/${req.params.taskId}`;
+  }
 
   try {
-    const upstream = await fetch(base + req.params.taskId, { headers });
+    const upstream = await fetch(url, { headers });
     const text = await upstream.text();
     if (!upstream.ok) return res.status(upstream.status).json({ error: text.slice(0, 200) });
     let data;
@@ -139,14 +154,14 @@ app.get('/api/verify', async (req, res) => {
 
   const endpoint = getEndpoint(cfg.provider, cfg.url);
   const headers  = { 'Authorization': 'Bearer ' + cfg.key, 'Content-Type': 'application/json' };
-  const body     = buildBody(cfg.provider, cfg.model, { prompt: 'test', duration: 5, resolution: '720p', aspect_ratio: '16:9' }, null);
+  const body     = buildBody(cfg.provider, cfg.model, { prompt: 'test', duration: 5, resolution: '720p', aspect_ratio: 'adaptive' }, null);
 
   try {
     const upstream = await fetch(endpoint, { method: 'POST', headers, body: JSON.stringify(body) });
     if (upstream.status === 401 || upstream.status === 403) {
       return res.json({ ok: false, error: `Auth fallida (${upstream.status}): API key inválida` });
     }
-    // 400/422 = key valid but bad minimal params — that's fine for a ping
+    // 400/422 = key válida pero parámetros mínimos rechazados — eso está bien para un ping
     if ([200, 201, 202, 400, 422].includes(upstream.status)) {
       return res.json({ ok: true, status: upstream.status });
     }
