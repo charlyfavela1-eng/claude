@@ -64,9 +64,12 @@ function buildBody(provider, model, params, imgB64) {
   const dur = Math.min(Math.max(parseInt(duration) || 5, 4), 15);
 
   if (provider === 'atlascloud') {
-    // Atlas Cloud format per official docs
+    // Switch model based on whether an image is provided
+    const atlasModel = imgB64
+      ? 'bytedance/seedance-2.0/image-to-video'
+      : 'bytedance/seedance-2.0/text-to-video';
     const b = {
-      model: 'bytedance/seedance-2.0/text-to-video',
+      model: atlasModel,
       prompt,
       duration: dur,
       resolution: resolution || '720p',
