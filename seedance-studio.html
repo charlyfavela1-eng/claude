@@ -173,6 +173,11 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);height:100vh
 .verify-result.ok{background:#dcfce7;color:#166534;display:block}
 .verify-result.err{background:#fee2e2;color:#991b1b;display:block;word-break:break-word}
 
+/* CORS BANNER */
+.cors-banner{background:#fefce8;border:1px solid #fde047;border-radius:10px;padding:10px 14px;margin:10px 14px 0;font-size:11px;color:#713f12;line-height:1.7;display:none}
+.cors-banner strong{color:#92400e}
+.cors-banner code{background:#fef08a;padding:1px 5px;border-radius:4px;font-family:var(--mono);font-size:10px}
+
 /* ASPECT PILLS */
 .ap-wrap{display:flex;gap:5px;flex-wrap:wrap}
 .ap{padding:3px 9px;border-radius:20px;border:1px solid var(--border);font-size:11px;cursor:pointer;color:var(--text2);font-family:var(--mono);transition:all .12s}
@@ -288,6 +293,12 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);height:100vh
 <!-- FILE INPUT -->
 <input type="file" id="file-inp" accept="image/*" style="display:none" onchange="onFileChange(event)">
 
+<!-- CORS BANNER (shown in topbar when file://) -->
+<div class="cors-banner" id="cors-banner">
+  <strong>⚠ CORS bloqueado</strong> — Estás abriendo este archivo desde <code>file://</code>. El navegador bloquea las peticiones a APIs externas.<br>
+  Solución rápida: abre una terminal en la carpeta del archivo y ejecuta <code>python3 -m http.server 8080</code>, luego abre <code>http://localhost:8080/seedance-studio.html</code>
+</div>
+
 <!-- SETTINGS MODAL -->
 <div class="overlay hidden" id="settings-overlay">
   <div class="modal" style="width:430px">
@@ -317,6 +328,14 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);height:100vh
         <option value="seedance-2-0-fast-260128">Seedance 2.0 Fast</option>
         <option value="seedance-1-5-pro">Seedance 1.5 Pro</option>
       </select>
+    </div>
+    <div class="field" id="s-proxy-wrap">
+      <label>Proxy CORS (opcional)</label>
+      <input type="text" id="s-proxy" placeholder="http://localhost:8010/proxy — deja vacío si no necesitas">
+      <div style="font-size:10px;color:var(--text3);margin-top:3px">
+        Si ves "Failed to fetch", levanta un proxy local:<br>
+        <code style="font-family:var(--mono);background:var(--surface);padding:2px 5px;border-radius:4px">npx local-cors-proxy --proxyUrl https://api.byteplus.com</code>
+      </div>
     </div>
     <div id="s-key-status"></div>
     <div id="verify-result" class="verify-result"></div>
@@ -422,7 +441,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);height:100vh
 let S = {
   boards:[],
   cur:null,
-  cfg:{ provider:'byteplus',key:'',url:'',model:'seedance-2-0-260128' },
+  cfg:{ provider:'byteplus',key:'',url:'',model:'seedance-2-0-260128',proxy:'' },
   gen:{ dur:'8',res:'1080p',aspect:'16:9',cam:'' },
   img:null, imgB64:null
 };
@@ -436,6 +455,7 @@ let S = {
   }
   if(!S.cur) S.cur=S.boards[0].id;
   syncConfigUI(); renderBoardList(); renderCanvas(); initChat();
+  if(location.protocol==='file:') document.getElementById('cors-banner').style.display='block';
 })();
 
 function save(){ try{ localStorage.setItem('sds2',JSON.stringify(S)); }catch(e){} }
@@ -579,40 +599,50 @@ async function sendChat(){
 }
 
 // ──── API HELPERS ────
+function applyProxy(endpoint){
+  const p=S.cfg.proxy.trim();
+  if(!p) return endpoint;
+  // local-cors-proxy style: http://localhost:8010/proxy → strips original host
+  return p.replace(/\/$/, '')+'/'+endpoint.replace(/^https?:\/\//,'');
+}
+
 function buildRequest(prompt, imgB64){
   const {provider,key,url,model}=S.cfg;
   const {dur,res,aspect,cam}=S.gen;
   let endpoint,headers,body;
 
   if(provider==='atlascloud'){
-    endpoint='https://api.atlascloud.ai/v1/video/generate';
+    endpoint=applyProxy('https://api.atlascloud.ai/v1/video/generate');
     headers={'Authorization':'Bearer '+key,'Content-Type':'application/json'};
     body={model,prompt,duration:parseInt(dur),resolution:res,aspect_ratio:aspect};
-    // atlascloud accepts base64 image directly
     if(imgB64) body.image=imgB64;
 
   } else if(provider==='volcengine'){
-    endpoint='https://ark.cn-beijing.volces.com/api/v3/video/generation';
+    endpoint=applyProxy('https://ark.cn-beijing.volces.com/api/v3/video/generation');
     headers={'Authorization':'Bearer '+key,'Content-Type':'application/json'};
-    // volcengine uses dreamina- prefix
     body={model:'dreamina-'+model,prompt,duration:parseInt(dur),aspect_ratio:aspect};
     if(imgB64) body.image=imgB64;
 
   } else {
-    // byteplus (default) — model name used as-is, no prefix
-    endpoint=(url||'https://api.byteplus.com')+'/v1/video/generation';
+    // byteplus — model name used as-is, no prefix
+    const base=url||'https://api.byteplus.com';
+    endpoint=applyProxy(base+'/v1/video/generation');
     headers={'Authorization':'Bearer '+key,'Content-Type':'application/json'};
     body={model,req_key:'seedance_video_01',prompt,duration:parseInt(dur),
           resolution:res,aspect_ratio:aspect};
     if(res==='2k') body.scale=2;
     if(cam) body.camera_motion=cam;
-    // base64 data URLs are NOT valid for image_url — only pass if it's an http URL
     if(imgB64){
       if(imgB64.startsWith('http')) body.image_url=imgB64;
-      else body.image=imgB64; // send raw base64 in image field
+      else body.image=imgB64;
     }
   }
   return {endpoint,headers,body};
+}
+
+function isCorsError(err){
+  const m=err.message||'';
+  return m==='Failed to fetch'||m.includes('NetworkError')||m.includes('network')||m.includes('CORS')||m.includes('Load failed');
 }
 
 // ──── API VERIFY ────
@@ -635,7 +665,7 @@ async function verifyApi(){
       endpoint='https://ark.cn-beijing.volces.com/api/v3/models';
       headers={'Authorization':'Bearer '+key};
     } else {
-      endpoint=(customUrl||'https://api.byteplus.com')+'/v1/video/generation';
+      endpoint=applyProxy((customUrl||'https://api.byteplus.com')+'/v1/video/generation');
       headers={'Authorization':'Bearer '+key,'Content-Type':'application/json'};
       // send a minimal request; 400/422 = auth OK but bad params, 401/403 = auth fail
       const r=await fetch(endpoint,{
@@ -659,9 +689,10 @@ async function verifyApi(){
     else if(r.status===401||r.status===403) showVerifyResult(false,`Auth fallida (${r.status}): API key inválida o sin permisos.`);
     else showVerifyResult(false,`HTTP ${r.status} — revisa la configuración.`);
   } catch(e){
-    const isCors=e.message.includes('fetch')||e.message.includes('network')||e.message.toLowerCase().includes('failed');
-    showVerifyResult(false, isCors
-      ? 'Error de red / CORS: el navegador bloqueó la petición. Esto es normal al llamar APIs externas desde el navegador. La key puede ser correcta; prueba generando un video.'
+    showVerifyResult(false, isCorsError(e)
+      ? (location.protocol==='file:'
+          ? 'CORS bloqueado (archivo local). Abre desde un servidor: python3 -m http.server 8080'
+          : 'CORS bloqueado. Configura el campo "Proxy CORS" o usa la extensión Allow-CORS en Chrome.')
       : 'Error: '+e.message);
   } finally{
     btn.classList.remove('testing');
@@ -701,22 +732,30 @@ async function genTile(tile,prompt,imgB64,group){
     updateTile(tile,group); swapTileEl(tile,group.id); return vurl;
   } catch(err){
     tile.status='error';
-    tile.err=err.message;
-    tile.errDetail=err.detail||'';
+    if(isCorsError(err)){
+      tile.err='CORS — petición bloqueada';
+      tile.errDetail=location.protocol==='file:'
+        ? 'Abre el archivo desde un servidor local: python3 -m http.server 8080'
+        : 'Configura un proxy CORS en "+ Conectar API" → campo Proxy CORS. Ejemplo: npx local-cors-proxy --proxyUrl https://api.byteplus.com';
+    } else {
+      tile.err=err.message;
+      tile.errDetail=err.detail||'';
+    }
     group.warn=true;
     updateTile(tile,group); swapTileEl(tile,group.id); throw err;
   }
 }
 
 async function poll(taskId,headers,provider,customUrl){
-  let base;
-  if(provider==='atlascloud') base='https://api.atlascloud.ai/v1/video/';
-  else if(provider==='volcengine') base='https://ark.cn-beijing.volces.com/api/v3/video/';
-  else base=(customUrl||'https://api.byteplus.com')+'/v1/video/generation/';
+  let rawBase;
+  if(provider==='atlascloud') rawBase='https://api.atlascloud.ai/v1/video/';
+  else if(provider==='volcengine') rawBase='https://ark.cn-beijing.volces.com/api/v3/video/';
+  else rawBase=(customUrl||'https://api.byteplus.com')+'/v1/video/generation/';
+  const base=applyProxy(rawBase);
   for(let i=0;i<72;i++){
     await new Promise(r=>setTimeout(r,5000));
     try{
-      const r=await fetch(base+taskId,{headers});
+      const r=await fetch(base.endsWith('/')?base+taskId:base+'/'+taskId,{headers});
       if(!r.ok) continue;
       const d=await r.json();
       const st=d.status||d.data?.status||d.state;
@@ -827,6 +866,7 @@ function syncConfigUI(){
   document.getElementById('s-key').value=S.cfg.key||'';
   document.getElementById('s-model').value=S.cfg.model||'seedance-2-0-260128';
   if(S.cfg.url) document.getElementById('s-url').value=S.cfg.url;
+  document.getElementById('s-proxy').value=S.cfg.proxy||'';
   onProvChange(); checkKeyUI();
   const dot=document.getElementById('api-dot');
   const txt=document.getElementById('api-status-txt');
@@ -852,6 +892,7 @@ function saveSettings(){
   S.cfg.key=document.getElementById('s-key').value.trim();
   S.cfg.url=document.getElementById('s-url').value.trim();
   S.cfg.model=document.getElementById('s-model').value;
+  S.cfg.proxy=document.getElementById('s-proxy').value.trim();
   save(); closeSettings(); syncConfigUI(); showNotif('Configuración guardada ✓');
 }
 
