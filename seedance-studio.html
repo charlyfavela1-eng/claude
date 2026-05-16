@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Seedance Studio</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f0efec;--bg2:#fff;--surface:#e8e7e3;--border:rgba(0,0,0,.1);--border2:rgba(0,0,0,.18);
+  --text:#111;--text2:#666;--text3:#aaa;--accent:#111;--accent-fg:#fff;
+  --shadow:0 1px 3px rgba(0,0,0,.08);--shadow-md:0 4px 16px rgba(0,0,0,.1);
+  --radius:10px;--radius-lg:14px;--font:'Inter',sans-serif;--mono:'JetBrains Mono',monospace;
+}
+body{font-family:var(--font);background:var(--bg);color:var(--text);height:100vh;display:flex;flex-direction:column;overflow:hidden;font-size:13px;line-height:1.5}
+
+/* TOPBAR */
+.topbar{height:48px;background:var(--bg);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 14px;gap:10px;flex-shrink:0;z-index:100}
+.back-btn,.icon-btn-sm{width:28px;height:28px;border-radius:7px;border:1px solid var(--border);background:var(--bg2);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text2);font-size:13px;transition:all .15s;flex-shrink:0}
+.back-btn:hover,.icon-btn-sm:hover{background:var(--surface);color:var(--text)}
+.board-name-wrap{display:flex;align-items:center;gap:5px;cursor:pointer;padding:4px 8px;border-radius:7px;transition:background .15s;font-size:13px}
+.board-name-wrap:hover{background:var(--surface)}
+.board-name-wrap strong{font-weight:600}
+.board-name-wrap span{font-weight:400;color:var(--text2)}
+.chevron{width:12px;height:12px;stroke:var(--text3);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:8px}
+.api-status-top{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text2);padding:4px 10px;border-radius:20px;border:1px solid var(--border);cursor:pointer;transition:all .15s}
+.api-status-top:hover{border-color:var(--border2)}
+.dot{width:6px;height:6px;border-radius:50%;background:#aaa;flex-shrink:0}
+.dot.green{background:#22c55e}
+.dot.yellow{background:#f59e0b;animation:pulse .8s ease-in-out infinite alternate}
+@keyframes pulse{from{opacity:.5}to{opacity:1}}
+.upgrade-btn{background:var(--accent);color:#fff;border:none;padding:6px 14px;border-radius:20px;font-family:var(--font);font-size:12px;font-weight:500;cursor:pointer;transition:opacity .15s;display:flex;align-items:center;gap:5px}
+.upgrade-btn:hover{opacity:.8}
+
+/* MAIN */
+.main{display:flex;flex:1;overflow:hidden}
+
+/* SIDEBAR */
+.sidebar{width:196px;flex-shrink:0;border-right:1px solid var(--border);background:var(--bg);overflow-y:auto;padding:10px 8px;display:flex;flex-direction:column;gap:1px}
+.sb-header{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);padding:6px 8px 4px;font-weight:500}
+.board-item{display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:8px;cursor:pointer;color:var(--text2);font-size:12px;transition:all .12s;border:1px solid transparent}
+.board-item:hover{background:var(--bg2);color:var(--text)}
+.board-item.active{background:var(--bg2);color:var(--text);border-color:var(--border);box-shadow:var(--shadow)}
+.board-thumb{width:24px;height:16px;border-radius:3px;background:var(--surface);border:1px solid var(--border);flex-shrink:0;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.board-thumb img{width:100%;height:100%;object-fit:cover}
+.board-item-name{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.new-board-btn{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:8px;cursor:pointer;color:var(--text3);font-size:12px;border:1px dashed rgba(0,0,0,.15);margin-top:6px;transition:all .15s}
+.new-board-btn:hover{border-color:var(--border2);color:var(--text2);background:var(--bg2)}
+.sb-divider{height:1px;background:var(--border);margin:8px 4px}
+
+/* CANVAS */
+.canvas{flex:1;overflow-y:auto;padding:30px 36px;display:flex;flex-direction:column;gap:24px;background:var(--bg)}
+
+/* GENERATION GROUP */
+.gen-group{display:flex;flex-direction:column;gap:7px}
+.gen-container{border:1.5px dashed rgba(0,0,0,.14);border-radius:var(--radius-lg);padding:10px;background:rgba(255,255,255,.55)}
+.gen-container:hover{border-color:rgba(0,0,0,.22)}
+.gen-grid{display:grid;gap:8px}
+.gen-grid.c1{grid-template-columns:1fr}
+.gen-grid.c2{grid-template-columns:1fr 1fr}
+.gen-grid.c3{grid-template-columns:1fr 1fr 1fr}
+.gen-grid.c4{grid-template-columns:1fr 1fr 1fr 1fr}
+.gen-meta{display:flex;align-items:center;gap:6px;padding:0 2px}
+.gen-warn{width:14px;height:14px;border-radius:50%;background:#f59e0b;color:#fff;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.gen-prompt{flex:1;font-size:11px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:500px}
+.gen-time{font-size:10px;color:var(--text3);font-family:var(--mono);flex-shrink:0}
+
+/* VIDEO TILE */
+.video-tile{border-radius:10px;overflow:hidden;background:#1c1c1c;position:relative;cursor:pointer;aspect-ratio:16/9;transition:transform .18s}
+.video-tile:hover{transform:scale(1.015)}
+.video-tile video,.video-tile img{width:100%;height:100%;object-fit:cover;display:block}
+.tile-like{position:absolute;top:7px;right:7px;width:24px;height:24px;border-radius:50%;background:rgba(0,0,0,.5);border:none;color:#fff;cursor:pointer;font-size:11px;display:flex;align-items:center;justify-content:center;transition:background .15s;z-index:2}
+.tile-like.on{background:#ef4444}
+.tile-like:hover{background:#ef4444}
+.tile-dur{position:absolute;bottom:7px;left:7px;background:rgba(0,0,0,.55);color:#fff;font-size:10px;padding:2px 7px;border-radius:5px;font-family:var(--mono);display:flex;align-items:center;gap:3px;pointer-events:none}
+.tile-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.72) 0%,transparent 50%);opacity:0;transition:opacity .18s;display:flex;align-items:flex-end;justify-content:flex-end;padding:7px}
+.video-tile:hover .tile-overlay{opacity:1}
+.tile-actions{display:flex;gap:5px}
+.tile-btn{width:26px;height:26px;border-radius:7px;background:rgba(255,255,255,.15);border:none;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;transition:background .15s;backdrop-filter:blur(4px)}
+.tile-btn:hover{background:rgba(255,255,255,.28)}
+
+/* GENERATING */
+.video-tile.generating{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;min-height:150px;background:#eeecea}
+.spin{width:30px;height:30px;border-radius:50%;border:2px solid rgba(0,0,0,.12);border-top-color:var(--accent);animation:spin .7s linear infinite}
+.gen-lbl{font-size:11px;color:var(--text3)}
+.gen-bar-w{width:80px;height:2px;background:rgba(0,0,0,.1);border-radius:1px;overflow:hidden}
+.gen-bar{height:100%;background:var(--accent);animation:pbar 14s ease-out forwards}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pbar{from{width:0}to{width:90%}}
+
+/* ERROR TILE */
+.video-tile.err-tile{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-height:120px;background:#fff5f5;border:1px solid #fecaca;cursor:default}
+.err-icon{font-size:20px}
+.err-msg{font-size:10px;color:#ef4444;text-align:center;padding:0 10px;max-width:200px;line-height:1.4}
+.err-detail{font-size:9px;color:#f87171;text-align:center;padding:0 8px;max-width:200px;line-height:1.4;word-break:break-all}
+
+/* RIGHT PANEL */
+.rp{width:310px;flex-shrink:0;border-left:1px solid var(--border);background:var(--bg2);display:flex;flex-direction:column;overflow:hidden;transition:width .2s}
+.rp.collapsed{width:0}
+.rp-head{padding:12px 14px 10px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:6px;flex-shrink:0}
+.rp-title{display:flex;align-items:center;gap:4px;cursor:pointer;padding:3px 7px;border-radius:7px;transition:background .15s}
+.rp-title:hover{background:var(--surface)}
+.rp-title-txt{font-size:12px;font-weight:500}
+.rp-btn{margin-left:auto;width:24px;height:24px;border-radius:6px;border:none;background:transparent;color:var(--text3);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;transition:all .15s}
+.rp-btn:hover{background:var(--surface);color:var(--text)}
+.rp-msgs{flex:1;overflow-y:auto;padding:12px 12px;display:flex;flex-direction:column;gap:12px}
+.msg{display:flex;gap:8px;align-items:flex-start}
+.msg-av{width:24px;height:24px;border-radius:6px;flex-shrink:0;background:var(--accent);display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:600}
+.msg-av.user{background:#e5e7eb;color:#374151}
+.msg-av img{width:100%;height:100%;border-radius:6px;object-fit:cover}
+.msg-body{flex:1}
+.msg-who{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px;font-weight:500}
+.msg-txt{font-size:12px;color:var(--text);line-height:1.6;background:var(--bg);border-radius:0 8px 8px 8px;padding:8px 10px;border:1px solid var(--border)}
+.msg-thumbs{display:flex;gap:5px;margin-top:5px}
+.msg-thumb{width:44px;height:30px;border-radius:5px;object-fit:cover;border:1px solid var(--border);cursor:pointer}
+
+/* RP INPUT */
+.rp-inp-area{padding:10px 12px 12px;border-top:1px solid var(--border);flex-shrink:0}
+.rp-inp-wrap{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:8px 10px;transition:border-color .2s}
+.rp-inp-wrap:focus-within{border-color:var(--border2)}
+.rp-inp-row{display:flex;align-items:flex-end;gap:8px}
+.rp-ta{flex:1;border:none;outline:none;font-family:var(--font);font-size:12px;color:var(--text);resize:none;background:transparent;line-height:1.5;min-height:18px;max-height:80px}
+.rp-ta::placeholder{color:var(--text3)}
+.rp-send-btn{width:28px;height:28px;border-radius:7px;background:var(--accent);border:none;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;transition:opacity .15s}
+.rp-send-btn:hover{opacity:.8}
+.rp-tools{display:flex;gap:4px;margin-top:7px;align-items:center}
+.rp-tool{display:flex;align-items:center;gap:3px;font-size:11px;color:var(--text3);cursor:pointer;padding:3px 7px;border-radius:6px;border:1px solid transparent;transition:all .12s}
+.rp-tool:hover{background:var(--surface);border-color:var(--border);color:var(--text2)}
+.var-label{margin-left:auto;font-size:11px;color:var(--text3)}
+.var-select{border:1px solid var(--border);border-radius:6px;padding:3px 6px;font-family:var(--font);font-size:11px;color:var(--text2);background:var(--bg2);cursor:pointer;outline:none}
+
+/* IMAGE PREVIEW IN CHAT */
+.img-preview-wrap{display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--surface);border-radius:8px;margin-bottom:8px}
+.img-preview-wrap img{width:48px;height:36px;border-radius:6px;object-fit:cover;border:1px solid var(--border)}
+.img-preview-info{flex:1;font-size:11px;color:var(--text2)}
+.img-preview-info span{display:block;color:var(--text3);font-size:10px;margin-top:1px}
+.img-preview-rm{width:20px;height:20px;border-radius:50%;background:var(--bg2);border:1px solid var(--border);color:var(--text3);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;transition:all .15s;flex-shrink:0}
+.img-preview-rm:hover{background:var(--surface);color:var(--text)}
+
+/* REFERENCE IMAGE IN BOARD GROUP */
+.ref-img-tile{border-radius:10px;overflow:hidden;position:relative;aspect-ratio:16/9;border:1.5px solid var(--border);background:var(--surface)}
+.ref-img-tile img{width:100%;height:100%;object-fit:cover;display:block}
+.ref-img-badge{position:absolute;top:6px;left:6px;background:rgba(0,0,0,.6);color:#fff;font-size:9px;padding:2px 6px;border-radius:4px;font-family:var(--mono);letter-spacing:.04em}
+.ref-arrow{display:flex;align-items:center;justify-content:center;color:var(--text3);font-size:18px;padding:0 2px;flex-shrink:0}
+.gen-container-inner{display:flex;align-items:stretch;gap:8px}
+
+/* MODALS */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center;z-index:999;backdrop-filter:blur(2px)}
+.overlay.hidden{display:none}
+.modal{background:var(--bg2);border:1px solid var(--border);border-radius:18px;padding:22px;box-shadow:var(--shadow-md)}
+.mh{font-size:15px;font-weight:600;margin-bottom:3px}
+.ms{font-size:12px;color:var(--text2);margin-bottom:18px}
+.field{display:flex;flex-direction:column;gap:4px;margin-bottom:11px}
+.field label{font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:.06em;font-weight:500}
+.field input,.field select,.field textarea{border:1px solid var(--border);border-radius:8px;padding:7px 10px;font-family:var(--font);font-size:13px;color:var(--text);background:var(--bg);outline:none;transition:border-color .15s}
+.field input:focus,.field select:focus{border-color:var(--border2)}
+.ma{display:flex;gap:8px;margin-top:16px}
+.btn-p{flex:1;background:var(--accent);color:#fff;border:none;border-radius:9px;padding:9px;font-family:var(--font);font-size:13px;font-weight:500;cursor:pointer;transition:opacity .15s}
+.btn-p:hover{opacity:.82}
+.btn-s{flex:1;background:var(--surface);color:var(--text);border:1px solid var(--border);border-radius:9px;padding:9px;font-family:var(--font);font-size:13px;cursor:pointer;transition:all .15s}
+.btn-s:hover{border-color:var(--border2)}
+.btn-test{background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0;border-radius:9px;padding:9px 14px;font-family:var(--font);font-size:13px;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:6px;white-space:nowrap}
+.btn-test:hover{background:#dcfce7}
+.btn-test.testing{opacity:.6;pointer-events:none}
+.api-pill{display:inline-flex;align-items:center;gap:5px;font-size:11px;padding:4px 9px;border-radius:20px;margin-top:5px}
+.api-pill.ok{background:#dcfce7;color:#15803d}
+.api-pill.err{background:#fee2e2;color:#b91c1c}
+.api-pill.testing{background:#fef9c3;color:#854d0e}
+.api-pill .pill-dot{width:6px;height:6px;border-radius:50%;background:currentColor}
+.verify-result{margin-top:8px;font-size:11px;line-height:1.6;padding:8px 10px;border-radius:8px;display:none}
+.verify-result.ok{background:#dcfce7;color:#166534;display:block}
+.verify-result.err{background:#fee2e2;color:#991b1b;display:block;word-break:break-word}
+
+/* ASPECT PILLS */
+.ap-wrap{display:flex;gap:5px;flex-wrap:wrap}
+.ap{padding:3px 9px;border-radius:20px;border:1px solid var(--border);font-size:11px;cursor:pointer;color:var(--text2);font-family:var(--mono);transition:all .12s}
+.ap:hover{border-color:var(--border2);color:var(--text)}
+.ap.on{border-color:var(--accent);color:var(--accent);background:rgba(0,0,0,.04)}
+
+/* LIGHTBOX */
+.lb{position:fixed;inset:0;background:rgba(0,0,0,.9);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;z-index:9999}
+.lb.hidden{display:none}
+.lb video{max-width:78vw;max-height:72vh;border-radius:12px}
+.lb-close{position:fixed;top:16px;right:20px;background:rgba(255,255,255,.12);border:none;color:#fff;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;transition:background .15s}
+.lb-close:hover{background:rgba(255,255,255,.22)}
+.lb-caption{font-size:12px;color:rgba(255,255,255,.5);max-width:560px;text-align:center;line-height:1.6}
+
+/* NOTIF */
+.notif{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--text);color:#fff;font-size:12px;padding:8px 16px;border-radius:20px;box-shadow:var(--shadow-md);animation:ni .22s ease;z-index:99999;white-space:nowrap}
+@keyframes ni{from{opacity:0;transform:translateX(-50%) translateY(8px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+
+/* EMPTY */
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:50vh;gap:12px;color:var(--text3)}
+.empty-icon{font-size:32px;opacity:.25}
+.empty-title{font-size:14px;color:var(--text2);font-weight:500}
+.empty-sub{font-size:12px;text-align:center;max-width:240px;line-height:1.6}
+
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-thumb{background:rgba(0,0,0,.12);border-radius:2px}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <button class="back-btn" title="Boards" onclick="showNotif('Selecciona un board en el panel izquierdo')">←</button>
+  <div class="board-name-wrap" onclick="openSettingsModal()">
+    <svg class="chevron" viewBox="0 0 24 24" style="width:14px;height:14px"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+    <span id="board-display"><strong>MI PROYECTO</strong> <span>VIDEO</span></span>
+    <svg class="chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+  </div>
+  <div class="topbar-right">
+    <div class="api-status-top" id="api-status-top" onclick="openSettingsModal()">
+      <div class="dot" id="api-dot"></div>
+      <span id="api-status-txt">Sin API</span>
+    </div>
+    <button class="icon-btn-sm" onclick="openGenModal()" title="Configurar generación">
+      <svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14"/></svg>
+    </button>
+    <button class="upgrade-btn" onclick="openSettingsModal()">+ Conectar API</button>
+  </div>
+</div>
+
+<div class="main">
+  <!-- SIDEBAR: BOARDS -->
+  <div class="sidebar">
+    <div class="sb-header">Boards</div>
+    <div id="boards-list"></div>
+    <div class="sb-divider"></div>
+    <div class="new-board-btn" onclick="openNewBoardModal()">
+      <svg viewBox="0 0 24 24" style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Nuevo board
+    </div>
+  </div>
+
+  <!-- CANVAS -->
+  <div class="canvas" id="canvas">
+    <div class="empty" id="canvas-empty">
+      <div class="empty-icon">✦</div>
+      <div class="empty-title">Board vacío</div>
+      <div class="empty-sub">Describe lo que quieres en el chat →</div>
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL: CHAT -->
+  <div class="rp" id="rp">
+    <div class="rp-head">
+      <div class="rp-title" onclick="cyclePanelTitle()">
+        <span class="rp-title-txt" id="rp-title">Video Production Planning</span>
+        <svg class="chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <button class="rp-btn" onclick="togglePanel()" title="Minimizar">−</button>
+    </div>
+    <div class="rp-msgs" id="rp-msgs"></div>
+    <div class="rp-inp-area">
+      <div id="img-preview-chat"></div>
+      <div class="rp-inp-wrap">
+        <div class="rp-inp-row">
+          <textarea class="rp-ta" id="rp-ta" placeholder="What do you want to do?" rows="1"
+            oninput="taResize(this)" onkeydown="taKey(event)"></textarea>
+          <button class="rp-send-btn" onclick="sendChat()">
+            <svg viewBox="0 0 24 24" style="width:11px;height:11px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="rp-tools">
+        <div class="rp-tool" onclick="attachImg()">
+          <svg viewBox="0 0 24 24" style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+          Imagen
+        </div>
+        <div class="rp-tool" onclick="openGenModal()">
+          <svg viewBox="0 0 24 24" style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+          Config
+        </div>
+        <span class="var-label">Variantes:</span>
+        <select class="var-select" id="var-count">
+          <option value="1">1</option>
+          <option value="2" selected>2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+        </select>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FILE INPUT -->
+<input type="file" id="file-inp" accept="image/*" style="display:none" onchange="onFileChange(event)">
+
+<!-- SETTINGS MODAL -->
+<div class="overlay hidden" id="settings-overlay">
+  <div class="modal" style="width:430px">
+    <div class="mh">Configuración de API</div>
+    <div class="ms">Conecta tu API key para generar videos reales con Seedance 2.0</div>
+    <div class="field">
+      <label>Proveedor</label>
+      <select id="s-prov" onchange="onProvChange()">
+        <option value="byteplus">BytePlus — ByteDance oficial</option>
+        <option value="atlascloud">Atlas Cloud</option>
+        <option value="volcengine">Volcengine ModelArk</option>
+        <option value="custom">URL personalizada</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>API Key</label>
+      <input type="password" id="s-key" placeholder="sk-..." oninput="checkKeyUI()">
+    </div>
+    <div class="field" id="s-url-wrap" style="display:none">
+      <label>Endpoint URL</label>
+      <input type="text" id="s-url" placeholder="https://...">
+    </div>
+    <div class="field">
+      <label>Modelo por defecto</label>
+      <select id="s-model">
+        <option value="seedance-2-0-260128">Seedance 2.0 Pro</option>
+        <option value="seedance-2-0-fast-260128">Seedance 2.0 Fast</option>
+        <option value="seedance-1-5-pro">Seedance 1.5 Pro</option>
+      </select>
+    </div>
+    <div id="s-key-status"></div>
+    <div id="verify-result" class="verify-result"></div>
+    <div class="ma">
+      <button class="btn-s" onclick="closeSettings()">Cancelar</button>
+      <button class="btn-test" id="btn-test" onclick="verifyApi()">
+        <svg viewBox="0 0 24 24" style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round"><polyline points="20 6 9 17 4 12"/></svg>
+        Verificar
+      </button>
+      <button class="btn-p" onclick="saveSettings()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- GEN CONFIG MODAL -->
+<div class="overlay hidden" id="gen-overlay">
+  <div class="modal" style="width:390px">
+    <div class="mh">Parámetros de generación</div>
+    <div class="ms">Ajusta la calidad y formato de los videos generados</div>
+    <div class="field">
+      <label>Duración</label>
+      <select id="g-dur">
+        <option value="5">5 segundos</option>
+        <option value="8" selected>8 segundos</option>
+        <option value="10">10 segundos</option>
+        <option value="15">15 segundos</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Resolución</label>
+      <select id="g-res">
+        <option value="720p">720p — borrador</option>
+        <option value="1080p" selected>1080p — producción</option>
+        <option value="2k">2K — máxima</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Proporción</label>
+      <div class="ap-wrap" id="ap-wrap">
+        <div class="ap on" onclick="setAp(this,'16:9')">16:9</div>
+        <div class="ap" onclick="setAp(this,'9:16')">9:16</div>
+        <div class="ap" onclick="setAp(this,'1:1')">1:1</div>
+        <div class="ap" onclick="setAp(this,'4:3')">4:3</div>
+        <div class="ap" onclick="setAp(this,'21:9')">21:9</div>
+        <div class="ap" onclick="setAp(this,'3:4')">3:4</div>
+      </div>
+    </div>
+    <div class="field">
+      <label>Movimiento de cámara</label>
+      <select id="g-cam">
+        <option value="">Auto</option>
+        <option value="static">Estático</option>
+        <option value="slow_zoom_in">Zoom lento entrada</option>
+        <option value="slow_zoom_out">Zoom lento salida</option>
+        <option value="pan_left">Paneo izquierda</option>
+        <option value="pan_right">Paneo derecha</option>
+        <option value="tracking">Seguimiento</option>
+        <option value="handheld">Cámara en mano</option>
+        <option value="crane_up">Grúa arriba</option>
+      </select>
+    </div>
+    <div class="ma">
+      <button class="btn-s" onclick="closeGenModal()">Cerrar</button>
+      <button class="btn-p" onclick="saveGenConfig()">Aplicar</button>
+    </div>
+  </div>
+</div>
+
+<!-- NEW BOARD MODAL -->
+<div class="overlay hidden" id="newboard-overlay">
+  <div class="modal" style="width:340px">
+    <div class="mh">Nuevo board</div>
+    <div class="ms">Crea un nuevo proyecto de moodboard</div>
+    <div class="field">
+      <label>Nombre</label>
+      <input type="text" id="nb-name" placeholder="ej: Campaña verano 2026">
+    </div>
+    <div class="field">
+      <label>Tipo</label>
+      <select id="nb-type">
+        <option>VIDEO</option>
+        <option>IMAGEN</option>
+        <option>CAMPAÑA</option>
+        <option>PRODUCTO</option>
+      </select>
+    </div>
+    <div class="ma">
+      <button class="btn-s" onclick="closeNewBoard()">Cancelar</button>
+      <button class="btn-p" onclick="createBoard()">Crear</button>
+    </div>
+  </div>
+</div>
+
+<!-- LIGHTBOX -->
+<div class="lb hidden" id="lb" onclick="lbClick(event)">
+  <button class="lb-close" onclick="closeLb()">✕</button>
+  <video id="lb-vid" controls autoplay loop></video>
+  <div class="lb-caption" id="lb-cap"></div>
+</div>
+
+<script>
+// ──── STATE ────
+let S = {
+  boards:[],
+  cur:null,
+  cfg:{ provider:'byteplus',key:'',url:'',model:'seedance-2-0-260128' },
+  gen:{ dur:'8',res:'1080p',aspect:'16:9',cam:'' },
+  img:null, imgB64:null
+};
+
+// ──── INIT ────
+(function(){
+  try{ const s=localStorage.getItem('sds2'); if(s) Object.assign(S,JSON.parse(s)); }catch(e){}
+  if(!S.boards||!S.boards.length){
+    S.boards=[{id:'b1',name:'Mi proyecto',type:'VIDEO',groups:[],createdAt:new Date().toISOString()}];
+    S.cur='b1';
+  }
+  if(!S.cur) S.cur=S.boards[0].id;
+  syncConfigUI(); renderBoardList(); renderCanvas(); initChat();
+})();
+
+function save(){ try{ localStorage.setItem('sds2',JSON.stringify(S)); }catch(e){} }
+function board(){ return S.boards.find(b=>b.id===S.cur)||S.boards[0]; }
+
+// ──── BOARD LIST ────
+function renderBoardList(){
+  const el=document.getElementById('boards-list'); el.innerHTML='';
+  S.boards.forEach(b=>{
+    const div=document.createElement('div');
+    div.className='board-item'+(b.id===S.cur?' active':'');
+    const lastTile=b.groups&&b.groups.length?b.groups[b.groups.length-1].tiles.find(t=>t.url):null;
+    const thumb=lastTile?`<img src="${lastTile.url}">`:'<svg viewBox="0 0 24 24" style="width:9px;height:9px;stroke:#bbb;fill:none;stroke-width:1.5"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>';
+    div.innerHTML=`<div class="board-thumb">${thumb}</div><span class="board-item-name">${b.name}</span>`;
+    div.onclick=()=>switchBoard(b.id);
+    el.appendChild(div);
+  });
+}
+
+function switchBoard(id){
+  S.cur=id; save();
+  renderBoardList(); renderCanvas(); initChat();
+}
+
+// ──── CANVAS ────
+function renderCanvas(){
+  const b=board();
+  document.getElementById('board-display').innerHTML=`<strong>${b.name.toUpperCase()}</strong> <span>${b.type}</span>`;
+  const canvas=document.getElementById('canvas');
+  canvas.innerHTML='';
+  if(!b.groups||!b.groups.length){
+    canvas.innerHTML='<div class="empty" id="canvas-empty"><div class="empty-icon">✦</div><div class="empty-title">Board vacío</div><div class="empty-sub">Describe lo que quieres en el chat →</div></div>';
+    return;
+  }
+  b.groups.forEach((g)=>appendGroup(g,canvas,false));
+}
+
+function appendGroup(g, container, prepend){
+  const el=document.createElement('div');
+  el.className='gen-group'; el.id='gg-'+g.id;
+  const cols=Math.min(g.tiles.length,4);
+  const short=g.prompt.length>72?g.prompt.slice(0,72)+'…':g.prompt;
+  const t=new Date(g.createdAt).toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'});
+  const refImg = g.refImg
+    ? `<div class="ref-img-tile" style="width:120px;flex-shrink:0">
+        <img src="${g.refImg}" alt="Referencia">
+        <div class="ref-img-badge">REF</div>
+      </div>
+      <div class="ref-arrow">→</div>`
+    : '';
+  el.innerHTML=`
+    <div class="gen-container">
+      <div class="gen-container-inner">
+        ${refImg}
+        <div class="gen-grid c${cols}" id="grid-${g.id}" style="flex:1;min-width:0">
+          ${g.tiles.map(tile=>tileHTML(tile,g.id)).join('')}
+        </div>
+      </div>
+    </div>
+    <div class="gen-meta">
+      ${g.warn?'<div class="gen-warn">!</div>':''}
+      ${g.refImg?'<svg viewBox="0 0 24 24" style="width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;flex-shrink:0"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>':''}
+      <div class="gen-prompt">${short}</div>
+      <div class="gen-time">${t}</div>
+    </div>`;
+  if(prepend&&container.firstChild) container.insertBefore(el,container.firstChild);
+  else container.appendChild(el);
+}
+
+function tileHTML(t,gid){
+  if(t.status==='generating') return `<div class="video-tile generating" id="tile-${t.id}">
+    <div class="spin"></div><div class="gen-lbl">Generando…</div>
+    <div class="gen-bar-w"><div class="gen-bar"></div></div></div>`;
+  if(t.status==='error') return `<div class="video-tile err-tile" id="tile-${t.id}">
+    <div class="err-icon">⚠️</div>
+    <div class="err-msg">${escHtml((t.err||'Error desconocido').slice(0,60))}</div>
+    <div class="err-detail">${escHtml((t.errDetail||'').slice(0,120))}</div></div>`;
+  return `<div class="video-tile" id="tile-${t.id}" onclick="openLb('${t.id}','${gid}')">
+    <video src="${t.url}" muted loop preload="metadata" onmouseenter="this.play()" onmouseleave="this.pause();this.currentTime=0"></video>
+    <button class="tile-like${t.liked?' on':''}" id="like-${t.id}" onclick="event.stopPropagation();like('${t.id}','${gid}')">♥</button>
+    <div class="tile-dur">▶ ${t.dur||S.gen.dur+'s'}</div>
+    <div class="tile-overlay">
+      <div class="tile-actions">
+        <button class="tile-btn" title="Descargar" onclick="event.stopPropagation();dl('${t.url}','${t.id}')">↓</button>
+        <button class="tile-btn" title="Usar referencia" onclick="event.stopPropagation();useRef('${t.id}','${gid}')">⎘</button>
+        <button class="tile-btn" title="Eliminar" onclick="event.stopPropagation();delTile('${t.id}','${gid}')">✕</button>
+      </div>
+    </div></div>`;
+}
+
+function escHtml(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+// ──── CHAT ────
+function initChat(){
+  document.getElementById('rp-msgs').innerHTML='';
+  addSysMsg('Board activo: <strong>'+board().name+'</strong>. Describe qué videos quieres generar y cuántas variantes.');
+}
+
+function addSysMsg(html){
+  const el=document.createElement('div'); el.className='msg';
+  el.innerHTML=`<div class="msg-av">✦</div><div class="msg-body"><div class="msg-who">Seedance Studio</div><div class="msg-txt">${html}</div></div>`;
+  const msgs=document.getElementById('rp-msgs'); msgs.appendChild(el); msgs.scrollTop=msgs.scrollHeight;
+}
+
+function addUserMsg(txt,imgB64){
+  const el=document.createElement('div'); el.className='msg';
+  const imgHtml=imgB64?`<div class="msg-thumbs"><img class="msg-thumb" src="${imgB64}"></div>`:'';
+  el.innerHTML=`<div class="msg-av user">U</div><div class="msg-body"><div class="msg-who">Tú</div><div class="msg-txt">${escHtml(txt)}${imgHtml}</div></div>`;
+  const msgs=document.getElementById('rp-msgs'); msgs.appendChild(el); msgs.scrollTop=msgs.scrollHeight;
+}
+
+function taResize(el){ el.style.height='auto'; el.style.height=Math.min(el.scrollHeight,80)+'px'; }
+function taKey(e){ if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendChat();} }
+
+async function sendChat(){
+  const ta=document.getElementById('rp-ta');
+  const prompt=ta.value.trim(); if(!prompt) return;
+  const variants=parseInt(document.getElementById('var-count').value)||2;
+  const imgB64=S.imgB64;
+  addUserMsg(prompt, imgB64);
+  ta.value=''; taResize(ta);
+  S.img=null; S.imgB64=null;
+  document.getElementById('img-preview-chat').innerHTML='';
+  if(!S.cfg.key||S.cfg.key.length<5){
+    addSysMsg('⚠️ Configura tu <strong>API key</strong> primero haciendo clic en "+ Conectar API" arriba.'); return;
+  }
+  addSysMsg(`Generando <strong>${variants}</strong> variante${variants>1?'s':''} de "<em>${escHtml(prompt.slice(0,50))}${prompt.length>50?'…':''}</em>"${imgB64?' (imagen a video)':''}…`);
+  const b=board();
+  document.getElementById('canvas-empty')?.remove();
+  const gid='g'+Date.now();
+  const tiles=Array.from({length:variants},(_,i)=>({id:'t'+Date.now()+i,status:'generating',prompt,dur:S.gen.dur+'s'}));
+  const group={id:gid,prompt,tiles,refImg:imgB64||null,createdAt:new Date().toISOString(),warn:false};
+  b.groups.push(group);
+  const canvas=document.getElementById('canvas');
+  appendGroup(group,canvas,false);
+  canvas.scrollTop=canvas.scrollHeight;
+  save();
+  const results=await Promise.allSettled(tiles.map(t=>genTile(t,prompt,imgB64,group)));
+  const ok=results.filter(r=>r.status==='fulfilled').length;
+  addSysMsg(ok>0?`✓ ${ok} video${ok>1?'s listos':'listo'}. Pasa el cursor para previsualizar. ¿Quieres ajustar algo?`:'❌ Error en la generación. Verifica tu API key en "+ Conectar API".');
+}
+
+// ──── API HELPERS ────
+function buildRequest(prompt, imgB64){
+  const {provider,key,url,model}=S.cfg;
+  const {dur,res,aspect,cam}=S.gen;
+  let endpoint,headers,body;
+
+  if(provider==='atlascloud'){
+    endpoint='https://api.atlascloud.ai/v1/video/generate';
+    headers={'Authorization':'Bearer '+key,'Content-Type':'application/json'};
+    body={model,prompt,duration:parseInt(dur),resolution:res,aspect_ratio:aspect};
+    // atlascloud accepts base64 image directly
+    if(imgB64) body.image=imgB64;
+
+  } else if(provider==='volcengine'){
+    endpoint='https://ark.cn-beijing.volces.com/api/v3/video/generation';
+    headers={'Authorization':'Bearer '+key,'Content-Type':'application/json'};
+    // volcengine uses dreamina- prefix
+    body={model:'dreamina-'+model,prompt,duration:parseInt(dur),aspect_ratio:aspect};
+    if(imgB64) body.image=imgB64;
+
+  } else {
+    // byteplus (default) — model name used as-is, no prefix
+    endpoint=(url||'https://api.byteplus.com')+'/v1/video/generation';
+    headers={'Authorization':'Bearer '+key,'Content-Type':'application/json'};
+    body={model,req_key:'seedance_video_01',prompt,duration:parseInt(dur),
+          resolution:res,aspect_ratio:aspect};
+    if(res==='2k') body.scale=2;
+    if(cam) body.camera_motion=cam;
+    // base64 data URLs are NOT valid for image_url — only pass if it's an http URL
+    if(imgB64){
+      if(imgB64.startsWith('http')) body.image_url=imgB64;
+      else body.image=imgB64; // send raw base64 in image field
+    }
+  }
+  return {endpoint,headers,body};
+}
+
+// ──── API VERIFY ────
+async function verifyApi(){
+  const key=document.getElementById('s-key').value.trim();
+  const prov=document.getElementById('s-prov').value;
+  const customUrl=document.getElementById('s-url').value.trim();
+  if(!key||key.length<5){
+    showVerifyResult(false,'Ingresa una API key válida primero.'); return;
+  }
+  const btn=document.getElementById('btn-test');
+  btn.classList.add('testing'); btn.innerHTML='<div class="spin" style="width:12px;height:12px;border-width:1.5px"></div> Verificando…';
+  document.getElementById('verify-result').style.display='none';
+  try{
+    let endpoint,headers;
+    if(prov==='atlascloud'){
+      endpoint='https://api.atlascloud.ai/v1/models';
+      headers={'Authorization':'Bearer '+key};
+    } else if(prov==='volcengine'){
+      endpoint='https://ark.cn-beijing.volces.com/api/v3/models';
+      headers={'Authorization':'Bearer '+key};
+    } else {
+      endpoint=(customUrl||'https://api.byteplus.com')+'/v1/video/generation';
+      headers={'Authorization':'Bearer '+key,'Content-Type':'application/json'};
+      // send a minimal request; 400/422 = auth OK but bad params, 401/403 = auth fail
+      const r=await fetch(endpoint,{
+        method:'POST',headers,
+        body:JSON.stringify({model:'seedance-2-0-260128',req_key:'seedance_video_01',prompt:'test',duration:5})
+      });
+      const txt=await r.text();
+      if(r.status===401||r.status===403){
+        showVerifyResult(false,`Auth fallida (${r.status}): API key inválida o sin permisos.`);
+      } else if(r.status===400||r.status===422||r.status===200||r.status===202){
+        showVerifyResult(true,`Conexión OK (${r.status}) — API key válida y endpoint accesible.`);
+      } else if(r.status===0||!r.status){
+        showVerifyResult(false,'Error de red / CORS. El navegador bloqueó la petición. Usa la extensión o un proxy.');
+      } else {
+        showVerifyResult(false,`Respuesta inesperada HTTP ${r.status}: ${txt.slice(0,120)}`);
+      }
+      return;
+    }
+    const r=await fetch(endpoint,{headers});
+    if(r.ok) showVerifyResult(true,`Conexión OK (${r.status}) — API key válida.`);
+    else if(r.status===401||r.status===403) showVerifyResult(false,`Auth fallida (${r.status}): API key inválida o sin permisos.`);
+    else showVerifyResult(false,`HTTP ${r.status} — revisa la configuración.`);
+  } catch(e){
+    const isCors=e.message.includes('fetch')||e.message.includes('network')||e.message.toLowerCase().includes('failed');
+    showVerifyResult(false, isCors
+      ? 'Error de red / CORS: el navegador bloqueó la petición. Esto es normal al llamar APIs externas desde el navegador. La key puede ser correcta; prueba generando un video.'
+      : 'Error: '+e.message);
+  } finally{
+    btn.classList.remove('testing');
+    btn.innerHTML='<svg viewBox="0 0 24 24" style="width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round"><polyline points="20 6 9 17 4 12"/></svg> Verificar';
+  }
+}
+
+function showVerifyResult(ok, msg){
+  const el=document.getElementById('verify-result');
+  el.className='verify-result '+(ok?'ok':'err');
+  el.textContent=(ok?'✓ ':'✗ ')+msg;
+}
+
+// ──── GENERATE TILE ────
+async function genTile(tile,prompt,imgB64,group){
+  const {endpoint,headers,body}=buildRequest(prompt,imgB64);
+  try{
+    const r=await fetch(endpoint,{method:'POST',headers,body:JSON.stringify(body)});
+    let rawText='';
+    try{ rawText=await r.text(); }catch(_){}
+    if(!r.ok){
+      let detail=rawText.slice(0,200);
+      let msg=`HTTP ${r.status}`;
+      if(r.status===401||r.status===403) msg='API key inválida o sin permisos';
+      else if(r.status===422) msg='Parámetros incorrectos';
+      else if(r.status===429) msg='Límite de requests alcanzado';
+      throw Object.assign(new Error(msg),{detail});
+    }
+    let d;
+    try{ d=JSON.parse(rawText); }catch(e){ throw new Error('Respuesta no es JSON: '+rawText.slice(0,80)); }
+    let vurl;
+    const taskId=d.task_id||d.id||d.data?.task_id;
+    if(taskId) vurl=await poll(taskId,headers,S.cfg.provider,S.cfg.url);
+    else vurl=d.video_url||d.url||d.output?.video_url||d.data?.video_url||d.data?.videos?.[0]?.url;
+    if(!vurl) throw new Error('No se recibió URL de video. Respuesta: '+JSON.stringify(d).slice(0,120));
+    tile.url=vurl; tile.status='done'; tile.dur=S.gen.dur+'s';
+    updateTile(tile,group); swapTileEl(tile,group.id); return vurl;
+  } catch(err){
+    tile.status='error';
+    tile.err=err.message;
+    tile.errDetail=err.detail||'';
+    group.warn=true;
+    updateTile(tile,group); swapTileEl(tile,group.id); throw err;
+  }
+}
+
+async function poll(taskId,headers,provider,customUrl){
+  let base;
+  if(provider==='atlascloud') base='https://api.atlascloud.ai/v1/video/';
+  else if(provider==='volcengine') base='https://ark.cn-beijing.volces.com/api/v3/video/';
+  else base=(customUrl||'https://api.byteplus.com')+'/v1/video/generation/';
+  for(let i=0;i<72;i++){
+    await new Promise(r=>setTimeout(r,5000));
+    try{
+      const r=await fetch(base+taskId,{headers});
+      if(!r.ok) continue;
+      const d=await r.json();
+      const st=d.status||d.data?.status||d.state;
+      if(st==='completed'||st==='succeed'||st==='done'||d.code===0){
+        const vurl=d.video_url||d.output?.video_url||d.data?.video_url||d.data?.videos?.[0]?.url;
+        if(vurl) return vurl;
+      }
+      if(st==='failed'||st==='error'){
+        throw new Error(d.message||d.data?.message||'Falló en servidor');
+      }
+    } catch(e){ if(e.message.includes('Falló')||e.message.includes('failed')) throw e; }
+  }
+  throw new Error('Tiempo de espera agotado (6 min)');
+}
+
+function updateTile(tile,group){
+  const b=board(); const g=b.groups.find(g=>g.id===group.id);
+  if(g){const t=g.tiles.find(t=>t.id===tile.id); if(t) Object.assign(t,tile);}
+  save();
+}
+
+function swapTileEl(tile,gid){
+  const el=document.getElementById('tile-'+tile.id);
+  if(!el) return;
+  const tmp=document.createElement('div'); tmp.innerHTML=tileHTML(tile,gid);
+  el.replaceWith(tmp.firstChild);
+}
+
+// ──── TILE ACTIONS ────
+function like(tid,gid){
+  const b=board(); b.groups.forEach(g=>g.tiles.forEach(t=>{if(t.id===tid) t.liked=!t.liked;}));
+  save();
+  document.getElementById('like-'+tid)?.classList.toggle('on');
+}
+
+function delTile(tid,gid){
+  const b=board(); const g=b.groups.find(g=>g.id===gid); if(!g) return;
+  g.tiles=g.tiles.filter(t=>t.id!==tid);
+  document.getElementById('tile-'+tid)?.remove();
+  if(!g.tiles.length){ b.groups=b.groups.filter(g=>g.id!==gid); document.getElementById('gg-'+gid)?.remove(); }
+  save();
+}
+
+function useRef(tid,gid){
+  const b=board(); let tile;
+  b.groups.forEach(g=>g.tiles.forEach(t=>{if(t.id===tid) tile=t;}));
+  showNotif('Video como referencia ✓ — describe la modificación en el chat');
+  addSysMsg('Referencia guardada. Ahora describe cómo quieres modificar o continuar este video.');
+}
+
+function dl(url,id){ const a=document.createElement('a'); a.href=url; a.download='seedance-'+id+'.mp4'; a.click(); }
+
+// ──── LIGHTBOX ────
+function openLb(tid,gid){
+  const b=board(); let tile;
+  b.groups.forEach(g=>g.tiles.forEach(t=>{if(t.id===tid) tile=t;}));
+  if(!tile?.url) return;
+  document.getElementById('lb-vid').src=tile.url;
+  document.getElementById('lb-cap').textContent=tile.prompt||'';
+  document.getElementById('lb').classList.remove('hidden');
+}
+function lbClick(e){if(e.target===document.getElementById('lb')) closeLb();}
+function closeLb(){ document.getElementById('lb').classList.add('hidden'); document.getElementById('lb-vid').pause(); }
+
+// ──── IMAGE ATTACH ────
+function attachImg(){ document.getElementById('file-inp').click(); }
+function onFileChange(e){
+  const file=e.target.files[0]; if(!file) return;
+  S.img=file;
+  const r=new FileReader();
+  r.onload=ev=>{
+    S.imgB64=ev.target.result;
+    const name=file.name.length>24?file.name.slice(0,24)+'…':file.name;
+    document.getElementById('img-preview-chat').innerHTML=`
+      <div class="img-preview-wrap">
+        <img src="${ev.target.result}" alt="Preview">
+        <div class="img-preview-info">
+          ${escHtml(name)}
+          <span>Imagen · imagen a video</span>
+        </div>
+        <button class="img-preview-rm" onclick="clearImg()" title="Quitar imagen">✕</button>
+      </div>`;
+  };
+  r.readAsDataURL(file);
+  e.target.value='';
+}
+function clearImg(){
+  S.img=null; S.imgB64=null;
+  document.getElementById('img-preview-chat').innerHTML='';
+  document.getElementById('file-inp').value='';
+}
+
+// ──── BOARDS ────
+function openNewBoardModal(){ document.getElementById('newboard-overlay').classList.remove('hidden'); setTimeout(()=>document.getElementById('nb-name').focus(),50); }
+function closeNewBoard(){ document.getElementById('newboard-overlay').classList.add('hidden'); }
+function createBoard(){
+  const n=document.getElementById('nb-name').value.trim();
+  if(!n){showNotif('Escribe un nombre');return;}
+  const t=document.getElementById('nb-type').value;
+  const id='b'+Date.now();
+  S.boards.push({id,name:n,type:t,groups:[],createdAt:new Date().toISOString()});
+  S.cur=id; save(); renderBoardList(); renderCanvas(); initChat(); closeNewBoard();
+}
+
+// ──── SETTINGS ────
+function syncConfigUI(){
+  document.getElementById('s-prov').value=S.cfg.provider||'byteplus';
+  document.getElementById('s-key').value=S.cfg.key||'';
+  document.getElementById('s-model').value=S.cfg.model||'seedance-2-0-260128';
+  if(S.cfg.url) document.getElementById('s-url').value=S.cfg.url;
+  onProvChange(); checkKeyUI();
+  const dot=document.getElementById('api-dot');
+  const txt=document.getElementById('api-status-txt');
+  if(S.cfg.key&&S.cfg.key.length>5){dot.classList.add('green');txt.textContent='Conectado';}
+  else{dot.classList.remove('green');txt.textContent='Sin API';}
+}
+
+function openSettingsModal(){
+  syncConfigUI();
+  document.getElementById('verify-result').style.display='none';
+  document.getElementById('settings-overlay').classList.remove('hidden');
+}
+function closeSettings(){ document.getElementById('settings-overlay').classList.add('hidden'); }
+function onProvChange(){ document.getElementById('s-url-wrap').style.display=document.getElementById('s-prov').value==='custom'?'block':'none'; }
+function checkKeyUI(){
+  const k=document.getElementById('s-key').value.trim();
+  document.getElementById('s-key-status').innerHTML=k.length>8
+    ?'<div class="api-pill ok"><div class="pill-dot"></div>API key lista</div>'
+    :'<div class="api-pill err"><div class="pill-dot"></div>Sin API key</div>';
+}
+function saveSettings(){
+  S.cfg.provider=document.getElementById('s-prov').value;
+  S.cfg.key=document.getElementById('s-key').value.trim();
+  S.cfg.url=document.getElementById('s-url').value.trim();
+  S.cfg.model=document.getElementById('s-model').value;
+  save(); closeSettings(); syncConfigUI(); showNotif('Configuración guardada ✓');
+}
+
+function openGenModal(){ document.getElementById('gen-overlay').classList.remove('hidden'); }
+function closeGenModal(){ document.getElementById('gen-overlay').classList.add('hidden'); }
+function setAp(el,v){ document.querySelectorAll('.ap').forEach(p=>p.classList.remove('on')); el.classList.add('on'); S.gen.aspect=v; }
+function saveGenConfig(){
+  S.gen.dur=document.getElementById('g-dur').value;
+  S.gen.res=document.getElementById('g-res').value;
+  S.gen.cam=document.getElementById('g-cam').value;
+  save(); closeGenModal(); showNotif('Config guardada ✓');
+}
+
+// ──── MISC ────
+const PANEL_TITLES=['Video Production Planning','Image Direction','Story Planning','Prompt Workshop','Campaign Strategy'];
+let panelIdx=0;
+function cyclePanelTitle(){ panelIdx=(panelIdx+1)%PANEL_TITLES.length; document.getElementById('rp-title').textContent=PANEL_TITLES[panelIdx]; }
+function togglePanel(){ const rp=document.getElementById('rp'); rp.classList.toggle('collapsed'); }
+function showNotif(msg){ const n=document.createElement('div'); n.className='notif'; n.textContent=msg; document.body.appendChild(n); setTimeout(()=>n.remove(),2800); }
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeLb();closeSettings();closeGenModal();closeNewBoard();}});
+</script>
+</body>
+</html>
